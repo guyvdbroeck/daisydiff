@@ -1,0 +1,8 @@
+#summary Existing software solutions.
+
+= Links =
+  * http://diffxml.sourceforge.net/
+    *http://belnet.dl.sourceforge.net/sourceforge/diffxml/dul.ps
+  * http://www.topologi.com/diffx/
+
+
