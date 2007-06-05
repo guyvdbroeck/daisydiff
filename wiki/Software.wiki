@@ -3,5 +3,8 @@
 = Links =
   * http://diffxml.sourceforge.net/
     * http://belnet.dl.sourceforge.net/sourceforge/diffxml/dul.ps
-  * http://www.topologi.com/diffx/
+  * http://www.topologi.com/diffx/ : Tested with minor changes and some moves. It only provides basic functionality and we have the ambition to do better.
+
+
+
 
