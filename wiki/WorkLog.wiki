@@ -1,6 +1,5 @@
 #summary Log of the days worked
 
 === Days spent in the Outerthought offices: ===
-  * May 1st: introduction
-
+  * May 1st: introduction, testing the DiffXML software.
 
