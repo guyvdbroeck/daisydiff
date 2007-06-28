@@ -1,0 +1,11 @@
+--- Dit is wat tekst.
+--- Er volgt nog een langer verhaal waarover ik
+--- later meer zal vertellen indien ik dit hier
+--- niet beu wordt.
++++ Dit is wat
++++ tekst en zo.
+         ^^^^^^ 
++++ Er volgt nog een veel langer verhaal waarover
+                     ^^^^^                       
++++ ik later meer zal vertellen indien ik dit
++++ hier niet beu wordt.
