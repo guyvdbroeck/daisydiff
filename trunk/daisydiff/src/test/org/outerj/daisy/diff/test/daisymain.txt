@@ -1,0 +1,88 @@
+<html>
+<body>
+ 
+<table class="homepage">
+<tbody>
+<tr>
+<td valign="top">
+<p>Welcome to <strong>Daisy</strong> - the <em>open source content management
+application framework</em>.</p>
+</td>
+<td valign="top">
+<ul>
+<li><a href="http://svn.cocoondev.org/dist/daisy/">Downloads</a></li>
+<li><a href="daisy:45">Mailing lists</a></li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+ 
+<h2>What is it?</h2>
+ 
+<p>Daisy is a comprehensive content management application framework, consisting
+of a standalone repository server accessible through HTTP/XML (using the
+<a href="http://naeblis.cx/rtomayko/2004/12/12/rest-to-my-wife">ReST</a> style
+of WebServices) and/or a high-level (remote) Java API, and an extensive browsing
+and editing DaisyWiki application running inside
+<a href="http://cocoon.apache.org/">Apache Cocoon</a>. Daisy is licensed under
+the commercially-friendly Apache License 2.0. Outerthought provides commercial
+services around Daisy. More marketing talk can be obtained
+<a href="http://outerthought.org/daisy.html">from their website</a>. This is the
+Daisy community website, with access to downloads and the full documentation.
+Enjoy!</p>
+ 
+<h2>Getting started</h2>
+ 
+<p>Daisy is used to host its own documentation website: browse around and learn
+all about its features. If you are interested to know more about Daisy's
+administrative and editing screens, we've put up a number of
+<a href="daisy:53">screenshots</a>. Also, you can easily
+<a href="daisy:13">install</a> and run Daisy to give it a try and see if it
+works out for your project.</p>
+ 
+<p>Daisy's default browsing and editing application can easily be adapted to
+your web look-and-feel: an XSLT-based skinning system requires no Java
+programming knowledge to adapt the DaisyWiki layout, and is much safer than r
+equiring people to mess around in JSP template files.</p>
+ 
+<p>Daisy is an open source project: your <a href="daisy:45">contributions</a>
+are warmly welcomed.</p>
+ 
+<h2>The project</h2>
+ 
+<p>Daisy has been under active development for almost 10 months before being
+released as an <a href="daisy:44">open source</a> project on October
+12<sup>th</sup> 2004. The initial development has been funded by
+<a href="http://www.schaubroeck.be/">Schaubroeck</a> - the implementation has
+been done by <a href="http://outerthought.org/">Outerthought</a>. Outerthought
+is an open source XML &amp; Java competence support center, which has two main
+areas of business: mentoring and coaching of budding Java/XML developers, and
+open source framework development.</p>
+ 
+<table>
+<tbody>
+<tr>
+<td>
+<p align="center"><a href="http://www.schaubroeck.be/"><img src="daisy:55"/></a>
+</p>
+</td>
+<td>
+<p align="center"><a href="http://outerthought.org/"><img src="daisy:56"/></a>
+</p>
+</td>
+</tr>
+</tbody>
+</table>
+ 
+<p>We sollicit contributions, either through code or through funding, from other
+companies interested in this development model. Outerthought has considerable
+experience in doing open source framework development as a foundation for
+commercial products. This way, users cannot only implement Daisy for their
+specific projects, but they can also support and steer direction of future Daisy
+development. We are also available for project-specific Daisy add-ons, making
+sure Daisy does exactly what you need for your particular requirements.</p>
+ 
+</body>
+</html>
+
