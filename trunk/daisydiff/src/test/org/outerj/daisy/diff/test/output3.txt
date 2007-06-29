@@ -1,6 +1,0 @@
-(3 equal lines skipped)
-    line4
---- line5
-+++ line55
-    line6
-(3 equal lines skipped)
