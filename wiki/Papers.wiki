@@ -7,3 +7,4 @@
   * http://www.goshaky.com/publications/master-thesis/XML-Version-Management.pdf
   * http://swag.uwaterloo.ca/~rekram/presentations/cs860--slides--diffX.pdf
   * http://swag.uwaterloo.ca/~rekram/publications/cascon2005-diffx-algorithm-to-detect-changes-in-xml-documents.pdf
+  * http://www.mulberrytech.com/Extreme/Proceedings/html/2005/Schaffert01/EML2005Schaffert01.html
