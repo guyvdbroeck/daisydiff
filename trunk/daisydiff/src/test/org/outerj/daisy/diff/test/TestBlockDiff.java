@@ -5,8 +5,8 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
 
-import org.outerj.daisy.diff.BlockComparator;
 import org.outerj.daisy.diff.DiffFileWriter;
+import org.outerj.daisy.diff.lcs.block.BlockComparator;
 
 public class TestBlockDiff {
 
@@ -17,9 +17,12 @@ public class TestBlockDiff {
 	
 	public TestBlockDiff() throws Exception{
 		StringBuilder leftsb = new StringBuilder();
-        leftsb.append(readResource("daisymain.txt"));
+//        leftsb.append(readResource("smallchange1.txt"));
+		leftsb.append(readResource("daisymain.txt"));
 
+		
         StringBuilder rightsb = new StringBuilder();
+//        rightsb.append(readResource("smallchange2.txt"));
         rightsb.append(readResource("daisymainchanged.txt"));
         
         BlockComparator leftComparator = new BlockComparator(leftsb);

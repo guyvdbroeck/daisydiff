@@ -1,9 +1,26 @@
-package org.outerj.daisy.diff;
+/*
+ * Copyright 2004 Outerthought bvba and Schaubroeck nv
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+package org.outerj.daisy.diff.lcs.block;
 
 import java.util.LinkedList;
 import java.util.List;
 
 import org.eclipse.compare.rangedifferencer.RangeDifference;
+import org.outerj.daisy.diff.DiffMarkup;
+import org.outerj.daisy.diff.PublicRangeDifference;
 
 public class BlockDiffParser {
 
@@ -23,7 +40,7 @@ public class BlockDiffParser {
         
 		for(int i=0;i<pdifferences.size();i++){
         	
-			int start = line; //obsolete
+			int start = line;//(line>0)?line-1:0; //obsolete
         	
 			markup.addClearPart(rightComparator.substring(start, pdifferences.get(i).rightStart()));
         	
@@ -39,7 +56,7 @@ public class BlockDiffParser {
         	line=pdifferences.get(i).rightEnd();
         }
 		
-		int start = line; //obsolete
+		int start = line;//(line>0)?line-1:0; //obsolete
     	
 		markup.addClearPart(rightComparator.substring(start));
         
@@ -60,28 +77,29 @@ public class BlockDiffParser {
 			
 			if(i+1<differences.length){
 				while(differences[i+1].kind()==kind
-						&& differences[i+1].leftStart()<=leftEnd+2
-						&& differences[i+1].rightStart()<=rightEnd+2
+						&& differences[i+1].leftStart()<=leftEnd+5
+						&& differences[i+1].rightStart()<=rightEnd+5
 						&& differences[i+1].rightLength()>0
 						&& differences[i+1].leftLength()>0
 						
 //						&& (leftComparator.getToken(leftEnd+1).equals(" ")
-//								|| leftComparator.getToken(leftEnd+1).equals(".")
-//								|| leftComparator.getToken(leftEnd+1).equals("!")
-//								|| leftComparator.getToken(leftEnd+1).equals(",")
-//								|| leftComparator.getToken(leftEnd+1).equals(";")
-//								|| leftComparator.getToken(leftEnd+1).equals("?")
-//								|| leftComparator.getToken(leftEnd+1).equals(" ")
-//								|| leftComparator.getToken(leftEnd+1).equals("=")
-//								|| leftComparator.getToken(leftEnd+1).equals("\\")
-//								|| leftComparator.getToken(leftEnd+1).equals("\"")
-//								|| leftComparator.getToken(leftEnd+1).equals("\t")
-//								|| leftComparator.getToken(leftEnd+1).equals("\r")
-//								|| leftComparator.getToken(leftEnd+1).equals("\n"))
+//								|| leftComparator.getToken(leftEnd).equals(".")
+//								|| leftComparator.getToken(leftEnd).equals("!")
+//								|| leftComparator.getToken(leftEnd).equals(",")
+//								|| leftComparator.getToken(leftEnd).equals(";")
+//								|| leftComparator.getToken(leftEnd).equals("?")
+//								|| leftComparator.getToken(leftEnd).equals(" ")
+//								|| leftComparator.getToken(leftEnd).equals("=")
+//								|| leftComparator.getToken(leftEnd).equals("\\")
+//								|| leftComparator.getToken(leftEnd).equals("\"")
+//								|| leftComparator.getToken(leftEnd).equals("\t")
+//								|| leftComparator.getToken(leftEnd).equals("\r")
+//								|| leftComparator.getToken(leftEnd).equals("\n"))
 						){
 					leftEnd = differences[i+1].leftEnd();
 					rightEnd = differences[i+1].rightEnd();
 					i++;
+					System.out.println(leftComparator.getToken(leftEnd));
 				}
 			}
 			newRanges.add(new PublicRangeDifference(kind, rightStart, rightEnd-rightStart
