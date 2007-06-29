@@ -21,14 +21,18 @@ import javax.xml.transform.sax.SAXTransformerFactory;
 import javax.xml.transform.sax.TransformerHandler;
 import javax.xml.transform.stream.StreamResult;
 
-import org.outerj.daisy.diff.lcs.Differ;
 import org.outerj.daisy.diff.lcs.block.BlockComparator;
 import org.outerj.daisy.diff.lcs.block.BlockDiffParser;
+import org.outerj.daisy.diff.lcs.block.BlockDiffer;
+import org.outerj.daisy.diff.lcs.tag.TagComparator;
+import org.outerj.daisy.diff.lcs.tag.TagDiffParser;
+import org.outerj.daisy.diff.lcs.tag.TagDiffer;
 import org.xml.sax.helpers.AttributesImpl;
 
 public class DiffFileWriter {
 
-	public static void diff(String file, BlockComparator leftComparator, BlockComparator rightComparator) throws Exception {
+	public static void diff(String file, BlockComparator leftComparator
+			, BlockComparator rightComparator) throws Exception {
 		StreamResult streamResult = new StreamResult(
 				new File(file));
 		SAXTransformerFactory tf = (SAXTransformerFactory)SAXTransformerFactory.newInstance();
@@ -48,8 +52,37 @@ public class DiffFileWriter {
 		
 		BlockDiffParser bdp = new BlockDiffParser(dm);
 		
-		Differ differ = new Differ(bdp);
-		differ.blockDiff(leftComparator, rightComparator);
+		BlockDiffer differ = new BlockDiffer(bdp);
+		differ.diff(leftComparator, rightComparator);
+		
+		serializer.endElement("", "body", "body");
+        serializer.endElement("", "html", "html");
+        serializer.endDocument();
+	}
+	
+	public static void diff(String file, TagComparator leftComparator
+			, TagComparator rightComparator) throws Exception {
+		StreamResult streamResult = new StreamResult(
+				new File(file));
+		SAXTransformerFactory tf = (SAXTransformerFactory)SAXTransformerFactory.newInstance();
+		TransformerHandler serializer = tf.newTransformerHandler();
+		
+		serializer.setResult(streamResult);
+		
+		serializer.startDocument();
+		AttributesImpl attrs = new AttributesImpl();
+        serializer.startElement("", "html", "html", attrs);
+        serializer.startElement("", "head", "head", attrs);
+        serializer.endElement("", "head", "head");
+        serializer.startElement("", "body", "body", attrs);
+		
+		DiffMarkup dm=new DiffMarkup(serializer);
+		dm.printInfo();
+		
+		TagDiffParser bdp = new TagDiffParser(dm);
+		
+		TagDiffer differ = new TagDiffer(bdp);
+		differ.diff(leftComparator, rightComparator);
 		
 		serializer.endElement("", "body", "body");
         serializer.endElement("", "html", "html");

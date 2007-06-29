@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.outerj.daisy.diff.lcs.block;
+package org.outerj.daisy.diff.lcs.tag;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -22,17 +22,17 @@ import org.eclipse.compare.rangedifferencer.RangeDifference;
 import org.outerj.daisy.diff.DiffMarkup;
 import org.outerj.daisy.diff.PublicRangeDifference;
 
-public class BlockDiffParser {
+public class TagDiffParser {
 
 	private DiffMarkup markup;
 
 
-	public BlockDiffParser(DiffMarkup markup){
+	public TagDiffParser(DiffMarkup markup){
 		this.markup=markup;
 	}
 	
 	
-	public void parseNewDiff(BlockComparator leftComparator, BlockComparator rightComparator, RangeDifference[] differences) throws Exception {
+	public void parseNewDiff(TagComparator leftComparator, TagComparator rightComparator, RangeDifference[] differences) throws Exception {
 		
 		List<PublicRangeDifference> pdifferences = preProcess(differences,leftComparator);
 		
@@ -41,8 +41,8 @@ public class BlockDiffParser {
 		for(int i=0;i<pdifferences.size();i++){
         	
 			int start = line;//(line>0)?line-1:0; //obsolete
-        	
-			markup.addClearPart(rightComparator.substring(start, pdifferences.get(i).rightStart()));
+        	if(pdifferences.get(i).rightStart()>start)
+        		markup.addClearPart(rightComparator.substring(start, pdifferences.get(i).rightStart()));
         	
         	if(pdifferences.get(i).leftLength()>0)
         		markup.addRemovedPart(leftComparator.substring(pdifferences.get(i).leftStart(),pdifferences.get(i).leftEnd()));
@@ -58,13 +58,15 @@ public class BlockDiffParser {
 		
 		int start = line;//(line>0)?line-1:0; //obsolete
     	
-		markup.addClearPart(rightComparator.substring(start));
+		if(start<rightComparator.getRangeCount())
+			markup.addClearPart(rightComparator.substring(start));
         
 		
 	}
 
 
-	private List<PublicRangeDifference> preProcess(RangeDifference[] differences, BlockComparator leftComparator) {
+	private List<PublicRangeDifference> preProcess(RangeDifference[] differences
+			, TagComparator leftComparator) {
 		List<PublicRangeDifference> newRanges = new LinkedList<PublicRangeDifference>();
 		
 		for(int i=0;i<differences.length;i++){
@@ -77,31 +79,17 @@ public class BlockDiffParser {
 			
 			if(i+1<differences.length){
 				while(differences[i+1].kind()==kind
-						&& differences[i+1].leftStart()<=leftEnd+1
-						&& differences[i+1].rightStart()<=rightEnd+1
+						&& differences[i+1].leftStart()<=leftEnd+3
+						&& differences[i+1].rightStart()<=rightEnd+3
 						&& differences[i+1].rightLength()>0
 						&& differences[i+1].leftLength()>0
-						
-//						&& (leftComparator.getToken(leftEnd+1).equals(" ")
-//								|| leftComparator.getToken(leftEnd).equals(".")
-//								|| leftComparator.getToken(leftEnd).equals("!")
-//								|| leftComparator.getToken(leftEnd).equals(",")
-//								|| leftComparator.getToken(leftEnd).equals(";")
-//								|| leftComparator.getToken(leftEnd).equals("?")
-//								|| leftComparator.getToken(leftEnd).equals(" ")
-//								|| leftComparator.getToken(leftEnd).equals("=")
-//								|| leftComparator.getToken(leftEnd).equals("\\")
-//								|| leftComparator.getToken(leftEnd).equals("\"")
-//								|| leftComparator.getToken(leftEnd).equals("\t")
-//								|| leftComparator.getToken(leftEnd).equals("\r")
-//								|| leftComparator.getToken(leftEnd).equals("\n"))
 						){
 					leftEnd = differences[i+1].leftEnd();
 					rightEnd = differences[i+1].rightEnd();
 					i++;
-					System.out.println(leftComparator.getToken(leftEnd));
-				}
+					}
 			}
+			System.out.println(leftStart+"->"+leftEnd);
 			newRanges.add(new PublicRangeDifference(kind, rightStart, rightEnd-rightStart
 					, leftStart, leftEnd-leftStart));
 		}

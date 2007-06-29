@@ -13,23 +13,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.outerj.daisy.diff.lcs;
+package org.outerj.daisy.diff.lcs.block;
 
-import org.eclipse.compare.rangedifferencer.IRangeComparator;
 import org.eclipse.compare.rangedifferencer.RangeDifference;
 import org.eclipse.compare.rangedifferencer.RangeDifferencer;
-import org.outerj.daisy.diff.lcs.block.BlockComparator;
-import org.outerj.daisy.diff.lcs.block.BlockDiffParser;
 
-public class Differ {
+public class BlockDiffer {
 	
 	private BlockDiffParser parser;
 	
-	public Differ(BlockDiffParser parser){
+	public BlockDiffer(BlockDiffParser parser){
 		this.parser=parser;
 	}
 	
-	public void blockDiff(BlockComparator leftComparator, BlockComparator rightComparator) throws Exception{
+	public void diff(BlockComparator leftComparator, BlockComparator rightComparator) throws Exception{
 		
 		RangeDifference[] differences = RangeDifferencer.findDifferences(leftComparator, rightComparator);
 	    
