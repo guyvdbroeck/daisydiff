@@ -8,8 +8,8 @@ import java.io.Reader;
 import org.eclipse.compare.rangedifferencer.RangeDifference;
 import org.eclipse.compare.rangedifferencer.RangeDifferencer;
 import org.outerj.daisy.diff.DiffFileWriter;
+import org.outerj.daisy.diff.lcs.rangecomparator.TagComparator;
 import org.outerj.daisy.diff.lcs.tag.Atom;
-import org.outerj.daisy.diff.lcs.tag.TagComparator;
 
 public class TestTagComparator {
 
@@ -21,19 +21,24 @@ public class TestTagComparator {
 	public TestTagComparator() throws Exception{
 		StringBuilder leftsb = new StringBuilder();
 //        leftsb.append(readResource("smallchange1.txt"));
-		leftsb.append(readResource("daisymain.txt"));
+		
+		String left = readResource("daisymain.txt");
+		for(int i=0;i<10;i++)
+			leftsb.append(left);
 
 		
         StringBuilder rightsb = new StringBuilder();
 //        rightsb.append(readResource("smallchange2.txt"));
-        rightsb.append(readResource("daisymainchanged.txt"));
+        String right = readResource("daisymainchanged.txt");
+        for(int i=0;i<10;i++)
+        	rightsb.append(right);
         
         TagComparator lefttc = new TagComparator(leftsb);
         TagComparator righttc = new TagComparator(rightsb);
         
-        for(Atom atom : lefttc.getAtoms()){
-        	System.out.println(atom);
-        }
+//        for(Atom atom : lefttc.getAtoms()){
+//        	System.out.println(atom);
+//        }
         
         DiffFileWriter.diff("/home/guy/Desktop/difftag1.html", lefttc, righttc);
     	

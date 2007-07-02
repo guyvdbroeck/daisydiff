@@ -21,10 +21,10 @@ import javax.xml.transform.sax.SAXTransformerFactory;
 import javax.xml.transform.sax.TransformerHandler;
 import javax.xml.transform.stream.StreamResult;
 
-import org.outerj.daisy.diff.lcs.block.BlockComparator;
 import org.outerj.daisy.diff.lcs.block.BlockDiffParser;
 import org.outerj.daisy.diff.lcs.block.BlockDiffer;
-import org.outerj.daisy.diff.lcs.tag.TagComparator;
+import org.outerj.daisy.diff.lcs.rangecomparator.BlockComparator;
+import org.outerj.daisy.diff.lcs.rangecomparator.TagComparator;
 import org.outerj.daisy.diff.lcs.tag.TagDiffParser;
 import org.outerj.daisy.diff.lcs.tag.TagDiffer;
 import org.xml.sax.helpers.AttributesImpl;

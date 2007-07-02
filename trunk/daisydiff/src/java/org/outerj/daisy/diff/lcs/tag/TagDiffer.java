@@ -17,6 +17,7 @@ package org.outerj.daisy.diff.lcs.tag;
 
 import org.eclipse.compare.rangedifferencer.RangeDifference;
 import org.eclipse.compare.rangedifferencer.RangeDifferencer;
+import org.outerj.daisy.diff.lcs.rangecomparator.TagComparator;
 
 public class TagDiffer {
 	
@@ -28,8 +29,10 @@ public class TagDiffer {
 	
 	public void diff(TagComparator leftComparator, TagComparator rightComparator) throws Exception{
 		
+		long t = System.currentTimeMillis();
 		RangeDifference[] differences = RangeDifferencer.findDifferences(leftComparator, rightComparator);
-	    
+	    System.out.println(System.currentTimeMillis()-t +"ms");
+		
 		parser.parseNewDiff(leftComparator, rightComparator, differences);
 	}
 	

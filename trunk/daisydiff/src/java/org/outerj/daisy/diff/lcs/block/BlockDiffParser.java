@@ -18,9 +18,10 @@ package org.outerj.daisy.diff.lcs.block;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.eclipse.compare.rangedifferencer.PublicRangeDifference;
 import org.eclipse.compare.rangedifferencer.RangeDifference;
 import org.outerj.daisy.diff.DiffMarkup;
-import org.outerj.daisy.diff.PublicRangeDifference;
+import org.outerj.daisy.diff.lcs.rangecomparator.BlockComparator;
 
 public class BlockDiffParser {
 

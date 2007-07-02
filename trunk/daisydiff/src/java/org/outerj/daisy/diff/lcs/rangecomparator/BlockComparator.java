@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.outerj.daisy.diff.lcs.block;
+package org.outerj.daisy.diff.lcs.rangecomparator;
 
 import org.eclipse.compare.rangedifferencer.IRangeComparator;
 

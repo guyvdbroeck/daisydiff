@@ -13,12 +13,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.outerj.daisy.diff.lcs.tag;
+package org.outerj.daisy.diff.lcs.rangecomparator;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.compare.rangedifferencer.IRangeComparator;
+import org.outerj.daisy.diff.lcs.tag.Atom;
+import org.outerj.daisy.diff.lcs.tag.DelimiterAtom;
+import org.outerj.daisy.diff.lcs.tag.TagAtom;
+import org.outerj.daisy.diff.lcs.tag.TextAtom;
 
 public class TagComparator implements IRangeComparator {
 
@@ -75,8 +79,8 @@ public class TagComparator implements IRangeComparator {
 	}
 
 	public String substring(int startAtom, int endAtom) {
-		System.out.println("start="+startAtom);
-		System.out.println("end="+endAtom);
+//		System.out.println("start="+startAtom);
+//		System.out.println("end="+endAtom);
         if (startAtom == endAtom) {
             return atoms.get(startAtom).getFullText();
         } else {

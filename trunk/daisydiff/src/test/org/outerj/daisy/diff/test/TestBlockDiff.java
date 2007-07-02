@@ -6,7 +6,7 @@ import java.io.InputStreamReader;
 import java.io.Reader;
 
 import org.outerj.daisy.diff.DiffFileWriter;
-import org.outerj.daisy.diff.lcs.block.BlockComparator;
+import org.outerj.daisy.diff.lcs.rangecomparator.BlockComparator;
 
 public class TestBlockDiff {
 

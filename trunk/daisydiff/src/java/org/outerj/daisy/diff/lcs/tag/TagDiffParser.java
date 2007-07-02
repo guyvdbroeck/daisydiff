@@ -18,9 +18,10 @@ package org.outerj.daisy.diff.lcs.tag;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.eclipse.compare.rangedifferencer.PublicRangeDifference;
 import org.eclipse.compare.rangedifferencer.RangeDifference;
 import org.outerj.daisy.diff.DiffMarkup;
-import org.outerj.daisy.diff.PublicRangeDifference;
+import org.outerj.daisy.diff.lcs.rangecomparator.TagComparator;
 
 public class TagDiffParser {
 
@@ -89,7 +90,7 @@ public class TagDiffParser {
 					i++;
 					}
 			}
-			System.out.println(leftStart+"->"+leftEnd);
+			//System.out.println(leftStart+"->"+leftEnd);
 			newRanges.add(new PublicRangeDifference(kind, rightStart, rightEnd-rightStart
 					, leftStart, leftEnd-leftStart));
 		}

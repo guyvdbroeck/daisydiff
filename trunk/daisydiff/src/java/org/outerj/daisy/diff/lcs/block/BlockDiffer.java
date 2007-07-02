@@ -17,6 +17,7 @@ package org.outerj.daisy.diff.lcs.block;
 
 import org.eclipse.compare.rangedifferencer.RangeDifference;
 import org.eclipse.compare.rangedifferencer.RangeDifferencer;
+import org.outerj.daisy.diff.lcs.rangecomparator.BlockComparator;
 
 public class BlockDiffer {
 	
