@@ -1,5 +1,5 @@
 /*
- * Copyright 2004 Outerthought bvba and Schaubroeck nv
+ * Copyright 2007 Outerthought bvba and Schaubroeck nv
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -48,7 +48,7 @@ public class BlockDiffParser {
         		markup.addRemovedPart(leftComparator.substring(pdifferences.get(i).leftStart(),pdifferences.get(i).leftEnd()));
         	
         	if(pdifferences.get(i).leftLength()>0 && pdifferences.get(i).rightLength()>0)
-        		markup.addSeperator();
+        		markup.addSeperator("|");
         	        	
         	if(pdifferences.get(i).rightLength()>0)
         		markup.addAddedPart(rightComparator.substring(pdifferences.get(i).rightStart(), pdifferences.get(i).rightEnd()));

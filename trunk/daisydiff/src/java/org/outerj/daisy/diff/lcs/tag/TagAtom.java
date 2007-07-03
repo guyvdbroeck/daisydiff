@@ -1,5 +1,5 @@
 /*
- * Copyright 2004 Outerthought bvba and Schaubroeck nv
+ * Copyright 2007 Outerthought bvba and Schaubroeck nv
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
