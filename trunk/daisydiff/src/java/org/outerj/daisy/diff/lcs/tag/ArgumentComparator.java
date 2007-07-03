@@ -21,7 +21,6 @@ import java.util.List;
 import org.eclipse.compare.rangedifferencer.IRangeComparator;
 import org.outerj.daisy.diff.lcs.rangecomparator.Atom;
 import org.outerj.daisy.diff.lcs.rangecomparator.IAtomSplitter;
-import org.outerj.daisy.diff.lcs.rangecomparator.TagComparator;
 
 public class ArgumentComparator implements IAtomSplitter {
 

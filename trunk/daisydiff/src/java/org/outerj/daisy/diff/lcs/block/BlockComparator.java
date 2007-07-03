@@ -15,10 +15,10 @@
  */
 package org.outerj.daisy.diff.lcs.block;
 
-import org.eclipse.compare.rangedifferencer.IRangeComparator;
-
 import java.util.ArrayList;
 import java.util.List;
+
+import org.eclipse.compare.rangedifferencer.IRangeComparator;
 
 /**
  * A Comparator for diffing corresponding changes resulting from a line-based diff.

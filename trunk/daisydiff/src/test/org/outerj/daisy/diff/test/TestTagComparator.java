@@ -20,10 +20,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
 
-import org.eclipse.compare.rangedifferencer.RangeDifference;
-import org.eclipse.compare.rangedifferencer.RangeDifferencer;
 import org.outerj.daisy.diff.DiffFileWriter;
-import org.outerj.daisy.diff.lcs.rangecomparator.Atom;
 import org.outerj.daisy.diff.lcs.rangecomparator.TagComparator;
 
 public class TestTagComparator {

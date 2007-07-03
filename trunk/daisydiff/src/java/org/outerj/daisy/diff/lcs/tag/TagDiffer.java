@@ -23,7 +23,6 @@ import org.eclipse.compare.rangedifferencer.RangeDifference;
 import org.eclipse.compare.rangedifferencer.RangeDifferencer;
 import org.outerj.daisy.diff.MarkupGenerator;
 import org.outerj.daisy.diff.lcs.rangecomparator.IAtomSplitter;
-import org.outerj.daisy.diff.lcs.rangecomparator.TagComparator;
 
 public class TagDiffer {
 
