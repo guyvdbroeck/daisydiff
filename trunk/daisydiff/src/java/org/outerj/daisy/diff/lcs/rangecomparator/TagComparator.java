@@ -58,7 +58,7 @@ public class TagComparator implements IAtomSplitter {
 				int end = s.indexOf('>',i);
 				atoms.add(new TagAtom(s.substring(i, end+1)));
 				i=end;
-			}else if(DelimiterAtom.isValidDelimiter(c)){
+			}else if(DelimiterAtom.isValidDelimiter(""+c)){
 				//a delimiter
 				if(currentWord.length()>0){
 					atoms.add(new TextAtom(currentWord.toString()));
@@ -78,8 +78,6 @@ public class TagComparator implements IAtomSplitter {
 	}
 
 	public String substring(int startAtom, int endAtom) {
-//		System.out.println("start="+startAtom);
-//		System.out.println("end="+endAtom);
         if (startAtom == endAtom) {
         	return "";
 //            return atoms.get(startAtom).getFullText();

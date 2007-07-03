@@ -20,16 +20,16 @@ public class TestTagComparator {
 	
 	public TestTagComparator() throws Exception{
 		StringBuilder leftsb = new StringBuilder();
-//        leftsb.append(readResource("smallchange1.txt"));
 		
 		String left = readResource("daisymain.txt");
+//		String left = readResource("guy.txt");
 //		for(int i=0;i<10;i++)
 			leftsb.append(left);
 
 		
         StringBuilder rightsb = new StringBuilder();
-//        rightsb.append(readResource("smallchange2.txt"));
         String right = readResource("daisymainchanged.txt");
+//        String right = readResource("guychanged.txt");
 //        for(int i=0;i<10;i++)
         	rightsb.append(right);
         
@@ -40,12 +40,13 @@ public class TestTagComparator {
 //        	System.out.println(atom);
 //        }
         
-        DiffFileWriter.diff("/home/guy/Desktop/difftag3.html", lefttc, righttc);
+        DiffFileWriter.diff("/home/guy/workspace/daisydiff/src/test/org/outerj/daisy/diff/test/html"+
+        		"/tag-word1.html", lefttc, righttc);
     	
         }
 	
 	String readResource(String name) throws Exception {
-        InputStream is = getClass().getClassLoader().getResourceAsStream("org/outerj/daisy/diff/test/" + name);
+        InputStream is = getClass().getClassLoader().getResourceAsStream("org/outerj/daisy/diff/test/txt/" + name);
         Reader reader = new InputStreamReader(is, "UTF-8");
         BufferedReader bufferedReader = new BufferedReader(reader);
 

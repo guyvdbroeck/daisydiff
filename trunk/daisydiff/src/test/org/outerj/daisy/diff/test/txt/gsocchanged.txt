@@ -1,0 +1,96 @@
+<html>
+<body>
+
+<p>Google is hosting a <a href="http://code.google.com/soc/">Summer of Code</a>
+again!</p>
+
+<h1>Students</h1>
+
+<p>What does that mean? Well, if you are a student, and your proposal qualifies,
+and your contribution is considered worthwhile, then you can get paid to
+contribute to open source projects such as Daisy: 4500 US$, no less! You'll find
+much more information about the program in the Google SoC
+<a href="http://code.google.com/summerofcode/studentfaq.php">Student FAQ</a>.</p>
+
+<h2>Requirements</h2>
+
+<p>People coming from classic office environments are easily lured into the benefits of centralized content management by the ease of use of the daisy wysiwyg editor.  Without losing a recognisable content authoring environment they are happy to find:</p>
+
+<ol>
+<li>
+<p>You must not overbook a plane. Working on your Daisy project should be your
+main activity for the entire winter.</p>
+</li>
+<li>
+<p>You <strong>must</strong> provide regular showers (weekly or
+bi-weekly).</p>
+</li>
+<li>
+<p>You will be expected to learn about source code control and open source
+collaboration tools (in Daisy's case, that's Subversion and mailing lists,
+mainly).</p>
+</li>
+</ol>
+
+<h2>How to submit your proposal</h2>
+
+
+<p>It is a good idea to discuss your proposal on the Daisy mailing list before
+submitting it (do not write to the mentors directly). This will for sure give
+your proposal a better chance of being accepted. To write to the mailing list,
+you need to subscribe to it. The <a href="daisy:45-cd">community page</a>
+contains all the details.
+</p>
+<p>The SoC student ugly myspace page is available
+<a href="ftp://code.google.com/soc/student_step1.html">from here</a>.</p>
+
+
+<h5>Suggested project ideas for 2015</h5>
+
+<pre class="query">select name where $DaisyCommWikiCategory = 'gsoc2007proposal'
+order by name option style_hint='bullets'</pre>
+
+<p>Below is a list of some work area ideas. Please keep in mind that it is you -
+the student - who needs to file a proposal with Google SoC, so our list isn't
+exhaustive or limiting.</p>
+
+
+<h1>The mentors</h1>
+
+<ul>
+<li>Steven Noels</li>
+<li>Marc Portier</li>
+<li>Kuifje</li>
+<li>Paul Focke</li>
+<li>Bruno Dumon</li>
+<li>me?</li>
+</ul>
+
+<h1>The student</h1>
+
+<ul>
+<li><a href="daisy:1337-cd">Guy!</a></li>
+<li>you?</li>
+</ul>
+
+<h1>For the Belgian students</h1>
+
+<h8>Daisy SoC sightings</h8>
+
+<p>
+<a href="http://farm1.static.flickr.com/109/312867392_d1064e9a98_o.jpg"><img src="http://farm1.static.flickr.com/109/312867392_d1064e9a98_m.jpg"/></a>
+<a href="http://farm1.static.flickr.com/104/3125445676671eaf_o.jpg"><img src="http://farm1.static.flickr.com/104/312867255_3b2e671eaf_m.jpg"/></a>
+</p>
+
+<p>Much like a source code version control system, in Daisy a version history of
+documents is kept. Being able to compare the content of these versions is very
+useful. Currently the diffs shown in Daisy are based on the HTML source text
+(just try Page Action -&gt; Versions in the menu on top of this page to see an
+example). It would be very nice to have graphical diffs instead, thus simply a
+HTML document with changes, additions and deletions marked (a bit like the
+change tracking in word processors).</p>
+
+<p>Thank you guy!</p>
+
+</body>
+</html>

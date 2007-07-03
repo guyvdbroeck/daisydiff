@@ -25,12 +25,12 @@ import org.outerj.daisy.diff.MarkupGenerator;
 import org.outerj.daisy.diff.lcs.rangecomparator.IAtomSplitter;
 import org.outerj.daisy.diff.lcs.rangecomparator.TagComparator;
 
-public class TagDiffParser {
+public class TagDiffer {
 
 	private MarkupGenerator markup;
 
 
-	public TagDiffParser(MarkupGenerator markup){
+	public TagDiffer(MarkupGenerator markup){
 		this.markup=markup;
 	}
 	
@@ -119,23 +119,27 @@ public class TagDiffParser {
 			parseNoChange(leftAtom, pdifferences.get(i).leftStart(),
 					rightAtom, pdifferences.get(i).rightStart(),
 					leftComparator, rightComparator);
-				
-        	if(pdifferences.get(i).leftLength()>0)
-        		markup.addRemovedPart(leftComparator.substring(pdifferences.get(i).leftStart(),pdifferences.get(i).leftEnd()));
+			
+			String leftString = leftComparator.substring(pdifferences.get(i).leftStart(),pdifferences.get(i).leftEnd());
+        	String rightString = rightComparator.substring(pdifferences.get(i).rightStart(), pdifferences.get(i).rightEnd());
+			
+			if(pdifferences.get(i).leftLength()>0)
+        		markup.addRemovedPart(leftString);
         	
-        	if(pdifferences.get(i).leftLength()>0 && pdifferences.get(i).rightLength()>0)
+        	if(leftString.replace(" ", "").replaceAll("\n", "").replace("\r", "").replace("\t", "").length()>0
+        			&& rightString.replace(" ", "").replaceAll("\n", "").replace("\r", "").replace("\t", "").length()>0)
         		markup.addSeperator("|");
         	        	
         	if(pdifferences.get(i).rightLength()>0)
-        		markup.addAddedPart(rightComparator.substring(pdifferences.get(i).rightStart(), pdifferences.get(i).rightEnd()));
+        		markup.addAddedPart(rightString);
         	
         	rightAtom=pdifferences.get(i).rightEnd();
         	leftAtom=pdifferences.get(i).leftEnd();
 			
         }
 		if(rightAtom<rightComparator.getRangeCount())
-			parseNoChange(leftAtom, pdifferences.get(pdifferences.size()-1).leftEnd(),
-					rightAtom, pdifferences.get(pdifferences.size()-1).rightEnd(), 
+			parseNoChange(leftAtom, leftComparator.getRangeCount(),
+					rightAtom, rightComparator.getRangeCount(), 
 					leftComparator, rightComparator);
         
 		
@@ -160,19 +164,25 @@ public class TagDiffParser {
 			while(connecting 
 					&& i+1<differences.length && differences[i+1].kind()==kind){
 				
-				int bridgelength=Math.min((leftEnd-leftStart)*2-2,10);
+				int bridgelength=0;
 				
-				System.out.println("bridgelength= "+bridgelength);
+				int nbtokens = Math.max((leftEnd-leftStart),(rightEnd-rightStart));
+				//System.out.println("#tokens: "+nbtokens);
+				if(nbtokens>5){
+					if(nbtokens>10){
+						bridgelength = 3;
+					}else
+						bridgelength = 2;
+				}
+				//System.out.println("bridgelength= "+bridgelength);
 				while((leftComparator.getAtom(temp) instanceof DelimiterAtom
 						|| (bridgelength-->0)
 						)
-						&& temp<=differences[i+1].leftStart()
+						&& temp<differences[i+1].leftStart()
 						){
-					//bridgelength--;
-					System.out.println("bridgelength= "+bridgelength);
+					//System.out.println("bridgelength= "+bridgelength);
 					
-					temp++;
-					
+					temp++;	
 				}
 				if(temp==differences[i+1].leftStart()){
 					leftEnd = differences[i+1].leftEnd();
@@ -180,14 +190,21 @@ public class TagDiffParser {
 					temp = leftEnd;
 					i++;
 				}else{
-					System.out.println("bridge stopped at token "+leftComparator.getAtom(temp).getFullText());
+//					System.out.println("bridge stopped at token "+
+//							leftComparator.getAtom(temp).getFullText().replaceAll(" ", "_"));
+//					System.out.println(leftComparator.getAtom(temp) instanceof DelimiterAtom);
+//					System.out.println(bridgelength+1>0);
+//					System.out.println("bridgelength was "+bridgelength+1);
 					connecting = false;
+					if(! (leftComparator.getAtom(temp) instanceof DelimiterAtom)){
+						if(leftComparator.getAtom(temp).getFullText().equals(" "))
+							throw new IllegalStateException("space found aiaiai");
+					}
 				}
 			}
 			newRanges.add(new PublicRangeDifference(kind, rightStart, rightEnd-rightStart
 					, leftStart, leftEnd-leftStart));
 		}
-		
 		
 		return newRanges;
 	}

@@ -1,7 +1,7 @@
 <html>
 <body>
 
-<p>Google is hosting a <a href="http://code.google.com/soc/">Summer of Code</a>
+<p>Google is hosting a <a href="http://code.googol.com/soc/">Summer of Code</a>
 again!</p>
 
 <p>What does that mean? Well, if you are a student, and your proposal qualifies,
@@ -95,6 +95,10 @@ their application.</p>
 <a href="http://farm1.static.flickr.com/109/312867392_d1064e9a98_o.jpg"><img src="http://farm1.static.flickr.com/109/312867392_d1064e9a98_m.jpg"/></a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 <a href="http://farm1.static.flickr.com/104/312867255_3b2e671eaf_o.jpg"><img src="http://farm1.static.flickr.com/104/312867255_3b2e671eaf_m.jpg"/></a>
 </p>
+
+<p>The main content type used for much like a textual content in Daisy is a subset of HTML
+which is also well-formed XML are (technically, on it's not XHTML since it's not in the
+XHTML the namespace).</p>
 
 <h1>Previous Daisy SoC Projects</h1>
 

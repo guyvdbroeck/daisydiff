@@ -32,7 +32,7 @@ public class ArgumentComparator implements IAtomSplitter {
 				}
 				atoms.add(new TextAtom(""+c));
 				currentWord.setLength(0);
-			}else if(DelimiterAtom.isValidDelimiter(c)){
+			}else if(DelimiterAtom.isValidDelimiter(""+c)){
 				//a delimiter
 				if(currentWord.length()>0){
 					atoms.add(new TextAtom(currentWord.toString()));

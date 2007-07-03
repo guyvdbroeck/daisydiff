@@ -25,7 +25,7 @@ import org.outerj.daisy.diff.lcs.block.BlockComparator;
 import org.outerj.daisy.diff.lcs.block.BlockDiffParser;
 import org.outerj.daisy.diff.lcs.block.BlockDiffer;
 import org.outerj.daisy.diff.lcs.rangecomparator.TagComparator;
-import org.outerj.daisy.diff.lcs.tag.TagDiffParser;
+import org.outerj.daisy.diff.lcs.tag.TagDiffer;
 import org.xml.sax.helpers.AttributesImpl;
 
 public class DiffFileWriter {
@@ -78,7 +78,7 @@ public class DiffFileWriter {
 		MarkupGenerator dm=new MarkupGenerator(serializer);
 		dm.printInfo();
 		
-		TagDiffParser differ = new TagDiffParser(dm);
+		TagDiffer differ = new TagDiffer(dm);
 		differ.parseNewDiff(leftComparator, rightComparator);
 		
 		serializer.endElement("", "body", "body");
