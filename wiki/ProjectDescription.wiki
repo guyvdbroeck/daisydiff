@@ -2,7 +2,7 @@
 #labels Featured
 
 == PROJECT DESCRIPTION: ==
-The goal of the "Daisy diff" project is to provide a Java library that compares XML files. The minimum inputs are 2 XML files, and the minimum output file is a Java representation of the basic operations that turned the first data structure into the second. This output can be converted to an XML-based representation or, given the proper formatting guidelines (in a yet undecided data type), into an html file with a certain syntax to denote changes.
+The goal of the "Daisy diff" project is to provide a Java library that compares HTML files. The minimum inputs are 2 HTML files, and the minimum output file is a Java representation of the basic operations that turned the first data structure into the second. This output can be converted to an XML-based representation or, given the proper formatting guidelines (in a yet undecided data type), into an html file with a certain syntax to denote changes.
 In addition, distance metrics can be computed that allow the user to quantify by how much 2 files differ. This enables them to distinguish minor from major changes, and tells them what the (chronological) relationships are between 3 files. For computing the changes there can be several algorithms:
 
     * A simple LCS (Longest Common Subsequence) implementation that will work on plain text or simple HTML files. This algorithm is the algorithm used in the Unix "diff" command, in CVS, patch, etc. It's computationally the best algorithm but it will destroy complex XML hierarchies. There are many open source implementations available of this algorithm. For instance the Wikipedia and Drupal software uses LCS, as does the current text-based implementation in Daisy.
