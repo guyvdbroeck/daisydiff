@@ -15,6 +15,8 @@
  */
 package org.outerj.daisy.diff.lcs.tag;
 
+import org.outerj.daisy.diff.lcs.rangecomparator.Atom;
+
 public class TextAtom implements Atom {
 
 	private String s;

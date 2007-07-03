@@ -20,15 +20,14 @@ import java.util.List;
 
 import org.eclipse.compare.rangedifferencer.PublicRangeDifference;
 import org.eclipse.compare.rangedifferencer.RangeDifference;
-import org.outerj.daisy.diff.DiffMarkup;
-import org.outerj.daisy.diff.lcs.rangecomparator.BlockComparator;
+import org.outerj.daisy.diff.MarkupGenerator;
 
 public class BlockDiffParser {
 
-	private DiffMarkup markup;
+	private MarkupGenerator markup;
 
 
-	public BlockDiffParser(DiffMarkup markup){
+	public BlockDiffParser(MarkupGenerator markup){
 		this.markup=markup;
 	}
 	

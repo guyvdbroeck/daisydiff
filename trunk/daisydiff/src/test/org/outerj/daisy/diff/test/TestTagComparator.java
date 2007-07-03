@@ -8,8 +8,8 @@ import java.io.Reader;
 import org.eclipse.compare.rangedifferencer.RangeDifference;
 import org.eclipse.compare.rangedifferencer.RangeDifferencer;
 import org.outerj.daisy.diff.DiffFileWriter;
+import org.outerj.daisy.diff.lcs.rangecomparator.Atom;
 import org.outerj.daisy.diff.lcs.rangecomparator.TagComparator;
-import org.outerj.daisy.diff.lcs.tag.Atom;
 
 public class TestTagComparator {
 
@@ -23,14 +23,14 @@ public class TestTagComparator {
 //        leftsb.append(readResource("smallchange1.txt"));
 		
 		String left = readResource("daisymain.txt");
-		for(int i=0;i<10;i++)
+//		for(int i=0;i<10;i++)
 			leftsb.append(left);
 
 		
         StringBuilder rightsb = new StringBuilder();
 //        rightsb.append(readResource("smallchange2.txt"));
         String right = readResource("daisymainchanged.txt");
-        for(int i=0;i<10;i++)
+//        for(int i=0;i<10;i++)
         	rightsb.append(right);
         
         TagComparator lefttc = new TagComparator(leftsb);
@@ -40,7 +40,7 @@ public class TestTagComparator {
 //        	System.out.println(atom);
 //        }
         
-        DiffFileWriter.diff("/home/guy/Desktop/difftag1.html", lefttc, righttc);
+        DiffFileWriter.diff("/home/guy/Desktop/difftag3.html", lefttc, righttc);
     	
         }
 	

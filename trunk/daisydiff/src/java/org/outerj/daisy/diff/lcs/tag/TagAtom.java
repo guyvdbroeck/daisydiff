@@ -15,6 +15,8 @@
  */
 package org.outerj.daisy.diff.lcs.tag;
 
+import org.outerj.daisy.diff.lcs.rangecomparator.Atom;
+
 public class TagAtom implements Atom{
 
 	private String identifier;
@@ -52,7 +54,7 @@ public class TagAtom implements Atom{
 	public String getFullText() {
 		String s = "<"+identifier;
 		if(hasInternalIdentifiers())
-			s+=" "+internalIdentifiers+">";
+			s+=" "+internalIdentifiers;
 		return s+=">";
 	}
 

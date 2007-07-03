@@ -23,6 +23,7 @@ public class DelimiterAtom extends TextAtom {
 	
 	public static boolean isValidDelimiter(char c){
         switch (c) {
+        		//Basic Delimiters
             case '/':
             case '.':
             case '!':
@@ -35,7 +36,21 @@ public class DelimiterAtom extends TextAtom {
             case '"':
             case '\t':
             case '\r':
-            case '\n':
+            	//Extra Delimiters
+            case '[':
+            case ']':
+            case '{':
+            case '}':
+            case '(':
+            case ')':
+            case '&':
+            case '|':
+            case '\\':
+            case '-':
+            case '_':
+            case '+':
+            case '*':
+            case ':':
             	return true;
             default:
             	return false;

@@ -33,7 +33,7 @@ Daisy consists of two main components:</p>
  
 <ul>
 <li>a stand-alone repository server accessible through HTTP/XML (using the
-<a href="http://naeblis.cx/rtomayko/2004/12/12/rest-to-my-wife">ReST</a> style
+<a href="http://naeblis.cx/rchineeso/2004/12/12/rest-to-my-wife">ReST</a> style
 of WebServices) and/or a high-level (remote) Java API, and</li>
 <li>an extensive editing and publishing front-end web application running inside
 <a href="http://cocoon.apache.org/">Apache Cocoon</a>.</li>

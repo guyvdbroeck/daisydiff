@@ -19,12 +19,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.compare.rangedifferencer.IRangeComparator;
-import org.outerj.daisy.diff.lcs.tag.Atom;
 import org.outerj.daisy.diff.lcs.tag.DelimiterAtom;
 import org.outerj.daisy.diff.lcs.tag.TagAtom;
 import org.outerj.daisy.diff.lcs.tag.TextAtom;
 
-public class TagComparator implements IRangeComparator {
+public class TagComparator implements IAtomSplitter {
 
 	private List<Atom> atoms = new ArrayList<Atom>(50);
 	
@@ -82,7 +81,8 @@ public class TagComparator implements IRangeComparator {
 //		System.out.println("start="+startAtom);
 //		System.out.println("end="+endAtom);
         if (startAtom == endAtom) {
-            return atoms.get(startAtom).getFullText();
+        	return "";
+//            return atoms.get(startAtom).getFullText();
         } else {
             StringBuilder result = new StringBuilder();
             for (int i = startAtom; i < endAtom; i++) {
@@ -98,7 +98,7 @@ public class TagComparator implements IRangeComparator {
 	
 	public Atom getAtom(int i){
 		if(i<0  || i>=atoms.size())
-			throw new IndexOutOfBoundsException();
+			throw new IndexOutOfBoundsException("There is no Atom with index "+i);
 		return atoms.get(i);
 	}
 	
