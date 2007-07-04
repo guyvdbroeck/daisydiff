@@ -13,19 +13,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.outerj.daisy.diff.lcs.rangecomparator;
+package org.outerj.daisy.diff.lcs.tag;
 
-public interface Atom {
+import org.eclipse.compare.rangedifferencer.IRangeComparator;
 
-	public String getIdentifier();
-	
-	public boolean hasInternalIdentifiers();
-	
-	public String getInternalIdentifiers();
-	
-	public String getFullText();
-	
-	public boolean isValidAtom(String s);
-	
-	public boolean equalsIdentifier(Atom other);
+public interface IAtomSplitter extends IRangeComparator {
+
+    public Atom getAtom(int i);
+
+    public String substring(int startAtom, int endAtom);
+
+    public String substring(int startAtom);
+
 }

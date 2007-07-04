@@ -15,10 +15,14 @@
  */
 package org.eclipse.compare.rangedifferencer;
 
+/**
+ * Provides a public constructor for the RangeDifference class.
+ */
 public class PublicRangeDifference extends RangeDifference {
 
-	public PublicRangeDifference(int kind, int rightStart, int rightLength, int leftStart, int leftLength) {
-		super(kind, rightStart, rightLength, leftStart, leftLength);
-	}
-	
+    public PublicRangeDifference(int kind, int rightStart, int rightLength,
+            int leftStart, int leftLength) {
+        super(kind, rightStart, rightLength, leftStart, leftLength);
+    }
+
 }

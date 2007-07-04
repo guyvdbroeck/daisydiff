@@ -15,59 +15,61 @@
  */
 package org.outerj.daisy.diff.lcs.tag;
 
-import org.outerj.daisy.diff.lcs.rangecomparator.Atom;
 
-public class TagAtom implements Atom{
+public class TagAtom implements Atom {
 
-	private String identifier;
-	private String internalIdentifiers = "";
-	
-	public TagAtom(String s){
-		if(!isValidAtom(s))
-			throw new IllegalArgumentException("The given string is not a valid tag");
-		s=s.substring(1, s.length()-1);
-		
-		if(s.indexOf(' ')>0){
-			identifier = s.substring(0,s.indexOf(' '));
-			internalIdentifiers = s.substring(s.indexOf(' ')+1);
-		}else{
-			identifier = s;
-		}	
-	}
-	
-	public String getIdentifier() {
-		return identifier;
-	}
+    private String identifier;
 
-	public String getInternalIdentifiers() {
-		return internalIdentifiers;
-	}
+    private String internalIdentifiers = "";
 
-	public boolean hasInternalIdentifiers() {
-		return internalIdentifiers.length()>0;
-	}
-	
-	public static boolean isValidTag(String s){
-		return s.lastIndexOf('<')==0 && s.indexOf('>')==s.length()-1 && s.length()>=3;
-	}
+    public TagAtom(String s) {
+        if (!isValidAtom(s))
+            throw new IllegalArgumentException(
+                    "The given string is not a valid tag");
+        s = s.substring(1, s.length() - 1);
 
-	public String getFullText() {
-		String s = "<"+identifier;
-		if(hasInternalIdentifiers())
-			s+=" "+internalIdentifiers;
-		return s+=">";
-	}
+        if (s.indexOf(' ') > 0) {
+            identifier = s.substring(0, s.indexOf(' '));
+            internalIdentifiers = s.substring(s.indexOf(' ') + 1);
+        } else {
+            identifier = s;
+        }
+    }
 
-	public boolean isValidAtom(String s) {
-		return isValidTag(s);
-	}
-	
-	public String toString(){
-		return "TagAtom: "+getFullText();
-	}
-	
-	public boolean equalsIdentifier(Atom other){
-		return other.getIdentifier().equals(this.getIdentifier());
-	}
+    public String getIdentifier() {
+        return identifier;
+    }
+
+    public String getInternalIdentifiers() {
+        return internalIdentifiers;
+    }
+
+    public boolean hasInternalIdentifiers() {
+        return internalIdentifiers.length() > 0;
+    }
+
+    public static boolean isValidTag(String s) {
+        return s.lastIndexOf('<') == 0 && s.indexOf('>') == s.length() - 1
+                && s.length() >= 3;
+    }
+
+    public String getFullText() {
+        String s = "<" + identifier;
+        if (hasInternalIdentifiers())
+            s += " " + internalIdentifiers;
+        return s += ">";
+    }
+
+    public boolean isValidAtom(String s) {
+        return isValidTag(s);
+    }
+
+    public String toString() {
+        return "TagAtom: " + getFullText();
+    }
+
+    public boolean equalsIdentifier(Atom other) {
+        return other.getIdentifier().equals(this.getIdentifier());
+    }
 
 }

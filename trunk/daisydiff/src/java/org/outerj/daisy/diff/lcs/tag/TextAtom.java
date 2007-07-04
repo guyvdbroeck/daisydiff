@@ -15,44 +15,44 @@
  */
 package org.outerj.daisy.diff.lcs.tag;
 
-import org.outerj.daisy.diff.lcs.rangecomparator.Atom;
 
 public class TextAtom implements Atom {
 
-	private String s;
-	
-	public TextAtom(String s){
-		if(!isValidAtom(s))
-			throw new IllegalArgumentException("The given String is not a valid Text Atom");
-		this.s = s;
-	}
-	
-	public String getFullText() {
-		return s;
-	}
+    private String s;
 
-	public String getIdentifier() {
-		return s;
-	}
+    public TextAtom(String s) {
+        if (!isValidAtom(s))
+            throw new IllegalArgumentException(
+                    "The given String is not a valid Text Atom");
+        this.s = s;
+    }
 
-	public String getInternalIdentifiers() {
-		throw new IllegalStateException("This Atom has no intenral identifiers");
-	}
+    public String getFullText() {
+        return s;
+    }
 
-	public boolean hasInternalIdentifiers() {
-		return false;
-	}
+    public String getIdentifier() {
+        return s;
+    }
 
-	public boolean isValidAtom(String s) {
-		return s.length()>0;
-	}
-	
-	public String toString(){
-		return "TextAtom: " + getFullText();
-	}
+    public String getInternalIdentifiers() {
+        throw new IllegalStateException("This Atom has no intenral identifiers");
+    }
 
-	public boolean equalsIdentifier(Atom other){
-		return other.getIdentifier().equals(this.getIdentifier());
-	}
+    public boolean hasInternalIdentifiers() {
+        return false;
+    }
+
+    public boolean isValidAtom(String s) {
+        return s.length() > 0;
+    }
+
+    public String toString() {
+        return "TextAtom: " + getFullText();
+    }
+
+    public boolean equalsIdentifier(Atom other) {
+        return other.getIdentifier().equals(this.getIdentifier());
+    }
 
 }
