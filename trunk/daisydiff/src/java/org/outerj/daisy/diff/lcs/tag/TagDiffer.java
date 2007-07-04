@@ -21,13 +21,12 @@ import java.util.List;
 import org.eclipse.compare.rangedifferencer.PublicRangeDifference;
 import org.eclipse.compare.rangedifferencer.RangeDifference;
 import org.eclipse.compare.rangedifferencer.RangeDifferencer;
-import org.outerj.daisy.diff.MarkupGenerator;
 
 public class TagDiffer {
 
-    private MarkupGenerator markup;
+    private HtmlSaxDiffOutput markup;
 
-    public TagDiffer(MarkupGenerator markup) {
+    public TagDiffer(HtmlSaxDiffOutput markup) {
         this.markup = markup;
     }
 
