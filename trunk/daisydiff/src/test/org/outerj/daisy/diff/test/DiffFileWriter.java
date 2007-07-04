@@ -49,7 +49,7 @@ public class DiffFileWriter {
        
         //<link href="/css/tagdiff.css" type="text/css" rel="stylesheet">
         AttributesImpl csslink = new AttributesImpl();
-        csslink.addAttribute("", "href", "href", "CDATA", "/home/guy/workspace/daisydiff/src/test/org/outerj/daisy/diff/test/css/tagdiff.css");
+        csslink.addAttribute("", "href", "href", "CDATA", "css/tagdiff.css");
         csslink.addAttribute("", "type", "type", "CDATA", "text/css");
         csslink.addAttribute("", "rel", "rel", "CDATA", "stylesheet");
         serializer.startElement("", "link", "link", csslink);
