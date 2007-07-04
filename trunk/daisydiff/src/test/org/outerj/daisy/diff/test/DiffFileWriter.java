@@ -41,14 +41,24 @@ public class DiffFileWriter {
         serializer.setResult(streamResult);
 
         serializer.startDocument();
-        AttributesImpl attrs = new AttributesImpl();
-        serializer.startElement("", "html", "html", attrs);
-        serializer.startElement("", "head", "head", attrs);
+        
+        AttributesImpl noattrs = new AttributesImpl();
+        
+        serializer.startElement("", "html", "html", noattrs);
+        serializer.startElement("", "head", "head", noattrs);
+       
+        //<link href="/css/tagdiff.css" type="text/css" rel="stylesheet">
+        AttributesImpl csslink = new AttributesImpl();
+        csslink.addAttribute("", "href", "href", "CDATA", "/home/guy/workspace/daisydiff/src/test/org/outerj/daisy/diff/test/css/tagdiff.css");
+        csslink.addAttribute("", "type", "type", "CDATA", "text/css");
+        csslink.addAttribute("", "rel", "rel", "CDATA", "stylesheet");
+        serializer.startElement("", "link", "link", csslink);
+        serializer.endElement("", "link", "link");
+        
         serializer.endElement("", "head", "head");
-        serializer.startElement("", "body", "body", attrs);
+        serializer.startElement("", "body", "body", noattrs);
 
         HtmlSaxDiffOutput dm = new HtmlSaxDiffOutput(serializer);
-        dm.printInfo();
 
         TagDiffer differ = new TagDiffer(dm);
         differ.parseNewDiff(leftComparator, rightComparator);

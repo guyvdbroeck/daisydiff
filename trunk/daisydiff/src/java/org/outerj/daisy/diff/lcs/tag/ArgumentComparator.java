@@ -67,7 +67,7 @@ public class ArgumentComparator implements IAtomSplitter {
 
     public Atom getAtom(int i) {
         if (i < 0 || i >= atoms.size())
-            throw new IndexOutOfBoundsException();
+            throw new IndexOutOfBoundsException("There is no Atom with index "+i);
         return atoms.get(i);
     }
 

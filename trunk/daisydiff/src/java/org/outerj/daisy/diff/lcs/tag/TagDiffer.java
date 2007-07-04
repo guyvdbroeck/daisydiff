@@ -42,8 +42,12 @@ public class TagDiffer {
 
         StringBuilder sb = new StringBuilder();
 
+        /*
+         * We can assume that the LCS is correct and that there are exacly as many
+         * atoms left and right
+         */
         while (beginLeft < endLeft) {
-
+            
             while (beginLeft < endLeft
                     && !rightComparator.getAtom(beginRight)
                             .hasInternalIdentifiers()
@@ -69,7 +73,7 @@ public class TagDiffer {
                 RangeDifference[] differences2 = RangeDifferencer
                         .findDifferences(leftComparator2, rightComparator2);
                 List<PublicRangeDifference> pdifferences2 = preProcess(
-                        differences2, 1);
+                        differences2, 2);
 
                 int rightAtom2 = 0;
                 for (int j = 0; j < pdifferences2.size(); j++) {
@@ -82,12 +86,6 @@ public class TagDiffer {
                                 pdifferences2.get(j).leftStart(), pdifferences2
                                         .get(j).leftEnd()));
                     }
-
-                    if (pdifferences2.get(j).leftLength() > 0
-                            && pdifferences2.get(j).rightLength() > 0) {
-                        markup.addSeperator("»");
-                    }
-
                     if (pdifferences2.get(j).rightLength() > 0) {
                         markup.addAddedPart(rightComparator2.substring(
                                 pdifferences2.get(j).rightStart(),
@@ -133,12 +131,6 @@ public class TagDiffer {
             if (pdifferences.get(i).leftLength() > 0)
                 markup.addRemovedPart(leftString);
 
-            if (leftString.replace(" ", "").replaceAll("\n", "").replace("\r",
-                    "").replace("\t", "").length() > 0
-                    && rightString.replace(" ", "").replaceAll("\n", "")
-                            .replace("\r", "").replace("\t", "").length() > 0)
-                markup.addSeperator("|");
-
             if (pdifferences.get(i).rightLength() > 0)
                 markup.addAddedPart(rightString);
 
@@ -175,17 +167,15 @@ public class TagDiffer {
 
                 int nbtokens = Math.max((leftEnd - leftStart),
                         (rightEnd - rightStart));
-                // System.out.println("#tokens: "+nbtokens);
                 if (nbtokens > 5) {
                     if (nbtokens > 10) {
                         bridgelength = 3;
                     } else
                         bridgelength = 2;
                 }
-                // System.out.println("bridgelength= "+bridgelength);
+
                 while ((leftComparator.getAtom(temp) instanceof DelimiterAtom || (bridgelength-- > 0))
                         && temp < differences[i + 1].leftStart()) {
-                    // System.out.println("bridgelength= "+bridgelength);
 
                     temp++;
                 }
@@ -195,13 +185,6 @@ public class TagDiffer {
                     temp = leftEnd;
                     i++;
                 } else {
-                    // System.out.println("bridge stopped at token "+
-                    // leftComparator.getAtom(temp).getFullText().replaceAll("
-                    // ", "_"));
-                    // System.out.println(leftComparator.getAtom(temp)
-                    // instanceof DelimiterAtom);
-                    // System.out.println(bridgelength+1>0);
-                    // System.out.println("bridgelength was "+bridgelength+1);
                     connecting = false;
                     if (!(leftComparator.getAtom(temp) instanceof DelimiterAtom)) {
                         if (leftComparator.getAtom(temp).getFullText().equals(

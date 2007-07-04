@@ -41,7 +41,7 @@ public class DelimiterAtom extends TextAtom {
             case '\t':
             case '\r':
             case '\n':
-                // Extra Delimiters
+            // Extra Delimiters
             case '[':
             case ']':
             case '{':
@@ -80,6 +80,7 @@ public class DelimiterAtom extends TextAtom {
 
     public boolean equalsIdentifier(Atom a) {
         return super.equalsIdentifier(a)
+                //Handling for automatically inserted newlines
                 || ((a.getIdentifier().equals(" ") || a.getIdentifier().equals(
                         "\n")) && (this.getIdentifier().equals(" ") || this
                         .getIdentifier().equals("\n")));

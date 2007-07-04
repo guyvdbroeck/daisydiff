@@ -1,0 +1,22 @@
+
+/*
+ * Styles for the Tag Diff
+ */
+
+span.diff-tag-html {
+  font-family: "Andale Mono" monospace;
+  font-size: 80%;
+}
+
+span.diff-tag-added {
+  font-family: "Andale Mono";
+  font-size: 100%;
+  background-color: #ccffcc; /* light green */
+}
+
+span.diff-tag-removed {
+  font-family: "Andale Mono";
+  font-size: 100%;
+  text-decoration: line-through;
+  background-color: #fdc6c6; /* light red */
+}
