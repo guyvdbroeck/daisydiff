@@ -30,12 +30,12 @@ public class TestTagComparator {
 
     public TestTagComparator() throws Exception {
         StringBuilder leftsb = new StringBuilder();
-        String left = readResource("daisymain.txt");
+        String left = readResource("gsoc.txt");
 
         leftsb.append(left);
 
         StringBuilder rightsb = new StringBuilder();
-        String right = readResource("daisymainchanged.txt");
+        String right = readResource("gsocchanged.txt");
 
         rightsb.append(right);
 
@@ -44,7 +44,7 @@ public class TestTagComparator {
 
         DiffFileWriter.diff(
                 "/home/guy/workspace/daisydiff/src/test/org/outerj/daisy/diff/test/html"
-                        + "/tag-word1.html", lefttc, righttc);
+                        + "/tag-word2.html", lefttc, righttc);
 
     }
 
