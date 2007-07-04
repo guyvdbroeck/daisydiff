@@ -15,7 +15,9 @@
  */
 package org.outerj.daisy.diff.lcs.tag;
 
-
+/**
+ * An atom that represents a closing or opening tag.
+ */
 public class TagAtom implements Atom {
 
     private String identifier;

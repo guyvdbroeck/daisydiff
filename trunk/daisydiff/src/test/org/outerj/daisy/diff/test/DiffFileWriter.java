@@ -26,6 +26,9 @@ import org.outerj.daisy.diff.lcs.tag.TagComparator;
 import org.outerj.daisy.diff.lcs.tag.TagDiffer;
 import org.xml.sax.helpers.AttributesImpl;
 
+/**
+ * Writes the generated HTML diff to a given file.
+ */
 public class DiffFileWriter {
 
     public static void diff(String file, TagComparator leftComparator,

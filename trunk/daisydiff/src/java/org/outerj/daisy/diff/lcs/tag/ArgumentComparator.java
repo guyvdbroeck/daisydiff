@@ -20,6 +20,10 @@ import java.util.List;
 
 import org.eclipse.compare.rangedifferencer.IRangeComparator;
 
+/**
+ * Takes a String and generates tokens/atoms that can be used by LCS.
+ * This comparator is used specifically for arguments inside HTML tags.
+ */
 public class ArgumentComparator implements IAtomSplitter {
 
     private List<Atom> atoms = new ArrayList<Atom>(5);

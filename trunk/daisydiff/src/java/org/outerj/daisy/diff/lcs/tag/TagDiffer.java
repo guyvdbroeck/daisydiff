@@ -22,6 +22,12 @@ import org.eclipse.compare.rangedifferencer.PublicRangeDifference;
 import org.eclipse.compare.rangedifferencer.RangeDifference;
 import org.eclipse.compare.rangedifferencer.RangeDifferencer;
 
+/**
+ * Takes 2 AtomSplitters and computes the difference between them.
+ * Output is sent to a given <code>HTMLSaxDiffOutput</code> and tags are
+ * diffed internally on a second iteration. The results are processed as to
+ * combine small subsequent changes in to larger changes.
+ */
 public class TagDiffer {
 
     private HtmlSaxDiffOutput markup;

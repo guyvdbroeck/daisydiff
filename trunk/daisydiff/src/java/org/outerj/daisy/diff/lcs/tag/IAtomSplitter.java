@@ -17,6 +17,10 @@ package org.outerj.daisy.diff.lcs.tag;
 
 import org.eclipse.compare.rangedifferencer.IRangeComparator;
 
+/**
+ * Extens the IRangeComparator interface with functionality to recreate parts of 
+ * the original document.
+ */
 public interface IAtomSplitter extends IRangeComparator {
 
     public Atom getAtom(int i);

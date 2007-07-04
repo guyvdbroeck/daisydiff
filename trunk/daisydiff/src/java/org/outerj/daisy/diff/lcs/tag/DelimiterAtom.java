@@ -15,7 +15,9 @@
  */
 package org.outerj.daisy.diff.lcs.tag;
 
-
+/**
+ * A TextAtom with an identifier from a limited set of delimiter strings.
+ */
 public class DelimiterAtom extends TextAtom {
 
     public DelimiterAtom(char c) {

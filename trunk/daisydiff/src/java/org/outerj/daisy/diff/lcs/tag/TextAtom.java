@@ -15,7 +15,9 @@
  */
 package org.outerj.daisy.diff.lcs.tag;
 
-
+/**
+ * An Atom that represents a piece of ordinary text.
+ */
 public class TextAtom implements Atom {
 
     private String s;

@@ -15,6 +15,11 @@
  */
 package org.outerj.daisy.diff.lcs.tag;
 
+/**
+ * A unit of comparison between html files. An Atom can be equal to another
+ * while not having the same text (tag arguments). In that case the Atom will
+ * have internal identifiers that can be compared on a second level.
+ */
 public interface Atom {
 
     public String getIdentifier();
