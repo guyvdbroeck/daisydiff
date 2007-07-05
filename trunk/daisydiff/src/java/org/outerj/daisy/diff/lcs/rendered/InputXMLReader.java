@@ -16,7 +16,7 @@
 package org.outerj.daisy.diff.lcs.rendered;
 
 import java.io.IOException;
-import java.io.StringReader;
+import java.net.URL;
 
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
@@ -25,15 +25,13 @@ import org.xml.sax.helpers.XMLReaderFactory;
 
 public class InputXMLReader {
 
-    public static void readXML(String s) throws SAXException, IOException{
-	readXML(new InputSource(new StringReader(s)));
+    public static void readXML(URL url, DiffContentHandler handler) throws SAXException, IOException{
+	readXML(new InputSource(url.openStream()), handler);
     }
 
-    public static void readXML(InputSource s) throws SAXException, IOException{
+    public static void readXML(InputSource s, DiffContentHandler handler) throws SAXException, IOException{
 	//TODO check what xml driver DaisyCMS uses!
 	XMLReader xr = XMLReaderFactory.createXMLReader();
-	
-	DiffContentHandler handler = new DiffContentHandler();
 	
 	xr.setContentHandler(handler);
 	xr.setErrorHandler(handler);

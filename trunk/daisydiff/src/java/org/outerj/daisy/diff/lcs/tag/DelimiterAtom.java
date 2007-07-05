@@ -26,42 +26,46 @@ public class DelimiterAtom extends TextAtom {
 
     public static boolean isValidDelimiter(String s) {
         if (s.length() == 1) {
-            switch (s.charAt(0)) {
-            // Basic Delimiters
-            case '/':
-            case '.':
-            case '!':
-            case ',':
-            case ';':
-            case '?':
-            case ' ':
-            case '=':
-            case '\'':
-            case '"':
-            case '\t':
-            case '\r':
-            case '\n':
-            // Extra Delimiters
-            case '[':
-            case ']':
-            case '{':
-            case '}':
-            case '(':
-            case ')':
-            case '&':
-            case '|':
-            case '\\':
-            case '-':
-            case '_':
-            case '+':
-            case '*':
-            case ':':
-                return true;
-            default:
-                return false;
-            }
+           isValidDelimiter(s.charAt(0)); 
         }
         return false;
+    }
+    
+    public static boolean isValidDelimiter(char c ){
+        switch (c) {
+        // Basic Delimiters
+        case '/':
+        case '.':
+        case '!':
+        case ',':
+        case ';':
+        case '?':
+        case ' ':
+        case '=':
+        case '\'':
+        case '"':
+        case '\t':
+        case '\r':
+        case '\n':
+        // Extra Delimiters
+        case '[':
+        case ']':
+        case '{':
+        case '}':
+        case '(':
+        case ')':
+        case '&':
+        case '|':
+        case '\\':
+        case '-':
+        case '_':
+        case '+':
+        case '*':
+        case ':':
+            return true;
+        default:
+            return false;
+        }
     }
 
     public boolean isValidAtom(String s) {
