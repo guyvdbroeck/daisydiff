@@ -25,11 +25,11 @@ import org.xml.sax.helpers.XMLReaderFactory;
 
 public class InputXMLReader {
 
-    public static void readXML(URL url, DiffContentHandler handler) throws SAXException, IOException{
+    public static void readXML(URL url, LeafComparator handler) throws SAXException, IOException{
 	readXML(new InputSource(url.openStream()), handler);
     }
 
-    public static void readXML(InputSource s, DiffContentHandler handler) throws SAXException, IOException{
+    public static void readXML(InputSource s, LeafComparator handler) throws SAXException, IOException{
 	//TODO check what xml driver DaisyCMS uses!
 	XMLReader xr = XMLReaderFactory.createXMLReader();
 	

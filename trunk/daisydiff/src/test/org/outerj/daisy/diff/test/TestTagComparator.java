@@ -42,13 +42,13 @@ public class TestTagComparator {
         TagComparator lefttc = new TagComparator(leftsb);
         TagComparator righttc = new TagComparator(rightsb);
 
-        DiffFileWriter.diff(
+        TagDiffFileWriter.diff(
                 "/home/guy/workspace/daisydiff/src/test/org/outerj/daisy/diff/test/html"
                         + "/tag-word2.html", lefttc, righttc);
 
     }
 
-    String readResource(String name) throws Exception {
+    private String readResource(String name) throws Exception {
         InputStream is = getClass().getClassLoader().getResourceAsStream(
                 "org/outerj/daisy/diff/test/txt/" + name);
         Reader reader = new InputStreamReader(is, "UTF-8");

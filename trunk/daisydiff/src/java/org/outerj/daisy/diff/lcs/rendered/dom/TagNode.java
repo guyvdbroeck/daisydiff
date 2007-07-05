@@ -4,29 +4,46 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import org.xml.sax.Attributes;
+
 public class TagNode extends Node implements Iterable<Node> {
 
-    public List<Node> children = new ArrayList<Node>();
+    private List<Node> children = new ArrayList<Node>();
     
-    private String s;
+    private String qName;
+
+    private Attributes attributes;
     
-    public TagNode(TagNode parent, String s) {
+    public TagNode(TagNode parent, String qName, Attributes attributes) {
         super(parent);
-        this.s = s;
+        this.qName = qName;
+        this.attributes = attributes;
     }
     
     public void addChild(Node node) {
         if(node.getParent()!=this)
-            throw new IllegalStateException("The nw child must have this node as a parent.");
+            throw new IllegalStateException("The new child must have this node as a parent.");
         children.add(node);
+    }
+    
+    public Node getChild(int i){
+        return children.get(i);
     }
     
     public Iterator<Node> iterator() {
         return children.iterator();
     }
     
-    public String getText(){
-        return s;
+    public int getNbChildren(){
+        return children.size();
+    }
+    
+    public String getQName(){
+        return qName;
+    }
+    
+    public Attributes getAttributes(){
+        return attributes;
     }
     
     public boolean equals(Object other){
@@ -41,7 +58,21 @@ public class TagNode extends Node implements Iterable<Node> {
             return false;
         }
         
-        return getText().equals(otherTagNode.getText());
+        return getQName().equals(otherTagNode.getQName());
+    }
+
+    public String getOpeningTag() {
+        String s = "<" + getQName();
+        Attributes localAttributes = getAttributes();
+        for(int i=0; i<localAttributes.getLength();i++){
+            s += " " + localAttributes.getQName(i)
+            + "=\""+localAttributes.getValue(i)+"\"";
+        }
+        return s += ">";
+    }
+    
+    public String getEndTag() {
+        return "</" + getQName() + ">";
     }
 
 }

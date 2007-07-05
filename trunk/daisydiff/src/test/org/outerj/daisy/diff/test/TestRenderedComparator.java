@@ -17,8 +17,8 @@ package org.outerj.daisy.diff.test;
 
 import java.net.URL;
 
-import org.outerj.daisy.diff.lcs.rendered.DiffContentHandler;
 import org.outerj.daisy.diff.lcs.rendered.InputXMLReader;
+import org.outerj.daisy.diff.lcs.rendered.LeafComparator;
 
 public class TestRenderedComparator {
 
@@ -27,15 +27,20 @@ public class TestRenderedComparator {
     }
 
     public TestRenderedComparator() throws Exception {
-        DiffContentHandler leftContentHandler = new DiffContentHandler();
-        DiffContentHandler rightContentHandler = new DiffContentHandler();
+      
+        LeafComparator leftContentHandler = new LeafComparator();
+        LeafComparator rightContentHandler = new LeafComparator();
 
         InputXMLReader.readXML(new URL(
-                "http://cocoondev.org/wiki/291-cd/version/last/part/SimpleDocumentContent/data")
+                "http://cocoondev.org/wiki/291-cd/version/18/part/SimpleDocumentContent/data")
         , leftContentHandler);
     
         InputXMLReader.readXML(new URL(
                 "http://cocoondev.org/wiki/291-cd/version/24/part/SimpleDocumentContent/data")
         , rightContentHandler);
+        
+        RenderedDiffFileWriter.diff(
+                "/home/guy/workspace/daisydiff/src/test/org/outerj/daisy/diff/test/html"
+                        + "/rendered2.html", leftContentHandler, rightContentHandler);
     }
 }
