@@ -56,7 +56,7 @@ public class TagNode extends Node implements Iterable<Node> {
         return attributes;
     }
     
-    public boolean equals(Object other){
+    public boolean isSameTag(Object other){
         if(other==null)
             return false;
         

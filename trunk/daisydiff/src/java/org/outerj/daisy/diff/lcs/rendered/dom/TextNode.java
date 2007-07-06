@@ -18,7 +18,7 @@ public class TextNode extends Node{
         return s;
     }
     
-    public boolean equals(Object other){
+    public boolean isSameText(Object other){
         if(other==null)
             return false;
         

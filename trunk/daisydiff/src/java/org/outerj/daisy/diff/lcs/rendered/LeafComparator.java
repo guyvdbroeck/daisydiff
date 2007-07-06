@@ -70,8 +70,7 @@ public class LeafComparator extends DefaultHandler implements IRangeComparator
         
         if (bodyStarted && !bodyEnded) {
             TagNode newTagNode = new TagNode(currentParent, qName, attributes);;
-            System.out.println("Started: " + newTagNode.getOpeningTag()
-                    +" with parent "+currentParent.getOpeningTag());
+//                    +" with parent "+currentParent.getOpeningTag());
             currentParent = newTagNode;
         }else if(bodyStarted){
             //Ignoring element after body tag closed
@@ -90,7 +89,7 @@ public class LeafComparator extends DefaultHandler implements IRangeComparator
             bodyEnded = true;
         }else if (bodyStarted && ! bodyEnded) {
             endWord();
-            System.out.println("Ended: " + currentParent.getEndTag());
+            //System.out.println("Ended: " + currentParent.getEndTag());
             currentParent = currentParent.getParent();
         }
     }
@@ -111,7 +110,7 @@ public class LeafComparator extends DefaultHandler implements IRangeComparator
                 
                 leafs.add(textNode);
                 currentParent.addChild(textNode);
-                System.out.println("adding delimiter: "+ textNode.getText());
+                //System.out.println("adding delimiter: "+ textNode.getText());
                 
             }else{
                 newWord.append(c);
@@ -122,7 +121,7 @@ public class LeafComparator extends DefaultHandler implements IRangeComparator
     
     private void endWord(){
         if (newWord.length()>0) {
-            System.out.println("adding word: " + newWord.toString());
+           // System.out.println("adding word: " + newWord.toString());
             leafs.add(new TextNode(currentParent, newWord.toString()));
             newWord.setLength(0);
         }        
@@ -154,7 +153,7 @@ public class LeafComparator extends DefaultHandler implements IRangeComparator
            return false;
         }
         
-        return getLeaf(i1).equals(comp.getLeaf(i2)); 
+        return getLeaf(i1).isSameText(comp.getLeaf(i2)); 
     }
 
     public boolean skipRangeComparison(int arg0, int arg1, IRangeComparator arg2) {
@@ -198,7 +197,7 @@ public class LeafComparator extends DefaultHandler implements IRangeComparator
         }
     }
 
-    public void markAsDeleted(int start, int end, LeafComparator leftComparator, int before) {
+    public void markAsDeleted(int start, int end, LeafComparator oldComp, int before) {
 
         int cut=start;
         boolean cutFound = false;
@@ -209,6 +208,7 @@ public class LeafComparator extends DefaultHandler implements IRangeComparator
         else{
             cut = start;
             cutFound = true;
+            System.out.println("cut at start");
         }
         
         TextNode nextLeaf = null;
@@ -217,25 +217,53 @@ public class LeafComparator extends DefaultHandler implements IRangeComparator
         else{
             cut = end+1;
             cutFound = true;
+
+            System.out.println("cut at end");
         }
+
+        int[] prevD = new int[end-start];
+        int[] nextD = new int[end-start];
         
-        while(!cutFound && cut<end && prevLeaf.getTagDistance(leftComparator.getLeaf(cut).getParentTree())
-                <nextLeaf.getTagDistance(leftComparator.getLeaf(cut).getParentTree())){
-            cut++;
-        }
+        if (!cutFound) {
+            for (int i = start; i < end; i++) {
+                prevD[i-start]=prevLeaf.getTagDistance(oldComp.getLeaf(i).getParentTree());
+                nextD[i-start]=nextLeaf.getTagDistance(oldComp.getLeaf(i).getParentTree());
+                System.out.println(i-start+": "+prevD[i-start]+" vs "+nextD[i-start]);
+            }
+            
+            long min=Long.MAX_VALUE;
+            cut = start;
+            for (int i = start; i < end+1; i++) {
+                long sum = 0;
+                for (int j = start; j < i; j++) {
+                    sum+=prevD[j-start];
+                }
+                for (int j = i; j < end; j++) {
+                    sum+=nextD[j-start];
+                }
+                System.out.println("sum for "+i+" is "+sum);
+                if(sum<min){
+                    min=sum;
+                    cut=i;
+                }
+            }
+        }        
         
         System.out.println("cut found at "+cut+" between "+start+" and "+end);
+        //System.out.println(prevLeaf.getText()+" -> "+nextLeaf.getText());
         
+        TagNode parent = prevLeaf.getParent();
+        int insertPoint= parent.getIndexOf(prevLeaf)+1;
         for(int i=start;i<cut;i++){
-            TextNode t = leftComparator.getLeaf(i);
-            TagNode parent = prevLeaf.getParent();
+            TextNode t = oldComp.getLeaf(i);
+            
             t.setDeleted();
             t.setParent(parent);
-            parent.addChildBefore(parent.getIndexOf(prevLeaf)+1, t);
+            parent.addChildBefore(insertPoint++, t);
         }
+        parent = nextLeaf.getParent();
         for(int i=cut;i<end;i++){
-            TextNode t = leftComparator.getLeaf(i);
-            TagNode parent = nextLeaf.getParent();
+            TextNode t = oldComp.getLeaf(i);
             t.setDeleted();
             t.setParent(parent);
             parent.addChildBefore(parent.getIndexOf(nextLeaf), t);

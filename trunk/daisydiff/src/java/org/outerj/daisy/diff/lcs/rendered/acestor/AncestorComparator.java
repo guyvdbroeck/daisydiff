@@ -27,7 +27,7 @@ public class AncestorComparator implements IRangeComparator{
             return false;
         }
         
-        return other.getAncestor(otheri).equals(getAncestor(owni));
+        return other.getAncestor(otheri).isSameTag(getAncestor(owni));
     }
 
     public boolean skipRangeComparison(int arg0, int arg1, IRangeComparator arg2) {

@@ -23,29 +23,66 @@ import org.outerj.daisy.diff.lcs.rendered.LeafComparator;
 public class TestRenderedComparator {
 
     public static void main(String[] args) throws Exception {
-        new TestRenderedComparator();
+        new TestRenderedComparator(1);
+        new TestRenderedComparator(2);
+        new TestRenderedComparator(3);
+        new TestRenderedComparator(4);
     }
 
-    public TestRenderedComparator() throws Exception {
-      
+    public TestRenderedComparator(int i) throws Exception {
+
         LeafComparator leftContentHandler = new LeafComparator();
         LeafComparator rightContentHandler = new LeafComparator();
 
-        InputXMLReader.readXML(new URL(
-//              "http://cocoondev.org/daisydocs-2_0/374-cd/24-cd/version/1/part/SimpleDocumentContent/data")
-//              "http://cocoondev.org/wiki/291-cd/version/19/part/SimpleDocumentContent/data")
-                "http://cocoondev.org/wiki/476-cd/version/3/part/SimpleDocumentContent/data")
-                , leftContentHandler);
-    
-        InputXMLReader.readXML(new URL(
-//        "http://cocoondev.org/daisydocs-2_0/374-cd/24-cd/version/4/part/SimpleDocumentContent/data")
-//        "http://cocoondev.org/wiki/291-cd/version/24/part/SimpleDocumentContent/data")
-        "http://cocoondev.org/wiki/476-cd/version/4/part/SimpleDocumentContent/data")
-        , rightContentHandler);
-        
+        if (i == 1) {
+            InputXMLReader
+                    .readXML(
+                            new URL(
+                                    "http://cocoondev.org/daisydocs-2_0/374-cd/24-cd/version/1/part/SimpleDocumentContent/data"),
+                            leftContentHandler);
+            InputXMLReader
+                    .readXML(
+                            new URL(
+                                    "http://cocoondev.org/daisydocs-2_0/374-cd/24-cd/version/4/part/SimpleDocumentContent/data"),
+                            rightContentHandler);
+        } else if (i == 2) {
+            InputXMLReader
+                    .readXML(
+                            new URL(
+                                    "http://cocoondev.org/wiki/291-cd/version/19/part/SimpleDocumentContent/data"),
+                            leftContentHandler);
+            InputXMLReader
+                    .readXML(
+                            new URL(
+                                    "http://cocoondev.org/wiki/291-cd/version/24/part/SimpleDocumentContent/data"),
+                            rightContentHandler);
+        } else if (i == 3) {
+            InputXMLReader
+                    .readXML(
+                            new URL(
+                                    "http://cocoondev.org/wiki/476-cd/version/1/part/SimpleDocumentContent/data"),
+                            leftContentHandler);
+            InputXMLReader
+                    .readXML(
+                            new URL(
+                                    "http://cocoondev.org/wiki/476-cd/version/3/part/SimpleDocumentContent/data"),
+                            rightContentHandler);
+        } else if (i == 4) {
+            InputXMLReader
+                    .readXML(
+                            new URL(
+                                    "http://cocoondev.org/wiki/476-cd/version/3/part/SimpleDocumentContent/data"),
+                            leftContentHandler);
+            InputXMLReader
+                    .readXML(
+                            new URL(
+                            "http://cocoondev.org/wiki/476-cd/version/5/part/SimpleDocumentContent/data"),
+                            rightContentHandler);
+        }
         RenderedDiffFileWriter.diff(
-                
-                "/home/guy/workspace/daisydiff/src/test/org/outerj/daisy/diff/test/html"
-                        + "/rendered4.html", leftContentHandler, rightContentHandler);
+
+        "/home/guy/workspace/daisydiff/src/test/org/outerj/daisy/diff/test/html"
+                + "/rendered" + i + ".html", leftContentHandler,
+                rightContentHandler);
     }
 }
