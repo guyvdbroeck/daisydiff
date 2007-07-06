@@ -1,8 +1,11 @@
 package org.outerj.daisy.diff.lcs.rendered.dom;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public abstract class Node {
     
-    private TagNode parent;
+    protected TagNode parent;
     
     public Node(TagNode parent){
         this.parent = parent;
@@ -14,6 +17,14 @@ public abstract class Node {
         return parent;
     }
     
+    public List<TagNode> getParentTree() {
+        List<TagNode> parentTree = new ArrayList(5);
+        if(getParent()!=null){
+            parentTree.addAll(getParent().getParentTree());
+            parentTree.add(getParent());
+        }
+        return parentTree;
+    }
     
     
 }

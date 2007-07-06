@@ -1,0 +1,1113 @@
+<html>
+<head>
+<META http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<link href="css/tagdiff.css" type="text/css" rel="stylesheet">
+<link href="http://cocoondev.org/resources/skins/daisysite/css/docstyle.css" type="text/css" rel="stylesheet">
+</head>
+<body>
+<span class="diff-tag-removed">Behind</span>
+<span class="diff-tag-removed">
+</span>
+
+
+
+
+
+<h1>Introduction</h1>
+
+
+
+
+<p>This  document  describes  the  editor  used  to  modify  pages  stored  in  the
+
+document  repository..  The  editor  features  wysiwyg  editing..</p>
+
+
+
+
+<h2>Where  do  I  find  the  editor??</h2>
+
+
+
+
+<p>The  editor  can  be  reached  by  either  editing  an  existing  document  or  creating
+
+a  new  document..</p>
+
+
+
+
+<p>To<span class="diff-tag-removed">]</span><span class="diff-tag-removed">(</span><span class="diff-tag-removed">by</span><span class="diff-tag-removed">action</span><span class="diff-tag-removed">default</span><span class="diff-tag-removed">,</span><span class="diff-tag-removed"> </span><span class="diff-tag-removed">this</span><span class="diff-tag-removed"> </span><span class="diff-tag-removed">is</span><span class="diff-tag-removed"> </span><span class="diff-tag-removed">the</span><span class="diff-tag-removed"> </span><span class="diff-tag-removed">menu</span><span class="diff-tag-removed"> </span><span class="diff-tag-removed"> </span>  edit  an  existing  <span class="diff-tag-removed">of</span><span class="diff-tag-removed"> </span><span class="diff-tag-removed">a</span><span class="diff-tag-removed">
+</span>document,,  use  the  <span class="diff-tag-removed">[</span>Edit  link  in  the  document  <span class="diff-tag-added">action</span>  menu<span class="diff-tag-removed"> </span><span class="diff-tag-removed">shown</span><span class="diff-tag-removed"> </span><span class="diff-tag-removed">on</span><span class="diff-tag-removed"> </span><span class="diff-tag-removed">the</span><span class="diff-tag-removed"> </span><span class="diff-tag-removed">right</span><span class="diff-tag-removed">)</span>..
+
+This  link  is  only  visible  if  you  are  allowed  to  edit  the  document..</p>
+
+
+
+
+<p>To<span class="diff-tag-removed">"</span>  create  a  new  document,,  <span class="diff-tag-removed">use</span><span class="diff-tag-added">select</span>  the  <span class="diff-tag-removed">"</span>New  Document  link  <span class="diff-tag-removed">(</span>in  the  <span class="diff-tag-removed">top</span><span class="diff-tag-removed">-</span><span class="diff-tag-removed">right</span><span class="diff-tag-removed">
+</span><span class="diff-tag-removed">navigation</span><span class="diff-tag-removed">)</span><span class="diff-tag-added">menu</span>..  You  are
+
+then  first  presented  with  a  list  of  document  types,,  after  selecting  one  the
+
+editor  will  open..</p>
+
+
+
+
+<h2>Document  <span class="diff-tag-removed">Type</span><span class="diff-tag-added">type</span>  <span class="diff-tag-removed">Influence</span><span class="diff-tag-added">influence</span>
+</h2>
+
+
+
+
+<p>The  content  of  the  edit  screen  depends  somewhat  on  the  document  type  of  the
+
+document  you''re  editing  or  creating..  See  <a>documents</a>
+
+for  a  general  discussion  on  documents  and  document  types..  As  a  quick  reminder,,  a
+
+document  can  consists  of  multiple  parts  and  fields..  The  parts  contain  the  actual
+
+content,,  the  fields  are  for  more  structured  ((meta))data..</p>
+
+
+
+
+<p>If  a  part  is  marked  as  a  ""Daisy  HTML""  part,,  you  will  be  presented  with  a
+
+wysiwyg  editor  for  that  part..  Otherwise,,  a  file  upload  control  will  be  shown..
+
+Because  of  the  ability  to  plugin  in  custom  <a>part
+
+editors</a>,,  other  types  of  editors  might  also  appear  ((e..g..  for  editing  book
+
+definitions))..</p>
+
+
+
+
+<h2>Supported  browsers</h2>
+
+
+
+
+<p>In  theory,,  the  document  editing  screen  should  work  on  most  browsers..  However,,
+
+to  use  wysiwyg  editing,,  it  is  advisable  to  use  a  recent  version  of  one  of  the
+
+mainstream  browsers,,  Mozilla//Firefox  or  Internet  Explorer..  We  do  most  of  our
+
+testing  using  recent  versions  of  Firefox  and  Internet  Explorer  6<span class="diff-tag-added">/</span><span class="diff-tag-added">/</span><span class="diff-tag-added">7</span>..</p>
+
+
+
+
+<p>On  other  browsers,,  the  editor  will  fall  back  to  a  textarea  allowing  you  to
+
+edit  the  HTML  source..  On  browsers  that  support  wysiwyg  editing,,  you  can  also
+
+switch  to  source  editing..</p>
+
+
+
+
+<p>In  any  case,,  Javascript  ((and  cookies))  must  be  enabled..</p>
+
+
+
+
+<h2>Heartbeat</h2>
+
+
+
+
+<p>While  editing  a  page,,  <span class="diff-tag-removed">each</span>the  server  keeps  some  state  about  <span class="diff-tag-removed">that</span>your  editing  session..
+
+After  a  certain  period  of  inactivity,,  the  server  will  clean  up  the  editing
+
+session..  To  avoid  the  editing  session  <span class="diff-tag-removed">hidden</span>to  expire  while  you''re  working  <span class="diff-tag-removed">itself</span>on  a
+
+<span class="diff-tag-removed">10</span>document,,  a  ''<span class="diff-tag-removed">speaking</span><span class="diff-tag-removed">,</span>heartbeat''  <span class="diff-tag-removed">this</span>signal  keeps  your  session  alive..  <span class="diff-tag-removed">(</span><span class="diff-tag-removed">Technically</span><span class="diff-tag-added">The</span>  <span class="diff-tag-added">heartbeat</span>  <span class="diff-tag-added">signal</span>
+
+<span class="diff-tag-removed">is</span><span class="diff-tag-added">also</span>  <span class="diff-tag-removed">a</span><span class="diff-tag-added">serves</span>  <span class="diff-tag-added">to</span>  <span class="diff-tag-removed">frame</span><span class="diff-tag-added">extend</span>  <span class="diff-tag-added">your</span>  <span class="diff-tag-removed">refreshes</span><span class="diff-tag-added">lock</span>  <span class="diff-tag-added">on</span>  <span class="diff-tag-added">the</span>  <span class="diff-tag-added">document</span><span class="diff-tag-added">.</span><span class="diff-tag-added">.</span><span class="diff-tag-added"> </span><span class="diff-tag-added"> </span><span class="diff-tag-added">(</span><span class="diff-tag-added">(</span><span class="diff-tag-added">Technically</span><span class="diff-tag-added"> </span><span class="diff-tag-added"> </span><span class="diff-tag-added">speaking</span><span class="diff-tag-added">,</span><span class="diff-tag-added">,</span><span class="diff-tag-added"> </span><span class="diff-tag-added"> </span><span class="diff-tag-added">the</span><span class="diff-tag-added">
+</span><span class="diff-tag-added">
+</span><span class="diff-tag-added">heartbeat</span><span class="diff-tag-added"> </span><span class="diff-tag-added"> </span><span class="diff-tag-added">signal</span><span class="diff-tag-added"> </span><span class="diff-tag-added"> </span><span class="diff-tag-added">is</span><span class="diff-tag-added"> </span><span class="diff-tag-added"> </span><span class="diff-tag-added">an</span>  <span class="diff-tag-removed">minutes</span><span class="diff-tag-added">Ajax</span><span class="diff-tag-added">-</span><span class="diff-tag-added">-</span><span class="diff-tag-added">request</span>))..</p>
+
+
+
+
+<h2>Document  locking</h2>
+
+
+
+
+<p>When  you  edit  an  existing  document,,  the  daisywiki  will  automatically  take  an
+
+exclusive  lock  on  the  document  to  ensure  nobody  else  can  edit  the  document  while
+
+you''re  working  on  it..  The  duration  of  the  initial  lock  is  15  minutes,,  the  lock
+
+is  then  automatically  extended  if  needed  via  the  heartbeat  signal..</p>
+
+
+
+
+<p>If  you  start  editing  a  page  but  decide  you  didn''t  want  to  after  all,,  it  is
+
+best  to  use  the  ""Cancel  editing""  button  at  the  bottom  of  the  edit  screen,,  so
+
+that  your  lock  get  cleared..  If  you  don''t  do  this,,  the  lock  will  expire  after  at
+
+most  15  minutes,,  so  this  is  not  a  big  problem..</p>
+
+
+
+
+<p>The  locking  behaviour  can  be  adjusted  by  the  site  administrator..
+
+For  example,,  the  locking  can  be  turned  of  completely..  However,,  we  expect  that  in
+
+most  cases  it  will  be  left  to  the  default  behaviour  described  here..</p>
+
+
+
+
+<h2>Editing  multiple  documents  at  once</h2>
+
+
+
+
+<p>Editing  multiple  documents  concurrently  in  different  browser  windows  or  tabs
+
+is  supported..</p>
+
+
+
+
+<h1>Supported  HTML  subset  and  HTML  cleaning</h1>
+
+
+
+
+<p>Although  a  wysiwyg  editor  is  shown  for  the  ""Daisy  HTML""  parts,,  the  goal  is  to
+
+limit  the  editing  to  a  subset  of  HTML  mainly  focussing  on  structural  aspects  of
+
+HTML..  So  forget  fonts,,  colors,,  special  styling  tricks,,  embedded  javascript,,  and
+
+so  on..  Inserting  those  while  editing  in  source  view  won''t  work  either,,  as  the
+
+HTML  is  cleaned  up  on  the  server  side..</p>
+
+
+
+
+<p>This  cleanup  process  can  also  be  triggered  manually,,  by  pressing  the  ""Cleanup
+
+edited  HTML""  button..  This  can  be  useful  if  you  pasted  content  copied  from  an
+
+external  application  and  you  want  to  see  how  it  will  look  finally..  When
+
+switching  from  wysiwyg  to  source  view,,  the  cleanup  is  also  performed..</p>
+
+
+
+
+<h2>Supported  HTML  subset</h2>
+
+
+
+
+<p>These  are  the  supported  tags  ((or  ""elements""))  and  attributes::</p>
+
+
+
+
+<ul>
+
+
+<li>&lt;html&gt;  and  &lt;body&gt;</li>
+
+
+<li>&lt;p&gt;  with  optional  attributes  align  and  class..  The  class  attribute  is
+
+only  kept  if  it  has  one  of  the  following  values::  note,,  warn,,  fixme</li>
+
+
+<li>&lt;br&gt;</li>
+
+
+<li>&lt;pre&gt;  with  optional  class  attribute..  The  class  attribute  is  only  kept
+
+if  has  one  of  the  following  values::  query,,  include,,  query--and--include</li>
+
+
+<li>&lt;h1&gt;,,  &lt;h2&gt;,,  &lt;h3&gt;,,  &lt;h4&gt;,,  &lt;h5&gt;</li>
+
+
+<li>&lt;a&gt;  with  required  attribute  href..  If  the  href  attribute  is  missing,,
+
+the  &lt;a&gt;  will  be  dropped..</li>
+
+
+<li>&lt;strong&gt;,,  &lt;em&gt;,,  &lt;sup&gt;,,  &lt;sub&gt;,,  &lt;tt&gt;,,
+
+&lt;del&gt;</li>
+
+
+<li>&lt;ul&gt;,,  &lt;ol&gt;,,  &lt;li&gt;</li>
+
+
+<li>&lt;blockquote&gt;</li>
+
+
+<li>&lt;img&gt;  with  attributes  src  and  align  ((optional))</li>
+
+
+<li>&lt;table&gt;  with  optional  attribute  class,,  &lt;tbody&gt;,,  &lt;tr&gt;,,
+
+&lt;td&gt;,,  &lt;th&gt;..  &lt;td&gt;  and  &lt;th&gt;  can  have  the  attributes
+
+colspan,,  rowspan  and  valign</li>
+
+
+</ul>
+
+
+
+
+<p>All  tags  not  listed  above  will  be  removed  ((but  their  character  content  will
+
+remain))..  On  the  block--type  elements  and  images,,  the  id  attribute  is  supported..
+
+For  the  most  accurate  list  of  elements  and  attributes,,  have  a  look  at  the
+
+htmlcleaner..xml  file  ((see  below))..</p>
+
+
+
+
+<p>The  supported  tags  can  have  any  content  model  as  allowed  by  the  HTML  DTD,,  but
+
+of  course  limited  to  the  supported  tags..  If  an  element  occurs  in  a  location
+
+where  it  is  not  supported,,  an  ancestor  is  searched  where  it  is  allowed  and  the
+
+containing  element((s))  are  ended,,  the  element  inserted,,  and  the  containing
+
+elements  reopened..  This  happens  for  example  when  a  &lt;table&gt;  occurs  inside  a
+
+&lt;p&gt;..</p>
+
+
+
+
+<p>&lt;b&gt;  and  &lt;i&gt;  are  translated  to  &lt;strong&gt;  and  &lt;em&gt;
+
+respectively,,  as  are  &lt;span&gt;  tags  with  font--weight//font--style
+
+specifications..</p>
+
+
+
+
+<p>If  two  or  more  &lt;br&gt;  tags  appear  after  one  another,,  this  is  translated
+
+to  a  paragraph  split..  The  meaningless  &lt;br&gt;''s  that  the  Mozilla  editor  tends
+
+to  leave  everywhere  are  removed..  Text  that  appears  directly  in  the  &lt;body&gt;
+
+is  wrapped  inside  &lt;p&gt;  elements..</p>
+
+
+
+
+<p>&lt;br&gt;  tags  inside  &lt;pre&gt;  are  translated  to  newlines  characters..</p>
+
+
+
+
+<p>The  result  is  serialized  as  a  XML--well--formed  HTML  document  ((not  XHTML))
+
+((UTF--8  encoded))..  Lines  are  split  at  80  characters  ((if  possible)),,  meaningless
+
+whitespace  is  removed..</p>
+
+
+
+
+<p>All  this  should  also  ensure  that  the  resulting  HTML  is  ((mostly))  the  same
+
+whether  it  is  edited  using  Mozilla  or  Internet  Explorer..</p>
+
+
+
+
+<p>The  supported  tags,,  attributes  and  classes  for  &lt;p&gt;  are  not
+
+hardcoded  but  can  be  configured  in  a  file  ((htmlcleaner..xml))..  However,,  making
+
+arbitrary  adjustments  to  this  file  is  not  supported  ((the  html--cleaner  code
+
+expects  certain  tags  to  be  there))..  Adding  new  tags  or  attributes  should
+
+generally  not  be  a  problem,,  but  those  won''t  have  the  necessary  GUI  editing
+
+support  unless  you  implement  that  also..</p>
+
+
+
+
+<h1>Images</h1>
+
+
+
+
+<p>Images  can  be  inserted  either  by  browsing  for  an  existing  image  in  the
+
+repository,,  or  by  uploading  a  new  image  in  the  repository..  You  can  also  insert
+
+images  that  are  not  in  the  repository,,  but  available  at  some  URL..</p>
+
+
+
+
+<p>You  can  change  the  alignment  of  the  images  ((using  the  usual  text--align
+
+buttons)),,  and  change  how  the  text  flows  around  the  image..  This  last  option  won''t
+
+have  effect  in  the  PDF  output..</p>
+
+
+
+
+<p>Note  that  images  are  also  documents  <span class="diff-tag-removed">document</span>in  the  repository,,  thus  are  versioned  and
+
+such..  If  you  have  an  updated  version  of  an  image  you  want  to  insert,,  it  is
+
+recommend  to  NOT  delete  the  existing  image  and  upload  the  new  image,,  but  rather
+
+go  to  the  document  editor  for  that  image  ((you  can  use  the  ""Open  image  <span class="diff-tag-added">in</span><span class="diff-tag-added"> </span><span class="diff-tag-added"> </span><span class="diff-tag-added">new</span><span class="diff-tag-added">
+</span><span class="diff-tag-added">
+</span><span class="diff-tag-added">window</span>""<span class="diff-tag-added"> </span><span class="diff-tag-added"> </span><span class="diff-tag-added">toolbar</span>  button  for  this)),,  and  upload  the  new  version  over  there..</p>
+
+
+
+
+<p>Currently  it  is  hardcoded  that  images  <span class="diff-tag-removed">use</span><span class="diff-tag-added">should</span><span class="diff-tag-added"> </span><span class="diff-tag-added"> </span><span class="diff-tag-added">have</span><span class="diff-tag-added"> </span><span class="diff-tag-added"> </span><span class="diff-tag-added">an</span>  <span class="diff-tag-removed">the</span><span class="diff-tag-added">"</span><span class="diff-tag-added">"</span><span class="diff-tag-added">ImageData</span><span class="diff-tag-added">"</span><span class="diff-tag-added">"</span>
+
+<span class="diff-tag-removed">called</span><span class="diff-tag-removed">document</span><span class="diff-tag-added">part</span><span class="diff-tag-added">.</span><span class="diff-tag-added">.</span>  <span class="diff-tag-removed">"</span><span class="diff-tag-removed">ImageData</span><span class="diff-tag-removed">"</span><span class="diff-tag-removed">type</span><span class="diff-tag-added">They</span>  <span class="diff-tag-removed">called</span><span class="diff-tag-added">can</span>  <span class="diff-tag-removed">"</span><span class="diff-tag-removed">Image</span><span class="diff-tag-removed">"</span><span class="diff-tag-added">however</span>  <span class="diff-tag-removed">with</span><span class="diff-tag-added">be</span>  <span class="diff-tag-removed">the</span><span class="diff-tag-added">of</span>  <span class="diff-tag-removed">part</span><span class="diff-tag-added">any</span>  <span class="diff-tag-added">document</span>  <span class="diff-tag-added">type</span>..</p>
+
+
+
+
+<h1>Links</h1>
+
+
+
+
+<p>The  format  of  links  to  other  documents  in  the  daisy  repository  is::</p>
+
+
+
+
+<pre>daisy::&lt;document  id&gt;
+
+for  example::
+
+daisy::167<span class="diff-tag-removed">
+</span>
+</pre>
+
+
+
+
+<p>The  daisy  link  can  furthermore  include  branch,,  language  and  version
+
+specifications::</p>
+
+
+
+
+<pre>daisy::&lt;document  id&gt;@&lt;branch  name  or  id&gt;<span class="diff-tag-removed">
+</span>::&lt;language  name  or  id&gt;::&lt;version  id&gt;</pre>
+
+
+
+
+<p>Each  of  these  additional  parts  is  optional..  For  example  to  link  to  version  5
+
+of  document  167,,  on  the  same  branch  and  language  as  the  current  document
+
+variant,,  use::</p>
+
+
+
+
+<pre>daisy::167@::::5<span class="diff-tag-removed">
+</span>
+</pre>
+
+
+
+
+<p>The  <tt>&lt;version  id&gt;</tt>  can  be  a  number  or  the  strings  <tt>last</tt>
+
+or  <tt>live</tt>..</p>
+
+
+
+
+<p>If  you  don''t  know  the  id  of  a  document  by  heart  ((which  is  likely  the  case)),,
+
+use  the  ""Create  link  by  searching""  button  on  the  toolbar..</p>
+
+
+
+
+<p>A  link  can  furthermore  contain  a  fragment  identifier..  A  fragment  identifier
+
+is  used  to  directly  link  to  a  specific  element  ((e..g..  a  heading  or  a  table))  in  a
+
+document..  For  this  you  first  need  to  assign  an  ID  to  the  element  you  want  to
+
+link  to  ((there  is  an  ""Edit  ID""  for  this  on  the  toolbar)),,  and  then  you  can  adjust
+
+the  link..  The  link  editor  dialogs  make  it  easy  by  allowing  to  browse  for
+
+available  element  IDs..</p>
+
+
+
+
+<h1>Upload  and  link  ((""attachment""))</h1>
+
+
+
+
+<p>TODO</p>
+
+
+
+
+<h1>Includes</h1>
+
+
+
+
+<p>It  is  possible  <span class="diff-tag-removed">by</span>to  <span class="diff-tag-removed">searching</span><span class="diff-tag-removed">)</span>include  other  documents  into  the  <span class="diff-tag-removed">link</span>document  you  <span class="diff-tag-removed">is</span>are  editing..
+
+For  this,,  choose  ""Include""  <span class="diff-tag-removed">on</span>in  the  style  dropdown,,  and  enter  a  ""daisy::""  link  in
+
+the  paragraph<span class="diff-tag-added">.</span><span class="diff-tag-added">.</span>  <span class="diff-tag-removed">(</span><span class="diff-tag-removed">there</span><span class="diff-tag-added">There</span>  <span class="diff-tag-added">are</span>  <span class="diff-tag-removed">a</span><span class="diff-tag-added">also</span>  <span class="diff-tag-removed">button</span><span class="diff-tag-added">buttons</span>  <span class="diff-tag-added">in</span>  the  toolbar  to<span class="diff-tag-added"> </span><span class="diff-tag-added"> </span><span class="diff-tag-added">directly</span>  insert  <span class="diff-tag-removed">this</span><span class="diff-tag-added">such</span><span class="diff-tag-added"> </span><span class="diff-tag-added"> </span><span class="diff-tag-added">an</span><span class="diff-tag-added">
+</span><span class="diff-tag-added">
+</span><span class="diff-tag-added">include</span><span class="diff-tag-added"> </span><span class="diff-tag-added"> </span><span class="diff-tag-added">and</span><span class="diff-tag-added"> </span><span class="diff-tag-added"> </span><span class="diff-tag-added">to</span><span class="diff-tag-added"> </span><span class="diff-tag-added"> </span><span class="diff-tag-added">browse</span><span class="diff-tag-added"> </span><span class="diff-tag-added"> </span><span class="diff-tag-added">for</span><span class="diff-tag-added"> </span><span class="diff-tag-added"> </span><span class="diff-tag-added">the</span>  <span class="diff-tag-added">document</span>  <span class="diff-tag-added">to</span>  <span class="diff-tag-added">include</span>..</p>
+<a class="diff-tag-changed" href="#">
+<span>An old &lt;p&gt; tag was removed. 
+</span></a><a class="diff-tag-changed" href="#">
+<span>An old &lt;p&gt; tag was removed. 
+</span></a><span class="diff-tag-added">
+</span><span class="diff-tag-added">
+</span>
+<p>
+<span class="diff-tag-added">After</span>  the  ""daisy::""  link,,  you  can  put  some  whitespace  ((e..g..  a  a  space
+
+character)),,  and  then  put  whatever  additional  text  you  want..  This  text  will  not
+
+be  published,,  but  is  useful  to  leave  a  comment  ((e..g..  the  name  of  the  included
+
+document))..</p>
+<span class="diff-tag-added">
+</span><span class="diff-tag-added">
+</span><span class="diff-tag-added">
+</span><span class="diff-tag-added">
+</span>
+<p>
+<span class="diff-tag-added">[</span><span class="diff-tag-added">[</span><span class="diff-tag-added">todo</span><span class="diff-tag-added">:</span><span class="diff-tag-added">:</span><span class="diff-tag-added"> </span><span class="diff-tag-added"> </span><span class="diff-tag-added">write</span><span class="diff-tag-added"> </span><span class="diff-tag-added"> </span><span class="diff-tag-added">something</span><span class="diff-tag-added"> </span><span class="diff-tag-added"> </span><span class="diff-tag-added">about</span><a class="diff-tag-changed" href="#"> <span>A new &lt;p&gt; tag was added. 
+</span></a><a class="diff-tag-changed" href="#"> <span>A new &lt;p&gt; tag was added. 
+</span></a><span class="diff-tag-added">include</span><a class="diff-tag-changed" href="#"> <span>A new &lt;p&gt; tag was added. 
+</span></a><a class="diff-tag-changed" href="#"> <span>A new &lt;p&gt; tag was added. 
+</span></a><span class="diff-tag-added">previews</span><span class="diff-tag-added">]</span><span class="diff-tag-added">]</span>
+</p>
+<span class="diff-tag-added">
+</span><span class="diff-tag-added">
+</span><span class="diff-tag-added">
+</span><span class="diff-tag-added">
+</span>
+<p>The  system  checks  for  recursive  includes  ((when  the  document  is  published,,  not
+
+when  it  is  edited))..  If  a  recursive  include  occurs,,  an  error  notice  will  be  shown
+
+at  the  location  of  the  include..</p>
+
+
+
+
+<p>It  is  also  possible  to  include  other  sources  into  your  document,,  for  example
+
+""http::""  or  ""cocoon::""  URLs  ((however,,  see  <a>Include
+
+Permissions</a>))..  In  that  case,,  those  URLs  must  produce  an  embeddable  chunk  of
+
+HTML  in  the  form  of  well--formed  XML..  These  includes  are  currently  only  supported
+
+in  the  HTML  publishing,,  thus  not  for  PDFs..</p>
+
+
+
+
+<h1>Embedded  queries</h1>
+
+
+
+
+<p>It  is  possible  to  embed  a  query  in  a  page..  To  do  this,,  put  your  cursor  on  an
+
+empty  line,,  and  choose  ""Query""  in  the  style  dropdown..  The  style  of  the  paragraph
+
+will  change  to  indicate  it  will  now  be  interpreted  as  a  query..  Then  enter  the
+
+query  in  the  paragraph..</p>
+
+
+
+
+<p>The  query  must  be  written  in  the  Daisy  <a>Query
+
+Language</a>..  It  is  advisable  to  first  try  out  your  query  via  the  ""Query  Search""
+
+page,,  and  once  it  works  and  gives  the  expected  results,,  to  copy  and  paste  it  in
+
+the  document..</p>
+
+
+
+
+<p>If  you  save  a  document  containing  an  invalid  query,,  an  error  notice  will  be
+
+shown  at  the  location  of  the  query..</p>
+
+
+
+
+<h1>Query  and  Include</h1>
+
+
+
+
+<p>The  ""Query--Include""  option  allows  to  specify  a  query,,  and  the  documents
+
+returned  by  that  query  will  be  included  ((rather  then  showing  the  query  results))..
+
+This  allows  to  quickly  created  an  aggregated  document  without  needing  to
+
+manually  insert  includes..</p>
+
+
+
+
+<p>It  is  not  important  what  you  put  in  the  ""select""  part  of  the  query,,  you  can
+
+simply  do  ""select  id  where  ........""..</p>
+
+
+
+
+<h1>IDs  and  fragment  identifiers</h1>
+
+
+
+
+<p>It  is  not  only  possible  to  link  to  a  document,,  but  also  to  a  specific
+
+location  in  a  document..  The  element  to  which  you  want  to  link  ((a  header,,  image,,
+
+......))  must  have  an  ID  assigned..  To  do  this,,  place  the  cursor  inside  the  element
+
+to  which  to  assign  the  ID,,  and  then  press  the  ""Edit  ID""  button  on  the  toolbar..
+
+</p>
+
+
+
+
+<p>Then  to  link  to  the  specific  element,,  just  insert  a  link  like  you  always  do..
+
+Both  the  ""Create  link""  and  ""Create  link  by  searching""  dialogs  allow  to  select
+
+the  ID  from  the  target  document  ((in  the  ""fragment  ID""  field))..  In  the  HTML
+
+source,,  the  target  ID  is  specified  in  the  link  as  in  this  example::</p>
+
+
+
+
+<pre>daisy::5#notes</pre>
+<a class="diff-tag-changed" href="#">
+<span>An old &lt;pre&gt; tag was removed. 
+</span></a><a class="diff-tag-changed" href="#">
+<span>An old &lt;pre&gt; tag was removed. 
+</span></a>
+
+
+<p>This  link  will  cause  the  browser  to  scroll  to  the  element  with  an  ID
+
+attribute  with  the  value  ""notes""..  The  part  starting  from  the  hash  sign  is  called
+
+the  ""fragment  identifier""..</p>
+
+
+
+
+<p>Explicit  anchor  elements  ((e..g..  HTML  <tt>&lt;a  name==""notes""//&gt;</tt>))  are  not
+
+supported,,  as  these  sort  of  elements  are  not  visible  in  the  wysiwyg  editor  and
+
+thus  users  would  work  blindly  if  these  were  used  ((deleting  or  moving  them
+
+without  being  aware  of  it,,  and  being  impossible  to  edit  in  wysiwyg  mode))..</p>
+
+
+
+
+<h1>Editor  shortcuts</h1>
+
+
+
+
+<table>
+
+
+<tbody>
+
+
+<tr>
+
+
+<th>
+
+
+<p>Shortcut</p>
+
+
+</th>
+
+<th>
+
+
+<p>Function</p>
+
+
+</th>
+
+
+</tr>
+
+
+<tr>
+
+
+<td>
+
+
+<p>ctrl++b</p>
+
+
+</td>
+
+<td>
+
+
+<p>bold</p>
+
+
+</td>
+
+
+</tr>
+
+
+<tr>
+
+
+<td>
+
+
+<p>ctrl++i</p>
+
+
+</td>
+
+<td>
+
+
+<p>italic</p>
+
+
+</td>
+
+
+</tr>
+
+
+<tr>
+
+
+<td>
+
+
+<p>ctrl++z</p>
+
+
+</td>
+
+<td>
+
+
+<p>undo</p>
+
+
+</td>
+
+
+</tr>
+
+
+<tr>
+
+
+<td>
+
+
+<p>ctrl++y</p>
+
+
+</td>
+
+<td>
+
+
+<p>redo</p>
+
+
+</td>
+
+
+</tr>
+
+
+<tr>
+
+
+<td>
+
+
+<p>ctrl++c</p>
+
+
+</td>
+
+<td>
+
+
+<p>copy</p>
+
+
+</td>
+
+
+</tr>
+
+
+<tr>
+
+
+<td>
+
+
+<p>ctrl++x</p>
+
+
+</td>
+
+<td>
+
+
+<p>cut</p>
+
+
+</td>
+
+
+</tr>
+
+
+<tr>
+
+
+<td>
+
+
+<p>ctrl++v</p>
+
+
+</td>
+
+<td>
+
+
+<p>paste</p>
+
+
+</td>
+
+
+</tr>
+
+
+<tr>
+
+
+<td>
+
+
+<p>ctrl++1,,  ctrl++2,,  ......</p>
+
+
+</td>
+
+<td>
+
+
+<p>switch  to  header  level  1,,  2,,  ......</p>
+
+
+</td>
+
+
+</tr>
+
+
+<tr>
+
+
+<td>
+
+
+<p>ctrl++a</p>
+
+
+</td>
+
+<td>
+
+
+<p>select  all</p>
+
+
+</td>
+
+
+</tr>
+
+
+<tr>
+
+
+<td>
+
+
+<p>ctrl++q</p>
+
+
+</td>
+
+<td>
+
+
+<p>switch  between  bullets  //  no  bullets</p>
+
+
+</td>
+
+
+</tr>
+
+
+<tr>
+
+
+<td>
+
+
+<p>ctrl++r</p>
+
+
+</td>
+
+<td>
+
+
+<p>remove  formatting  ((same  as  the  gum  icon))  ((since  Daisy  1..1))</p>
+
+
+</td>
+
+
+</tr>
+
+
+</tbody>
+
+
+</table>
+
+
+
+
+<h1>Editing  hints</h1>
+
+
+
+
+<h2>Firefox  and  Mozilla</h2>
+
+
+
+
+<p>Pressing  enter  once  in  Firefox  inserts  a  newline  ((a  &lt;br&gt;))..  To  start  a
+
+new  paragraph,,  press  enter  twice..</p>
+
+
+
+
+<p>The  toolbar  buttons  for  cut//copy//paste  won''t  work  because  of  security
+
+restrictions,,  though  you  can  configure  Firefox  to  allow  this  for  a  specific
+
+site..  More  information  is  given  when  you  click  on  one  of  these  buttons  while  in
+
+Firefox..  However,,  using  the  keyboard  shortcuts  you  can  perform  these  operations
+
+without  any  special  configuration..</p>
+
+
+
+
+<p>When  you  add  a  link  or  apply  a  styling  to  some  words  on  the  end  of  a  line,,  it
+
+might  be  difficult  ((read::  impossible))  to  ''move  after''  the  link  or  styling..  You
+
+can  interrupt  the  link  or  styling  by  moving  the  cursor  to  the  end  of  the  line,,
+
+and  pressing  the  ''Remove  link''  or  ''Remove  formatting''  button  ((thus  without
+
+making  a  selection))..</p>
+
+
+
+
+<h2>Internet  Explorer  ((IE))</h2>
+
+
+
+
+<p>Merging  table  cells  in  IE  works  a  bit  counter--intuitive..  You  cannot  simply
+
+select  multiple  cells  and  click  on  the  merge  cell  button..  Instead,,  put  the
+
+cursor  in  one  cell,,  and  click  on  the  merge  cell  button..  You  will  then  be  asked
+
+how  many  rows  and  columns  you  want  to  merge<span class="diff-tag-added">.</span><span class="diff-tag-added">.</span>
+</p>
+<span class="diff-tag-added">
+</span><span class="diff-tag-added">
+</span><span class="diff-tag-added">
+</span><span class="diff-tag-added">
+</span>
+<h2>
+<span class="diff-tag-added">All</span><span class="diff-tag-added"> </span><span class="diff-tag-added"> </span><span class="diff-tag-added">browsers</span>
+</h2>
+<span class="diff-tag-added">
+</span><span class="diff-tag-added">
+</span><span class="diff-tag-added">
+</span><span class="diff-tag-added">
+</span>
+<p>
+<span class="diff-tag-added">To</span><span class="diff-tag-added"> </span><span class="diff-tag-added"> </span><span class="diff-tag-added">copy</span><span class="diff-tag-added"> </span><span class="diff-tag-added"> </span><span class="diff-tag-added">content</span><span class="diff-tag-added"> </span><span class="diff-tag-added"> </span><span class="diff-tag-added">from</span><span class="diff-tag-added"> </span><span class="diff-tag-added"> </span><span class="diff-tag-added">one</span><span class="diff-tag-added"> </span><span class="diff-tag-added"> </span><span class="diff-tag-added">document</span><span class="diff-tag-added"> </span><span class="diff-tag-added"> </span><span class="diff-tag-added">to</span><span class="diff-tag-added"> </span><span class="diff-tag-added"> </span><span class="diff-tag-added">the</span><span class="diff-tag-added"> </span><span class="diff-tag-added"> </span><span class="diff-tag-added">other</span><span class="diff-tag-added">,</span><span class="diff-tag-added">,</span><span class="diff-tag-added"> </span><span class="diff-tag-added"> </span><span class="diff-tag-added">it</span><span class="diff-tag-added"> </span><span class="diff-tag-added"> </span><span class="diff-tag-added">is</span><span class="diff-tag-added"> </span><span class="diff-tag-added"> </span><span class="diff-tag-added">recommended</span><span class="diff-tag-added"> </span><span class="diff-tag-added"> </span><span class="diff-tag-added">to</span><span class="diff-tag-added"> </span><span class="diff-tag-added"> </span><span class="diff-tag-added">open</span><span class="diff-tag-added"> </span><span class="diff-tag-added"> </span><span class="diff-tag-added">the</span><span class="diff-tag-added">
+</span><span class="diff-tag-added">
+</span><span class="diff-tag-added">source</span><span class="diff-tag-added"> </span><span class="diff-tag-added"> </span><span class="diff-tag-added">document</span><span class="diff-tag-added"> </span><span class="diff-tag-added"> </span><span class="diff-tag-added">in</span><span class="diff-tag-added"> </span><span class="diff-tag-added"> </span><span class="diff-tag-added">the</span><span class="diff-tag-added"> </span><span class="diff-tag-added"> </span><span class="diff-tag-added">editor</span><span class="diff-tag-added"> </span><span class="diff-tag-added"> </span><span class="diff-tag-added">and</span><span class="diff-tag-added"> </span><span class="diff-tag-added"> </span><span class="diff-tag-added">copy</span><span class="diff-tag-added"> </span><span class="diff-tag-added"> </span><span class="diff-tag-added">from</span><span class="diff-tag-added"> </span><span class="diff-tag-added"> </span><span class="diff-tag-added">there</span><span class="diff-tag-added">.</span><span class="diff-tag-added">.</span><span class="diff-tag-added"> </span><span class="diff-tag-added"> </span><span class="diff-tag-added">This</span><span class="diff-tag-added"> </span><span class="diff-tag-added"> </span><span class="diff-tag-added">way</span><span class="diff-tag-added"> </span><span class="diff-tag-added"> </span><span class="diff-tag-added">you</span><span class="diff-tag-added"> </span><span class="diff-tag-added"> </span><span class="diff-tag-added">make</span><span class="diff-tag-added"> </span><span class="diff-tag-added"> </span><span class="diff-tag-added">sure</span><span class="diff-tag-added"> </span><span class="diff-tag-added"> </span><span class="diff-tag-added">you</span><span class="diff-tag-added">
+</span><span class="diff-tag-added">
+</span><span class="diff-tag-added">copy</span><span class="diff-tag-added"> </span><span class="diff-tag-added"> </span><span class="diff-tag-added">the</span><span class="diff-tag-added"> </span><span class="diff-tag-added"> </span><span class="diff-tag-added">original</span><span class="diff-tag-added"> </span><span class="diff-tag-added"> </span><span class="diff-tag-added">source</span><span class="diff-tag-added"> </span><span class="diff-tag-added"> </span><span class="diff-tag-added">content</span><span class="diff-tag-added">,</span><span class="diff-tag-added">,</span><span class="diff-tag-added"> </span><span class="diff-tag-added"> </span><span class="diff-tag-added">e</span><span class="diff-tag-added">.</span><span class="diff-tag-added">.</span><span class="diff-tag-added">g</span><span class="diff-tag-added">.</span><span class="diff-tag-added">.</span><span class="diff-tag-added"> </span><span class="diff-tag-added"> </span><span class="diff-tag-added">with</span><span class="diff-tag-added"> </span><span class="diff-tag-added"> </span><span class="diff-tag-added">"</span><span class="diff-tag-added">"</span><span class="diff-tag-added">daisy</span><span class="diff-tag-added">:</span><span class="diff-tag-added">:</span><span class="diff-tag-added">"</span><span class="diff-tag-added">"</span><span class="diff-tag-added"> </span><span class="diff-tag-added"> </span><span class="diff-tag-added">links</span><span class="diff-tag-added"> </span><span class="diff-tag-added"> </span><span class="diff-tag-added">intact</span><span class="diff-tag-added">.</span><span class="diff-tag-added">.</span>
+</p>
+<span class="diff-tag-added">
+</span><span class="diff-tag-added">
+</span><span class="diff-tag-added">
+</span><span class="diff-tag-added">
+</span>
+<h2>
+<span class="diff-tag-added">Editing</span><span class="diff-tag-added"> </span><span class="diff-tag-added"> </span><span class="diff-tag-added">fields</span>
+</h2>
+<span class="diff-tag-added">
+</span><span class="diff-tag-added">
+</span><span class="diff-tag-added">
+</span><span class="diff-tag-added">
+</span>
+<h3>
+<span class="diff-tag-added">Editing</span><span class="diff-tag-added"> </span><span class="diff-tag-added"> </span><span class="diff-tag-added">hierarchical</span><span class="diff-tag-added"> </span><span class="diff-tag-added"> </span><span class="diff-tag-added">field</span><span class="diff-tag-added"> </span><span class="diff-tag-added"> </span><span class="diff-tag-added">values</span>
+</h3>
+<span class="diff-tag-added">
+</span><span class="diff-tag-added">
+</span><span class="diff-tag-added">
+</span><span class="diff-tag-added">
+</span>
+<p>
+<span class="diff-tag-added">Hierarchical</span><span class="diff-tag-added"> </span><span class="diff-tag-added"> </span><span class="diff-tag-added">field</span><span class="diff-tag-added"> </span><span class="diff-tag-added"> </span><span class="diff-tag-added">values</span><span class="diff-tag-added"> </span><span class="diff-tag-added"> </span><span class="diff-tag-added">are</span><span class="diff-tag-added"> </span><span class="diff-tag-added"> </span><span class="diff-tag-added">entered</span><span class="diff-tag-added"> </span><span class="diff-tag-added"> </span><span class="diff-tag-added">as</span><span class="diff-tag-added"> </span><span class="diff-tag-added"> </span><span class="diff-tag-added">a</span><span class="diff-tag-added"> </span><span class="diff-tag-added"> </span><span class="diff-tag-added">slash</span><span class="diff-tag-added">-</span><span class="diff-tag-added">-</span><span class="diff-tag-added">separated</span><span class="diff-tag-added"> </span><span class="diff-tag-added"> </span><span class="diff-tag-added">sequence</span><span class="diff-tag-added">.</span><span class="diff-tag-added">.</span><span class="diff-tag-added"> </span><span class="diff-tag-added"> </span><span class="diff-tag-added">For</span><span class="diff-tag-added">
+</span><span class="diff-tag-added">
+</span><span class="diff-tag-added">example</span><span class="diff-tag-added">:</span><span class="diff-tag-added">:</span><span class="diff-tag-added"> </span><span class="diff-tag-added"> </span><tt><span class="diff-tag-added">abc</span><span class="diff-tag-added"> </span><span class="diff-tag-added"> </span><span class="diff-tag-added">/</span><span class="diff-tag-added">/</span><span class="diff-tag-added"> </span><span class="diff-tag-added"> </span><span class="diff-tag-added">def</span><span class="diff-tag-added"> </span><span class="diff-tag-added"> </span><span class="diff-tag-added">/</span><span class="diff-tag-added">/</span><span class="diff-tag-added"> </span><span class="diff-tag-added"> </span><span class="diff-tag-added">ghi</span></tt><span class="diff-tag-added">.</span><span class="diff-tag-added">.</span><span class="diff-tag-added"> </span><span class="diff-tag-added"> </span><span class="diff-tag-added">The</span><span class="diff-tag-added"> </span><span class="diff-tag-added"> </span><span class="diff-tag-added">whitespace</span><span class="diff-tag-added"> </span><span class="diff-tag-added"> </span><span class="diff-tag-added">around</span><span class="diff-tag-added"> </span><span class="diff-tag-added"> </span><span class="diff-tag-added">the</span><span class="diff-tag-added"> </span><span class="diff-tag-added"> </span><span class="diff-tag-added">separator</span><span class="diff-tag-added"> </span><span class="diff-tag-added"> </span><span class="diff-tag-added">slashes</span><span class="diff-tag-added">
+</span><span class="diff-tag-added">
+</span><span class="diff-tag-added">is</span><span class="diff-tag-added"> </span><span class="diff-tag-added"> </span><span class="diff-tag-added">not</span><span class="diff-tag-added"> </span><span class="diff-tag-added"> </span><span class="diff-tag-added">significant</span><span class="diff-tag-added">,</span><span class="diff-tag-added">,</span><span class="diff-tag-added"> </span><span class="diff-tag-added"> </span><span class="diff-tag-added">it</span><span class="diff-tag-added"> </span><span class="diff-tag-added"> </span><span class="diff-tag-added">will</span><span class="diff-tag-added"> </span><span class="diff-tag-added"> </span><span class="diff-tag-added">be</span><span class="diff-tag-added"> </span><span class="diff-tag-added"> </span><span class="diff-tag-added">dropped</span><span class="diff-tag-added">.</span><span class="diff-tag-added">.</span><span class="diff-tag-added"> </span><span class="diff-tag-added"> </span><span class="diff-tag-added">An</span><span class="diff-tag-added"> </span><span class="diff-tag-added"> </span><span class="diff-tag-added">extra</span><span class="diff-tag-added"> </span><span class="diff-tag-added"> </span><span class="diff-tag-added">slash</span><span class="diff-tag-added"> </span><span class="diff-tag-added"> </span><span class="diff-tag-added">at</span><span class="diff-tag-added"> </span><span class="diff-tag-added"> </span><span class="diff-tag-added">the</span><span class="diff-tag-added"> </span><span class="diff-tag-added"> </span><span class="diff-tag-added">start</span><span class="diff-tag-added"> </span><span class="diff-tag-added"> </span><span class="diff-tag-added">or</span><span class="diff-tag-added"> </span><span class="diff-tag-added"> </span><span class="diff-tag-added">end</span><span class="diff-tag-added"> </span><span class="diff-tag-added"> </span><span class="diff-tag-added">is</span><span class="diff-tag-added">
+</span><span class="diff-tag-added">
+</span><span class="diff-tag-added">allowed</span><span class="diff-tag-added"> </span><span class="diff-tag-added"> </span><span class="diff-tag-added">and</span><span class="diff-tag-added"> </span><span class="diff-tag-added"> </span><span class="diff-tag-added">will</span><span class="diff-tag-added"> </span><span class="diff-tag-added"> </span><span class="diff-tag-added">be</span><span class="diff-tag-added"> </span><span class="diff-tag-added"> </span><span class="diff-tag-added">ignored</span><span class="diff-tag-added">.</span><span class="diff-tag-added">.</span><span class="diff-tag-added"> </span><span class="diff-tag-added"> </span><span class="diff-tag-added">Slashes</span><span class="diff-tag-added"> </span><span class="diff-tag-added"> </span><span class="diff-tag-added">separated</span><span class="diff-tag-added"> </span><span class="diff-tag-added"> </span><span class="diff-tag-added">by</span><span class="diff-tag-added"> </span><span class="diff-tag-added"> </span><span class="diff-tag-added">only</span><span class="diff-tag-added"> </span><span class="diff-tag-added"> </span><span class="diff-tag-added">whitespace</span><span class="diff-tag-added"> </span><span class="diff-tag-added"> </span><span class="diff-tag-added">will</span><span class="diff-tag-added"> </span><span class="diff-tag-added"> </span><span class="diff-tag-added">be</span><span class="diff-tag-added">
+</span><span class="diff-tag-added">
+</span><span class="diff-tag-added">dropped</span><span class="diff-tag-added"> </span><span class="diff-tag-added"> </span><span class="diff-tag-added">(</span><span class="diff-tag-added">(</span><span class="diff-tag-added">i</span><span class="diff-tag-added">.</span><span class="diff-tag-added">.</span><span class="diff-tag-added">o</span><span class="diff-tag-added">.</span><span class="diff-tag-added">.</span><span class="diff-tag-added">w</span><span class="diff-tag-added">.</span><span class="diff-tag-added">.</span><span class="diff-tag-added"> </span><span class="diff-tag-added"> </span><span class="diff-tag-added">they</span><span class="diff-tag-added"> </span><span class="diff-tag-added"> </span><span class="diff-tag-added">will</span><span class="diff-tag-added"> </span><span class="diff-tag-added"> </span><span class="diff-tag-added">not</span><span class="diff-tag-added"> </span><span class="diff-tag-added"> </span><span class="diff-tag-added">cause</span><span class="diff-tag-added"> </span><span class="diff-tag-added"> </span><span class="diff-tag-added">the</span><span class="diff-tag-added"> </span><span class="diff-tag-added"> </span><span class="diff-tag-added">addition</span><span class="diff-tag-added"> </span><span class="diff-tag-added"> </span><span class="diff-tag-added">of</span><span class="diff-tag-added"> </span><span class="diff-tag-added"> </span><span class="diff-tag-added">an</span><span class="diff-tag-added"> </span><span class="diff-tag-added"> </span><span class="diff-tag-added">element</span><span class="diff-tag-added"> </span><span class="diff-tag-added"> </span><span class="diff-tag-added">in</span><span class="diff-tag-added"> </span><span class="diff-tag-added"> </span><span class="diff-tag-added">the</span><span class="diff-tag-added">
+</span><span class="diff-tag-added">
+</span><span class="diff-tag-added">hierarchical</span><span class="diff-tag-added"> </span><span class="diff-tag-added"> </span><span class="diff-tag-added">path</span><span class="diff-tag-added">)</span><span class="diff-tag-added">)</span><span class="diff-tag-added">.</span><span class="diff-tag-added">.</span><span class="diff-tag-added"> </span><span class="diff-tag-added"> </span><span class="diff-tag-added">If</span><span class="diff-tag-added"> </span><span class="diff-tag-added"> </span><span class="diff-tag-added">you</span><span class="diff-tag-added"> </span><span class="diff-tag-added"> </span><span class="diff-tag-added">want</span><span class="diff-tag-added"> </span><span class="diff-tag-added"> </span><span class="diff-tag-added">to</span><span class="diff-tag-added"> </span><span class="diff-tag-added"> </span><span class="diff-tag-added">use</span><span class="diff-tag-added"> </span><span class="diff-tag-added"> </span><span class="diff-tag-added">the</span><span class="diff-tag-added"> </span><span class="diff-tag-added"> </span><span class="diff-tag-added">slash</span><span class="diff-tag-added"> </span><span class="diff-tag-added"> </span><span class="diff-tag-added">character</span><span class="diff-tag-added"> </span><span class="diff-tag-added"> </span><span class="diff-tag-added">in</span><span class="diff-tag-added"> </span><span class="diff-tag-added"> </span><span class="diff-tag-added">a</span><span class="diff-tag-added"> </span><span class="diff-tag-added"> </span><span class="diff-tag-added">value</span><span class="diff-tag-added"> </span><span class="diff-tag-added"> </span><span class="diff-tag-added">itself</span><span class="diff-tag-added">,</span><span class="diff-tag-added">,</span><span class="diff-tag-added">
+</span><span class="diff-tag-added">
+</span><span class="diff-tag-added">this</span><span class="diff-tag-added"> </span><span class="diff-tag-added"> </span><span class="diff-tag-added">can</span><span class="diff-tag-added"> </span><span class="diff-tag-added"> </span><span class="diff-tag-added">be</span><span class="diff-tag-added"> </span><span class="diff-tag-added"> </span><span class="diff-tag-added">done</span><span class="diff-tag-added"> </span><span class="diff-tag-added"> </span><span class="diff-tag-added">by</span><span class="diff-tag-added"> </span><span class="diff-tag-added"> </span><span class="diff-tag-added">escaping</span><span class="diff-tag-added"> </span><span class="diff-tag-added"> </span><span class="diff-tag-added">it</span><span class="diff-tag-added"> </span><span class="diff-tag-added"> </span><span class="diff-tag-added">as</span><span class="diff-tag-added"> </span><span class="diff-tag-added"> </span><span class="diff-tag-added">a</span><span class="diff-tag-added"> </span><span class="diff-tag-added"> </span><span class="diff-tag-added">double</span><span class="diff-tag-added"> </span><span class="diff-tag-added"> </span><span class="diff-tag-added">slash</span><span class="diff-tag-added"> </span><span class="diff-tag-added"> </span><span class="diff-tag-added">(</span><span class="diff-tag-added">(</span><span class="diff-tag-added">/</span><span class="diff-tag-added">/</span><span class="diff-tag-added">/</span><span class="diff-tag-added">/</span><span class="diff-tag-added">)</span><span class="diff-tag-added">)</span>..</p>
+
+
+
+
+<h1>Character  Set  Information</h1>
+
+
+
+
+<p>By  default,,  daisy  is  configured  to  use  unicode  ((UTF--8))  everywhere..  For  the
+
+part  content  you  enter  in  the  wysiwyg  or  source  editor,,  you  can  use  whatever
+
+unicode--supported  characters  ((more  correctly,,  it  is  limited  by  as  far  as  Java
+
+supports  unicode))..  Metadata  however,,  such  as  the  document  name,,  fields,,  etc  is
+
+stored  in  a  relational  database,,  MySQL,,  which  needs  to  be  configured  with  a
+
+certain  encoding  ((in  West--Europe  often  latin1))  and  hence  is  limited  to  the
+
+characters  supported  by  that  encoding..  Contact  your  system  administrator  if  you
+
+which  to  know  what  encoding  that  is,,  and  thus  to  what  characters  ((glyphs))  you''re
+
+limited..</p>
+
+
+
+
+
+
+</body>
+</html>

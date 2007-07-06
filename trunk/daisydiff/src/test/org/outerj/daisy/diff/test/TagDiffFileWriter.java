@@ -58,6 +58,14 @@ public class TagDiffFileWriter {
         serializer.startElement("", "link", "link", csslink);
         serializer.endElement("", "link", "link");
         
+        csslink = new AttributesImpl();
+        csslink.addAttribute("", "href", "href", "CDATA", "http://cocoondev.org/resources/skins/daisysite/css/docstyle.css");
+        csslink.addAttribute("", "type", "type", "CDATA", "text/css");
+        csslink.addAttribute("", "rel", "rel", "CDATA", "stylesheet");
+        serializer.startElement("", "link", "link", csslink);
+        serializer.endElement("", "link", "link");
+        
+        
         serializer.endElement("", "head", "head");
         serializer.startElement("", "body", "body", noattrs);
 

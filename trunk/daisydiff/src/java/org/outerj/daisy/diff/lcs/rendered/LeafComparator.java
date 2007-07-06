@@ -141,6 +141,10 @@ public class LeafComparator extends DefaultHandler implements IRangeComparator
             getLeaf(i).markAsNew();
         }
     }
+    
+    public void compareTags(int i, TextNode node){
+        getLeaf(i).compareTags(node.getParentTree());
+    }
 
     public boolean rangesEqual(int i1, IRangeComparator rangeComp, int i2) {
         LeafComparator comp;
@@ -192,6 +196,51 @@ public class LeafComparator extends DefaultHandler implements IRangeComparator
         default:
             return false;
         }
+    }
+
+    public void markAsDeleted(int start, int end, LeafComparator leftComparator, int before) {
+
+        int cut=start;
+        boolean cutFound = false;
+        
+        TextNode prevLeaf = null;
+        if(before>0)
+             prevLeaf = getLeaf(before-1);
+        else{
+            cut = start;
+            cutFound = true;
+        }
+        
+        TextNode nextLeaf = null;
+        if(before<getRangeCount())
+            nextLeaf = getLeaf(before);
+        else{
+            cut = end+1;
+            cutFound = true;
+        }
+        
+        while(!cutFound && cut<end && prevLeaf.getTagDistance(leftComparator.getLeaf(cut).getParentTree())
+                <nextLeaf.getTagDistance(leftComparator.getLeaf(cut).getParentTree())){
+            cut++;
+        }
+        
+        System.out.println("cut found at "+cut+" between "+start+" and "+end);
+        
+        for(int i=start;i<cut;i++){
+            TextNode t = leftComparator.getLeaf(i);
+            TagNode parent = prevLeaf.getParent();
+            t.setDeleted();
+            t.setParent(parent);
+            parent.addChildBefore(parent.getIndexOf(prevLeaf)+1, t);
+        }
+        for(int i=cut;i<end;i++){
+            TextNode t = leftComparator.getLeaf(i);
+            TagNode parent = nextLeaf.getParent();
+            t.setDeleted();
+            t.setParent(parent);
+            parent.addChildBefore(parent.getIndexOf(nextLeaf), t);
+        }
+        
     }
 
 }

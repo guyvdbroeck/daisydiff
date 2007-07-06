@@ -27,12 +27,28 @@ public class RenderedDiffer {
         List<PublicRangeDifference> pdifferences = preProcess(differences,
                 leftComparator);
         
+        int nextleftstart = 0;
+        int nextrightstart = 0;
+        
         for(PublicRangeDifference d : pdifferences){
-            System.out.println("making as new: "+ d.rightStart() + "-"+ d.rightEnd());
+            
+            if(d.leftStart()>nextleftstart){
+                handleClearPart(nextleftstart, d.leftStart(), nextrightstart
+                        , d.rightStart(), leftComparator, rightComparator);
+            }
+            if(d.leftLength()>0){
+                rightComparator.markAsDeleted(d.leftStart(),d.leftEnd(),leftComparator, d.rightStart());
+            }
             rightComparator.markAsNew(d.rightStart(), d.rightEnd());
+            
+            nextleftstart = d.leftEnd();
+            nextrightstart = d.rightEnd();
         }
-        
-        
+        if(nextleftstart<leftComparator.getRangeCount()){
+            handleClearPart(nextleftstart, leftComparator.getRangeCount()
+                    , nextrightstart, rightComparator.getRangeCount()
+                    , leftComparator, rightComparator);
+        }
         
         output.toHTML(rightComparator.getBody());
     }
@@ -40,7 +56,15 @@ public class RenderedDiffer {
     private void handleClearPart(int leftstart, int leftend, int rightstart, int rightend
             , LeafComparator leftComparator, LeafComparator rightComparator){
         
+        int i=rightstart;
+        int j=leftstart;
         
+        while(i<rightend){
+            
+            rightComparator.compareTags(i, leftComparator.getLeaf(j));
+            
+            i++;j++;
+        }
         
     }
 

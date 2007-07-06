@@ -26,6 +26,16 @@ public class TagNode extends Node implements Iterable<Node> {
         children.add(node);
     }
     
+    public int getIndexOf(Node child){
+        return children.indexOf(child);
+    }
+    
+    public void addChildBefore(int index, Node node) {
+        if(node.getParent()!=this)
+            throw new IllegalStateException("The new child must have this node as a parent.");
+        children.add(index, node);
+    }
+    
     public Node getChild(int i){
         return children.get(i);
     }
@@ -58,7 +68,7 @@ public class TagNode extends Node implements Iterable<Node> {
             return false;
         }
         
-        return getQName().equals(otherTagNode.getQName());
+        return getOpeningTag().equals(otherTagNode.getOpeningTag());
     }
 
     public String getOpeningTag() {

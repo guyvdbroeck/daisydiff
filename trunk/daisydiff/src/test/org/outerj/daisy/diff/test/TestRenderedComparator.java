@@ -32,15 +32,20 @@ public class TestRenderedComparator {
         LeafComparator rightContentHandler = new LeafComparator();
 
         InputXMLReader.readXML(new URL(
-                "http://cocoondev.org/wiki/291-cd/version/18/part/SimpleDocumentContent/data")
-        , leftContentHandler);
+//              "http://cocoondev.org/daisydocs-2_0/374-cd/24-cd/version/1/part/SimpleDocumentContent/data")
+//              "http://cocoondev.org/wiki/291-cd/version/19/part/SimpleDocumentContent/data")
+                "http://cocoondev.org/wiki/476-cd/version/3/part/SimpleDocumentContent/data")
+                , leftContentHandler);
     
         InputXMLReader.readXML(new URL(
-                "http://cocoondev.org/wiki/291-cd/version/24/part/SimpleDocumentContent/data")
+//        "http://cocoondev.org/daisydocs-2_0/374-cd/24-cd/version/4/part/SimpleDocumentContent/data")
+//        "http://cocoondev.org/wiki/291-cd/version/24/part/SimpleDocumentContent/data")
+        "http://cocoondev.org/wiki/476-cd/version/4/part/SimpleDocumentContent/data")
         , rightContentHandler);
         
         RenderedDiffFileWriter.diff(
+                
                 "/home/guy/workspace/daisydiff/src/test/org/outerj/daisy/diff/test/html"
-                        + "/rendered2.html", leftContentHandler, rightContentHandler);
+                        + "/rendered4.html", leftContentHandler, rightContentHandler);
     }
 }

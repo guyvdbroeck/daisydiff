@@ -31,13 +31,38 @@ public class HtmlSaxRenderedDiffOutput {
                     attrs.addAttribute("", "class", "class", "CDATA", "diff-tag-added");
                     
                     handler.startElement("", "span", "span", attrs);
+                }else if(textChild.isChanged()){
+                    AttributesImpl attrs = new AttributesImpl();
+                    attrs.addAttribute("", "class", "class", "CDATA", "diff-tag-changed");
                     
+                    attrs.addAttribute("", "href", "href", "CDATA", "#");
+                    
+                    handler.startElement("", "a", "a", attrs);
+                }else if(textChild.isDeleted()){
+                    AttributesImpl attrs = new AttributesImpl();
+                    attrs.addAttribute("", "class", "class", "CDATA", "diff-tag-removed");
+                    
+                    handler.startElement("", "span", "span", attrs);
                 }
                 
                 char[] chars = textChild.getText().toCharArray();
                 handler.characters(chars, 0, chars.length);
             
                 if(textChild.isNew()){
+                    handler.endElement("", "span", "span");
+                    
+                }else if(textChild.isChanged()){
+                    AttributesImpl attrs = new AttributesImpl();
+                     
+                    handler.startElement("", "span", "span", attrs);
+                    
+                    handler.characters(textChild.getChanges().toCharArray(), 0, textChild.getChanges().length());
+                    
+                    handler.endElement("", "span", "span");
+                    
+                    
+                    handler.endElement("", "a", "a");
+                }else if(textChild.isDeleted()){
                     handler.endElement("", "span", "span");
                     
                 }
