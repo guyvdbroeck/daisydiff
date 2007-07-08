@@ -20,6 +20,7 @@ import java.util.List;
 
 import org.eclipse.compare.rangedifferencer.IRangeComparator;
 import org.outerj.daisy.diff.lcs.rendered.dom.BodyNode;
+import org.outerj.daisy.diff.lcs.rendered.dom.Node;
 import org.outerj.daisy.diff.lcs.rendered.dom.TagNode;
 import org.outerj.daisy.diff.lcs.rendered.dom.TextNode;
 import org.xml.sax.Attributes;
@@ -197,78 +198,111 @@ public class LeafComparator extends DefaultHandler implements IRangeComparator
         }
     }
 
-    public void markAsDeleted(int start, int end, LeafComparator oldComp, int before) {
-
-        int cut=start;
-        boolean cutFound = false;
+    public void markAsDeleted(int start, int end, LeafComparator oldComp, int before, boolean reconstructTags) {
         
-        TextNode prevLeaf = null;
-        if(before>0)
-             prevLeaf = getLeaf(before-1);
-        else{
-            cut = start;
-            cutFound = true;
-            System.out.println("cut at start");
-        }
-        
-        TextNode nextLeaf = null;
-        if(before<getRangeCount())
-            nextLeaf = getLeaf(before);
-        else{
-            cut = end+1;
-            cutFound = true;
-
-            System.out.println("cut at end");
-        }
-
-        int[] prevD = new int[end-start];
-        int[] nextD = new int[end-start];
-        
-        if (!cutFound) {
-            for (int i = start; i < end; i++) {
-                prevD[i-start]=prevLeaf.getTagDistance(oldComp.getLeaf(i).getParentTree());
-                nextD[i-start]=nextLeaf.getTagDistance(oldComp.getLeaf(i).getParentTree());
-                System.out.println(i-start+": "+prevD[i-start]+" vs "+nextD[i-start]);
+        if(!reconstructTags){
+            int cut=start;
+            boolean cutFound = false;
+            
+            TextNode prevLeaf = null;
+            if(before>0)
+                 prevLeaf = getLeaf(before-1);
+            else{
+                cut = start;
+                cutFound = true;
+                System.out.println("cut at start");
             }
             
-            long min=Long.MAX_VALUE;
-            cut = start;
-            for (int i = start; i < end+1; i++) {
-                long sum = 0;
-                for (int j = start; j < i; j++) {
-                    sum+=prevD[j-start];
-                }
-                for (int j = i; j < end; j++) {
-                    sum+=nextD[j-start];
-                }
-                System.out.println("sum for "+i+" is "+sum);
-                if(sum<min){
-                    min=sum;
-                    cut=i;
-                }
+            TextNode nextLeaf = null;
+            if(before<getRangeCount())
+                nextLeaf = getLeaf(before);
+            else{
+                cut = end+1;
+                cutFound = true;
+    
+                System.out.println("cut at end");
             }
-        }        
-        
-        System.out.println("cut found at "+cut+" between "+start+" and "+end);
-        //System.out.println(prevLeaf.getText()+" -> "+nextLeaf.getText());
-        
-        TagNode parent = prevLeaf.getParent();
-        int insertPoint= parent.getIndexOf(prevLeaf)+1;
-        for(int i=start;i<cut;i++){
-            TextNode t = oldComp.getLeaf(i);
+    
+            int[] prevD = new int[end-start];
+            int[] nextD = new int[end-start];
             
-            t.setDeleted();
-            t.setParent(parent);
-            parent.addChildBefore(insertPoint++, t);
+            if (!cutFound) {
+                for (int i = start; i < end; i++) {
+                    prevD[i-start]=prevLeaf.getTagDistance(oldComp.getLeaf(i).getParentTree());
+                    nextD[i-start]=nextLeaf.getTagDistance(oldComp.getLeaf(i).getParentTree());
+                    System.out.println(i-start+": "+prevD[i-start]+" vs "+nextD[i-start]);
+                }
+                
+                long min=Long.MAX_VALUE;
+                cut = start;
+                for (int i = start; i < end+1; i++) {
+                    long sum = 0;
+                    for (int j = start; j < i; j++) {
+                        sum+=prevD[j-start];
+                    }
+                    for (int j = i; j < end; j++) {
+                        sum+=nextD[j-start];
+                    }
+                    System.out.println("sum for "+i+" is "+sum);
+                    if(sum<min){
+                        min=sum;
+                        cut=i;
+                    }
+                }
+            }        
+            
+            System.out.println("cut found at "+cut+" between "+start+" and "+end);
+            //System.out.println(prevLeaf.getText()+" -> "+nextLeaf.getText());
+            
+            TagNode parent = prevLeaf.getParent();
+            int insertPoint= parent.getIndexOf(prevLeaf)+1;
+            for(int i=start;i<cut;i++){
+                TextNode t = oldComp.getLeaf(i);
+                
+                t.setDeleted();
+                t.setParent(parent);
+                parent.addChildBefore(insertPoint++, t);
+            }
+            parent = nextLeaf.getParent();
+            for(int i=cut;i<end;i++){
+                TextNode t = oldComp.getLeaf(i);
+                t.setDeleted();
+                t.setParent(parent);
+                parent.addChildBefore(parent.getIndexOf(nextLeaf), t);
+            }
+        }else{
+            
+            for(int i=start;i<end;i++){
+                oldComp.getLeaf(i).markAsDeleted(start);
+                oldComp.getLeaf(i).setDeleted();
+            }
+            List<Node> deletedNodes = oldComp.getBody().getMinimalDeletedSet(start);
+            
+            Node prevLeaf = null;
+            if(before>0)
+                 prevLeaf = getLeaf(before-1);
+            else{
+                 prevLeaf = null;
+            }
+            
+            for(int i=0;i<deletedNodes.size();i++){
+                System.out.println("taking on deletednode "+i);
+                TagNode lastcommonparent;
+                int afterLastcommonparentIndex ;
+                if(prevLeaf==null){
+                    lastcommonparent = getBody();
+                    afterLastcommonparentIndex = 0;
+                }else{
+                    lastcommonparent = deletedNodes.get(i)
+                                        .getLastCommonParent(prevLeaf);
+                    afterLastcommonparentIndex = deletedNodes.get(i).getAfterLastCommonParentIndex();
+                }
+                deletedNodes.get(i).setParent(lastcommonparent);
+                lastcommonparent.addChildBefore(afterLastcommonparentIndex, deletedNodes.get(i));
+                prevLeaf=deletedNodes.get(i);
+            }
+            
         }
-        parent = nextLeaf.getParent();
-        for(int i=cut;i<end;i++){
-            TextNode t = oldComp.getLeaf(i);
-            t.setDeleted();
-            t.setParent(parent);
-            parent.addChildBefore(parent.getIndexOf(nextLeaf), t);
-        }
-        
     }
 
 }
