@@ -48,7 +48,7 @@ a.diff-tag-changed:hover span {
   font-weight: normal;
   font-style: normal;
   text-decoration: none;
-  white-space: pre;
+  white-space: auto;
   width: auto;
   min-width: 200px;
 }

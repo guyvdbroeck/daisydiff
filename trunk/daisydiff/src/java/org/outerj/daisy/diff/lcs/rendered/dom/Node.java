@@ -33,7 +33,7 @@ public abstract class Node {
     }
     
     public List<TagNode> getParentTree() {
-        List<TagNode> parentTree = new ArrayList(5);
+        List<TagNode> parentTree = new ArrayList<TagNode>(5);
         if(getParent()!=null){
             parentTree.addAll(getParent().getParentTree());
             parentTree.add(getParent());
@@ -41,7 +41,7 @@ public abstract class Node {
         return parentTree;
     }
     
-    public abstract List<Node>  getMinimalDeletedSet(int start);
+    public abstract List<Node> getMinimalDeletedSet(int start);
 
     public TagNode getLastCommonParent(Node other) {
         if(other == null)
@@ -56,22 +56,42 @@ public abstract class Node {
             if(myParents.get(i).isSameTag(otherParents.get(i))){
                 lastIndex=i;
             }else{
-                afterLastCommonParentIndex = myParents.get(lastIndex).getIndexOf(
-                                        myParents.get(i))+1;
+                lastCommonParentIndex = myParents.get(lastIndex).getIndexOf(
+                                        myParents.get(i));
+                lastCommonParentDepth = lastIndex;
                 return myParents.get(lastIndex);
             }
         }
         
         //There were no parents besides the BODY
-        afterLastCommonParentIndex=myParents.get(0).getIndexOf(other)+1;
+        if(myParents.size()<=1){
+            lastCommonParentIndex= myParents.get(0).getIndexOf(this);
+            lastCommonParentDepth= 0;
+        }
         
+        //All tags matched
+        else if(myParents.size()<=otherParents.size()){
+           lastCommonParentIndex = myParents.get(lastIndex).getIndexOf(
+                    this);
+            lastCommonParentDepth = lastIndex;
+        }else{
+            lastCommonParentIndex = myParents.get(lastIndex).getIndexOf(
+                    myParents.get(lastIndex+1));
+            lastCommonParentDepth = lastIndex;
+        }
         return myParents.get(lastIndex);
     }
     
-    private int afterLastCommonParentIndex=-1;
+    private int lastCommonParentDepth=-1;
     
-    public int getAfterLastCommonParentIndex(){
-        return afterLastCommonParentIndex;
+    public int getLastCommonParentDepth(){
+        return lastCommonParentDepth;
+    }
+    
+    private int lastCommonParentIndex=-1;
+    
+    public int getLastCommonParentIndex(){
+        return lastCommonParentIndex;
     }
     public void setParent(TagNode parent) {
         this.parent = parent;

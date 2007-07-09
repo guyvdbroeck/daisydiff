@@ -27,6 +27,7 @@ public class TestRenderedComparator {
         new TestRenderedComparator(2);
         new TestRenderedComparator(3);
         new TestRenderedComparator(4);
+        new TestRenderedComparator(5);
     }
 
     public TestRenderedComparator(int i) throws Exception {
@@ -78,6 +79,17 @@ public class TestRenderedComparator {
                             new URL(
                             "http://cocoondev.org/wiki/476-cd/version/5/part/SimpleDocumentContent/data"),
                             rightContentHandler);
+        }else if (i == 5) {
+            InputXMLReader
+            .readXML(
+                    new URL(
+                            "http://cocoondev.org/wiki/476-cd/version/6/part/SimpleDocumentContent/data"),
+                    leftContentHandler);
+    InputXMLReader
+            .readXML(
+                    new URL(
+                            "http://cocoondev.org/wiki/476-cd/version/9/part/SimpleDocumentContent/data"),
+                    rightContentHandler);
         }
         RenderedDiffFileWriter.diff(
 

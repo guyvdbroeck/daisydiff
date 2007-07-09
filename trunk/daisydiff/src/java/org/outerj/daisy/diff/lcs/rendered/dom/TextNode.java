@@ -45,9 +45,6 @@ public class TextNode extends Node{
             System.out.println("ClassCastException");
             return false;
         }
-//        System.out.println("comparing "+getText()+" and "+otherTextNode.getText());
-//        System.out.println("returning "+getText().replace('\n', ' ')
-//                .equals(otherTextNode.getText().replace('\n', ' ')));
         return getText().replace('\n', ' ')
                 .equals(otherTextNode.getText().replace('\n', ' '));
     }
@@ -126,6 +123,8 @@ public class TextNode extends Node{
         return nodes;
     }
     
-    
+    public String toString(){
+        return getText();
+    }
     
 }

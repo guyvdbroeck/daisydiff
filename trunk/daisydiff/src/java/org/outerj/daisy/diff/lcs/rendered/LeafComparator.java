@@ -27,141 +27,145 @@ import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
-public class LeafComparator extends DefaultHandler implements IRangeComparator
-{
+public class LeafComparator extends DefaultHandler implements IRangeComparator {
 
     private List<TextNode> leafs = new ArrayList<TextNode>(50);
-    
+
     private BodyNode bodyNode = new BodyNode();
+
     private TagNode currentParent = bodyNode;
-    
+
     private boolean documentStarted = false;
+
     private boolean documentEnded = false;
-    
+
     public LeafComparator() {
         super();
     }
-    
-    public BodyNode getBody(){
+
+    public BodyNode getBody() {
         return bodyNode;
     }
-    
+
     public void startDocument() throws SAXException {
-        if(documentStarted)
-            throw new IllegalStateException("This Handler only accepts one document");
-        documentStarted=true;
+        if (documentStarted)
+            throw new IllegalStateException(
+                    "This Handler only accepts one document");
+        documentStarted = true;
     }
 
-    public void endDocument () throws SAXException {
-        if(!documentStarted || documentEnded)
+    public void endDocument() throws SAXException {
+        if (!documentStarted || documentEnded)
             throw new IllegalStateException();
         endWord();
-        documentEnded=true;
-        documentStarted=false;
+        documentEnded = true;
+        documentStarted = false;
     }
 
     private boolean bodyStarted = false;
+
     private boolean bodyEnded = false;
-    
+
     public void startElement(String uri, String localName, String qName,
             Attributes attributes) throws SAXException {
-        
+
         if (!documentStarted || documentEnded)
             throw new IllegalStateException();
-        
+
         if (bodyStarted && !bodyEnded) {
-            TagNode newTagNode = new TagNode(currentParent, qName, attributes);;
-//                    +" with parent "+currentParent.getOpeningTag());
+            TagNode newTagNode = new TagNode(currentParent, qName, attributes);
+            ;
+            // +" with parent "+currentParent.getOpeningTag());
             currentParent = newTagNode;
-        }else if(bodyStarted){
-            //Ignoring element after body tag closed
-        }else if(qName.equalsIgnoreCase("body")){
+        } else if (bodyStarted) {
+            // Ignoring element after body tag closed
+        } else if (qName.equalsIgnoreCase("body")) {
             bodyStarted = true;
         }
     }
 
     public void endElement(String uri, String localName, String qName)
             throws SAXException {
-        
+
         if (!documentStarted || documentEnded)
             throw new IllegalStateException();
 
-        if(qName.equalsIgnoreCase("body")){
+        if (qName.equalsIgnoreCase("body")) {
             bodyEnded = true;
-        }else if (bodyStarted && ! bodyEnded) {
+        } else if (bodyStarted && !bodyEnded) {
             endWord();
-            //System.out.println("Ended: " + currentParent.getEndTag());
+            // System.out.println("Ended: " + currentParent.getEndTag());
             currentParent = currentParent.getParent();
         }
     }
-    
+
     private StringBuilder newWord = new StringBuilder();
-    
+
     public void characters(char ch[], int start, int length)
             throws SAXException {
-        
+
         if (!documentStarted || documentEnded)
             throw new IllegalStateException();
-        
-        for(int i=start; i<start+length;i++){
+
+        for (int i = start; i < start + length; i++) {
             char c = ch[i];
-            if(isValidDelimiter(c)){
-                endWord(); 
-                TextNode textNode = new TextNode(currentParent, c+"");
-                
+            if (isValidDelimiter(c)) {
+                endWord();
+                TextNode textNode = new TextNode(currentParent, Character.toString(c));
+
                 leafs.add(textNode);
                 currentParent.addChild(textNode);
-                //System.out.println("adding delimiter: "+ textNode.getText());
                 
-            }else{
+
+            } else {
                 newWord.append(c);
             }
-            
+
         }
     }
-    
-    private void endWord(){
-        if (newWord.length()>0) {
-           // System.out.println("adding word: " + newWord.toString());
+
+    private void endWord() {
+        if (newWord.length() > 0) {
+            // System.out.println("adding word: " + newWord.toString());
             leafs.add(new TextNode(currentParent, newWord.toString()));
             newWord.setLength(0);
-        }        
+        }
     }
 
     public int getRangeCount() {
-       return leafs.size();
+        return leafs.size();
     }
-    
-    public TextNode getLeaf(int i){
-       return leafs.get(i);
+
+    public TextNode getLeaf(int i) {
+        return leafs.get(i);
     }
-    
-    public void markAsNew(int begin, int end){
-        for(int i=begin;i<end;i++){
+
+    public void markAsNew(int begin, int end) {
+        for (int i = begin; i < end; i++) {
             getLeaf(i).markAsNew();
         }
     }
-    
-    public void compareTags(int i, TextNode node){
+
+    public void compareTags(int i, TextNode node) {
         getLeaf(i).compareTags(node.getParentTree());
     }
 
     public boolean rangesEqual(int i1, IRangeComparator rangeComp, int i2) {
         LeafComparator comp;
         try {
-            comp = (LeafComparator)rangeComp;
+            comp = (LeafComparator) rangeComp;
         } catch (RuntimeException e) {
-           return false;
+            return false;
         }
-        
-        return getLeaf(i1).isSameText(comp.getLeaf(i2)); 
+
+        return getLeaf(i1).isSameText(comp.getLeaf(i2));
     }
 
     public boolean skipRangeComparison(int arg0, int arg1, IRangeComparator arg2) {
         return false;
     }
 
-    public static boolean isValidDelimiter(char c ){
+    public static boolean isValidDelimiter(char c) {
         switch (c) {
         // Basic Delimiters
         case '/':
@@ -177,7 +181,7 @@ public class LeafComparator extends DefaultHandler implements IRangeComparator
         case '\t':
         case '\r':
         case '\n':
-        // Extra Delimiters
+            // Extra Delimiters
         case '[':
         case ']':
         case '{':
@@ -198,110 +202,191 @@ public class LeafComparator extends DefaultHandler implements IRangeComparator
         }
     }
 
-    public void markAsDeleted(int start, int end, LeafComparator oldComp, int before, boolean reconstructTags) {
-        
-        if(!reconstructTags){
-            int cut=start;
+    public void markAsDeleted(int start, int end, LeafComparator oldComp,
+            int before, boolean reconstructTags) {
+
+        if (!reconstructTags) {
+            int cut = start;
             boolean cutFound = false;
-            
+
             TextNode prevLeaf = null;
-            if(before>0)
-                 prevLeaf = getLeaf(before-1);
-            else{
+            if (before > 0)
+                prevLeaf = getLeaf(before - 1);
+            else {
                 cut = start;
                 cutFound = true;
                 System.out.println("cut at start");
             }
-            
+
             TextNode nextLeaf = null;
-            if(before<getRangeCount())
+            if (before < getRangeCount())
                 nextLeaf = getLeaf(before);
-            else{
-                cut = end+1;
+            else {
+                cut = end + 1;
                 cutFound = true;
-    
+
                 System.out.println("cut at end");
             }
-    
-            int[] prevD = new int[end-start];
-            int[] nextD = new int[end-start];
-            
+
+            int[] prevD = new int[end - start];
+            int[] nextD = new int[end - start];
+
             if (!cutFound) {
                 for (int i = start; i < end; i++) {
-                    prevD[i-start]=prevLeaf.getTagDistance(oldComp.getLeaf(i).getParentTree());
-                    nextD[i-start]=nextLeaf.getTagDistance(oldComp.getLeaf(i).getParentTree());
-                    System.out.println(i-start+": "+prevD[i-start]+" vs "+nextD[i-start]);
+                    prevD[i - start] = prevLeaf.getTagDistance(oldComp.getLeaf(
+                            i).getParentTree());
+                    nextD[i - start] = nextLeaf.getTagDistance(oldComp.getLeaf(
+                            i).getParentTree());
+                    System.out.println(i - start + ": " + prevD[i - start]
+                            + " vs " + nextD[i - start]);
                 }
-                
-                long min=Long.MAX_VALUE;
+
+                long min = Long.MAX_VALUE;
                 cut = start;
-                for (int i = start; i < end+1; i++) {
+                for (int i = start; i < end + 1; i++) {
                     long sum = 0;
                     for (int j = start; j < i; j++) {
-                        sum+=prevD[j-start];
+                        sum += prevD[j - start];
                     }
                     for (int j = i; j < end; j++) {
-                        sum+=nextD[j-start];
+                        sum += nextD[j - start];
                     }
-                    System.out.println("sum for "+i+" is "+sum);
-                    if(sum<min){
-                        min=sum;
-                        cut=i;
+                    System.out.println("sum for " + i + " is " + sum);
+                    if (sum < min) {
+                        min = sum;
+                        cut = i;
                     }
                 }
-            }        
-            
-            System.out.println("cut found at "+cut+" between "+start+" and "+end);
-            //System.out.println(prevLeaf.getText()+" -> "+nextLeaf.getText());
-            
+            }
+
+            System.out.println("cut found at " + cut + " between " + start
+                    + " and " + end);
+            // System.out.println(prevLeaf.getText()+" -> "+nextLeaf.getText());
+
             TagNode parent = prevLeaf.getParent();
-            int insertPoint= parent.getIndexOf(prevLeaf)+1;
-            for(int i=start;i<cut;i++){
+            int insertPoint = parent.getIndexOf(prevLeaf) + 1;
+            for (int i = start; i < cut; i++) {
                 TextNode t = oldComp.getLeaf(i);
-                
+
                 t.setDeleted();
                 t.setParent(parent);
                 parent.addChildBefore(insertPoint++, t);
             }
             parent = nextLeaf.getParent();
-            for(int i=cut;i<end;i++){
+            for (int i = cut; i < end; i++) {
                 TextNode t = oldComp.getLeaf(i);
                 t.setDeleted();
                 t.setParent(parent);
                 parent.addChildBefore(parent.getIndexOf(nextLeaf), t);
             }
-        }else{
-            
-            for(int i=start;i<end;i++){
+        } else {
+
+            for (int i = start; i < end; i++) {
                 oldComp.getLeaf(i).markAsDeleted(start);
                 oldComp.getLeaf(i).setDeleted();
             }
-            List<Node> deletedNodes = oldComp.getBody().getMinimalDeletedSet(start);
-            
+            List<Node> deletedNodes = oldComp.getBody().getMinimalDeletedSet(
+                    start);
+
             Node prevLeaf = null;
-            if(before>0)
-                 prevLeaf = getLeaf(before-1);
-            else{
-                 prevLeaf = null;
+            if (before > 0)
+                prevLeaf = getLeaf(before - 1);
+            else {
+                prevLeaf = null;
             }
-            
-            for(int i=0;i<deletedNodes.size();i++){
-                System.out.println("taking on deletednode "+i);
-                TagNode lastcommonparent;
-                int afterLastcommonparentIndex ;
-                if(prevLeaf==null){
-                    lastcommonparent = getBody();
-                    afterLastcommonparentIndex = 0;
-                }else{
-                    lastcommonparent = deletedNodes.get(i)
-                                        .getLastCommonParent(prevLeaf);
-                    afterLastcommonparentIndex = deletedNodes.get(i).getAfterLastCommonParentIndex();
+            Node nextLeaf = null;
+            if (before < getRangeCount())
+                nextLeaf = getLeaf(before);
+            else {
+                nextLeaf = null;
+            }
+
+            while (deletedNodes.size() > 0) {
+
+                if (prevLeaf == null && nextLeaf == null) {
+                    int insertIndex;
+                    TagNode lastCommonParent = getBody();
+                    insertIndex = 0;
+                    prevLeaf = deletedNodes.get(0);
+                    deletedNodes.remove(0);
+                    prevLeaf.setParent(lastCommonParent);
+                    lastCommonParent.addChildBefore(insertIndex, prevLeaf);
+                } else if (prevLeaf == null) {
+                    int insertIndex;
+                    int index = deletedNodes.size() - 1;
+                    TagNode lastCommonParent = nextLeaf
+                            .getLastCommonParent(deletedNodes.get(index));
+                    insertIndex = nextLeaf.getLastCommonParentIndex();
+                    nextLeaf = deletedNodes.get(index);
+                    deletedNodes.remove(index);
+                    nextLeaf.setParent(lastCommonParent);
+                    lastCommonParent.addChildBefore(insertIndex, nextLeaf);
+                } else if (nextLeaf == null) {
+                    int insertIndex;
+                    int index = 0;
+                    TagNode lastCommonParent = prevLeaf
+                            .getLastCommonParent(deletedNodes.get(index));
+                    insertIndex = prevLeaf.getLastCommonParentIndex() + 1;
+                    prevLeaf = deletedNodes.get(index);
+                    deletedNodes.remove(index);
+                    prevLeaf.setParent(lastCommonParent);
+                    lastCommonParent.addChildBefore(insertIndex, prevLeaf);
+                } else {
+
+                    TagNode lastCommonParentPrev = prevLeaf
+                            .getLastCommonParent(deletedNodes.get(0));
+                    TagNode lastCommonParentNext = nextLeaf
+                            .getLastCommonParent(deletedNodes.get(deletedNodes.size() - 1));
+
+                    if (prevLeaf.getLastCommonParentDepth() >= nextLeaf
+                            .getLastCommonParentDepth()) {
+                        int insertIndex = prevLeaf.getLastCommonParentIndex() + 1;
+                        int index = 0;
+                        prevLeaf = deletedNodes.get(index);
+                        deletedNodes.remove(index);
+                        prevLeaf.setParent(lastCommonParentPrev);
+                        lastCommonParentPrev.addChildBefore(insertIndex,
+                                prevLeaf);
+                    } else {
+                        int insertIndex = nextLeaf.getLastCommonParentIndex();
+                        int index = deletedNodes.size() - 1;
+                        nextLeaf = deletedNodes.get(index);
+                        deletedNodes.remove(index);
+                        nextLeaf.setParent(lastCommonParentNext);
+                        lastCommonParentNext.addChildBefore(insertIndex,
+                                nextLeaf);
+                    }
+
                 }
-                deletedNodes.get(i).setParent(lastcommonparent);
-                lastcommonparent.addChildBefore(afterLastcommonparentIndex, deletedNodes.get(i));
-                prevLeaf=deletedNodes.get(i);
+
             }
-            
+
+            // for (int i = 0; i < deletedNodes.size(); i++) {
+            //                
+            //                
+            //                
+            // TagNode lastcommonparent;
+            // int afterLastcommonparentIndex;
+            //                
+            // if (prevLeaf == null) {
+            // lastcommonparent = getBody();
+            // afterLastcommonparentIndex = 0;
+            // System.out.println("Setting afterLastcommonparent to 0.");
+            // } else {
+            // lastcommonparent = prevLeaf
+            // .getLastCommonParent(deletedNodes.get(i));
+            // afterLastcommonparentIndex = prevLeaf
+            // .getAfterLastCommonParentIndex();
+            // System.out.println("Afterlast = "+afterLastcommonparentIndex);
+            // }
+            // int temp = lastcommonparent.getNbChildren();
+            // deletedNodes.get(i).setParent(lastcommonparent);
+            //                lastcommonparent.addChildBefore(afterLastcommonparentIndex,
+            //                        deletedNodes.get(i));
+            //                prevLeaf = deletedNodes.get(i);
+            //
+            //            }
+
         }
     }
 

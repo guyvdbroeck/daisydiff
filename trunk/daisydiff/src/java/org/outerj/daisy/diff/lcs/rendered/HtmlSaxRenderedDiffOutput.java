@@ -40,7 +40,11 @@ public class HtmlSaxRenderedDiffOutput {
                 toHTML(((TagNode)child));
             }else if(child instanceof TextNode){
                 TextNode textChild = (TextNode)child;
-               
+
+                if(textChild.getText().length()<3){
+                    System.out.println("small text output:"+textChild.getText());
+                }
+                
                 if(textChild.isNew()){
                     AttributesImpl attrs = new AttributesImpl();
                     attrs.addAttribute("", "class", "class", "CDATA", "diff-tag-added");

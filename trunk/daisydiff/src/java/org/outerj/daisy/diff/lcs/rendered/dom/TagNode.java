@@ -20,103 +20,121 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.xml.sax.Attributes;
+import org.xml.sax.helpers.AttributesImpl;
 
 public class TagNode extends Node implements Iterable<Node> {
 
     private List<Node> children = new ArrayList<Node>();
-    
+
     private String qName;
 
     private Attributes attributes;
-    
-    public TagNode(TagNode parent, String qName, Attributes attributes) {
+
+    public TagNode(TagNode parent, String qName, Attributes attributesarg) {
         super(parent);
         this.qName = qName;
-        this.attributes = attributes;
+        this.attributes = new AttributesImpl(attributesarg);
+        if(qName.equalsIgnoreCase("a")){
+            System.out.println("A tag:"+attributes.getValue(0));
+        }
     }
-    
+
     public void addChild(Node node) {
-        if(node.getParent()!=this)
-            throw new IllegalStateException("The new child must have this node as a parent.");
+        if (node.getParent() != this)
+            throw new IllegalStateException(
+                    "The new child must have this node as a parent.");
         children.add(node);
     }
-    
-    public int getIndexOf(Node child){
+
+    public int getIndexOf(Node child) {
         return children.indexOf(child);
     }
-    
+
     public void addChildBefore(int index, Node node) {
-        if(node.getParent()!=this)
-            throw new IllegalStateException("The new child must have this node as a parent.");
+        if (node.getParent() != this)
+            throw new IllegalStateException(
+                    "The new child must have this node as a parent.");
         children.add(index, node);
     }
-    
-    public Node getChild(int i){
+
+    public Node getChild(int i) {
         return children.get(i);
     }
-    
+
     public Iterator<Node> iterator() {
         return children.iterator();
     }
-    
-    public int getNbChildren(){
+
+    public int getNbChildren() {
         return children.size();
     }
-    
-    public String getQName(){
+
+    public String getQName() {
         return qName;
     }
-    
-    public Attributes getAttributes(){
+
+    public Attributes getAttributes() {
         return attributes;
     }
-    
-    public boolean isSameTag(Object other){
-        if(other==null)
+
+    public boolean isSameTag(Object other) {
+        if (other == null)
             return false;
-        
+
         TagNode otherTagNode;
         try {
-            otherTagNode = (TagNode)other;
+            otherTagNode = (TagNode) other;
         } catch (ClassCastException e) {
             System.out.println("ClassCastException");
             return false;
         }
-        
+
         return getOpeningTag().equals(otherTagNode.getOpeningTag());
     }
 
     public String getOpeningTag() {
         String s = "<" + getQName();
         Attributes localAttributes = getAttributes();
-        for(int i=0; i<localAttributes.getLength();i++){
-            s += " " + localAttributes.getQName(i)
-            + "=\""+localAttributes.getValue(i)+"\"";
+        for (int i = 0; i < localAttributes.getLength(); i++) {
+            s += " " + localAttributes.getQName(i) + "=\""
+                    + localAttributes.getValue(i) + "\"";
         }
         return s += ">";
     }
-    
+
     public String getEndTag() {
         return "</" + getQName() + ">";
     }
-    
+
     public List<Node> getMinimalDeletedSet(int start) {
-        if(children.size()==0)
-            return new ArrayList<Node>();
-        
         List<Node> nodes = new ArrayList<Node>();
+
+        if (children.size() == 0) {
+            return nodes;
+        }
+
         boolean hasNegativeChild = false;
-        for(Node child : children){
-            nodes.addAll(child.getMinimalDeletedSet(start));
-            if(hasNegativeChild || !(nodes.size()==1 && nodes.contains(child))){
+
+        for (Node child : children) {
+            List<Node> childrenChildren = child.getMinimalDeletedSet(start);
+            nodes.addAll(childrenChildren);
+            if (!hasNegativeChild
+                    && !(childrenChildren.size() == 1 && childrenChildren
+                            .contains(child))) {
                 hasNegativeChild = true;
             }
         }
-        if(!hasNegativeChild){
+        if (!hasNegativeChild) {
             nodes.clear();
             nodes.add(this);
         }
         return nodes;
     }
+
+    public String toString() {
+        return getOpeningTag();
+    }
+    
+    
 
 }

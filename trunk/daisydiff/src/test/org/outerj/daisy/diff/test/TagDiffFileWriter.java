@@ -21,9 +21,6 @@ import javax.xml.transform.sax.SAXTransformerFactory;
 import javax.xml.transform.sax.TransformerHandler;
 import javax.xml.transform.stream.StreamResult;
 
-import org.outerj.daisy.diff.lcs.rendered.LeafComparator;
-import org.outerj.daisy.diff.lcs.rendered.HtmlSaxRenderedDiffOutput;
-import org.outerj.daisy.diff.lcs.rendered.RenderedDiffer;
 import org.outerj.daisy.diff.lcs.tag.HtmlSaxDiffOutput;
 import org.outerj.daisy.diff.lcs.tag.TagComparator;
 import org.outerj.daisy.diff.lcs.tag.TagDiffer;
