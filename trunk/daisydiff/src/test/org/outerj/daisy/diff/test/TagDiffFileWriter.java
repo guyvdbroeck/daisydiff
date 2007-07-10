@@ -41,28 +41,29 @@ public class TagDiffFileWriter {
         serializer.setResult(streamResult);
 
         serializer.startDocument();
-        
+
         AttributesImpl noattrs = new AttributesImpl();
-        
+
         serializer.startElement("", "html", "html", noattrs);
         serializer.startElement("", "head", "head", noattrs);
-       
-        //<link href="/css/tagdiff.css" type="text/css" rel="stylesheet">
+
+        // <link href="/css/tagdiff.css" type="text/css" rel="stylesheet">
         AttributesImpl csslink = new AttributesImpl();
-        csslink.addAttribute("", "href", "href", "CDATA", "css/tagdiff.css");
+        csslink.addAttribute("", "href", "href", "CDATA", "tagdiff.css");
         csslink.addAttribute("", "type", "type", "CDATA", "text/css");
         csslink.addAttribute("", "rel", "rel", "CDATA", "stylesheet");
         serializer.startElement("", "link", "link", csslink);
         serializer.endElement("", "link", "link");
-        
+
         csslink = new AttributesImpl();
-        csslink.addAttribute("", "href", "href", "CDATA", "http://cocoondev.org/resources/skins/daisysite/css/docstyle.css");
+        csslink
+                .addAttribute("", "href", "href", "CDATA",
+                        "http://cocoondev.org/resources/skins/daisysite/css/docstyle.css");
         csslink.addAttribute("", "type", "type", "CDATA", "text/css");
         csslink.addAttribute("", "rel", "rel", "CDATA", "stylesheet");
         serializer.startElement("", "link", "link", csslink);
         serializer.endElement("", "link", "link");
-        
-        
+
         serializer.endElement("", "head", "head");
         serializer.startElement("", "body", "body", noattrs);
 

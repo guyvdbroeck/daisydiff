@@ -27,7 +27,7 @@ public class TestRenderedComparator {
         new TestRenderedComparator(2);
         new TestRenderedComparator(3);
         new TestRenderedComparator(4);
-        new TestRenderedComparator(5);
+//        new TestRenderedComparator(5);
     }
 
     public TestRenderedComparator(int i) throws Exception {
@@ -50,46 +50,46 @@ public class TestRenderedComparator {
             InputXMLReader
                     .readXML(
                             new URL(
-                                    "http://cocoondev.org/wiki/291-cd/version/19/part/SimpleDocumentContent/data"),
+                                    "http://cocoondev.org/wiki/476-cd/version/3/part/SimpleDocumentContent/data"),
                             leftContentHandler);
             InputXMLReader
                     .readXML(
                             new URL(
-                                    "http://cocoondev.org/wiki/291-cd/version/24/part/SimpleDocumentContent/data"),
+                                    "http://cocoondev.org/wiki/476-cd/version/5/part/SimpleDocumentContent/data"),
                             rightContentHandler);
         } else if (i == 3) {
             InputXMLReader
                     .readXML(
                             new URL(
-                                    "http://cocoondev.org/wiki/476-cd/version/1/part/SimpleDocumentContent/data"),
+                                    "http://cocoondev.org/wiki/476-cd/version/10/part/SimpleDocumentContent/data"),
                             leftContentHandler);
             InputXMLReader
                     .readXML(
                             new URL(
-                                    "http://cocoondev.org/wiki/476-cd/version/3/part/SimpleDocumentContent/data"),
+                                    "http://cocoondev.org/wiki/476-cd/version/11/part/SimpleDocumentContent/data"),
                             rightContentHandler);
         } else if (i == 4) {
             InputXMLReader
                     .readXML(
                             new URL(
-                                    "http://cocoondev.org/wiki/476-cd/version/3/part/SimpleDocumentContent/data"),
+                                    "http://cocoondev.org/wiki/476-cd/version/20/part/SimpleDocumentContent/data"),
                             leftContentHandler);
             InputXMLReader
                     .readXML(
                             new URL(
-                            "http://cocoondev.org/wiki/476-cd/version/5/part/SimpleDocumentContent/data"),
+                                    "http://cocoondev.org/wiki/476-cd/version/21/part/SimpleDocumentContent/data"),
                             rightContentHandler);
-        }else if (i == 5) {
+        } else if (i == 5) {
             InputXMLReader
-            .readXML(
-                    new URL(
-                            "http://cocoondev.org/wiki/476-cd/version/6/part/SimpleDocumentContent/data"),
-                    leftContentHandler);
-    InputXMLReader
-            .readXML(
-                    new URL(
-                            "http://cocoondev.org/wiki/476-cd/version/9/part/SimpleDocumentContent/data"),
-                    rightContentHandler);
+                    .readXML(
+                            new URL(
+                                    "http://cocoondev.org/wiki/476-cd/version/10/part/SimpleDocumentContent/data"),
+                            leftContentHandler);
+            InputXMLReader
+                    .readXML(
+                            new URL(
+                                    "http://cocoondev.org/wiki/476-cd/version/13/part/SimpleDocumentContent/data"),
+                            rightContentHandler);
         }
         RenderedDiffFileWriter.diff(
 

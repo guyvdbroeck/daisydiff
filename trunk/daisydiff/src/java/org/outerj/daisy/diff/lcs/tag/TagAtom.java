@@ -32,7 +32,7 @@ public class TagAtom implements Atom {
 
         if (s.indexOf(' ') > 0) {
             identifier = s.substring(0, s.indexOf(' '));
-            //TODO check if the +1 is ok!
+            // TODO check if the +1 is ok!
             internalIdentifiers = s.substring(s.indexOf(' ') + 1);
         } else {
             identifier = s;

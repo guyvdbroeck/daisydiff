@@ -46,7 +46,7 @@ public class TextAtom implements Atom {
     }
 
     public boolean isValidAtom(String s) {
-        return s!=null && s.length() > 0;
+        return s != null && s.length() > 0;
     }
 
     public String toString() {

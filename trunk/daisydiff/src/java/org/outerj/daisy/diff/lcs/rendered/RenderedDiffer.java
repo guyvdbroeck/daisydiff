@@ -96,33 +96,36 @@ public class RenderedDiffer {
             int rightStart = differences[i].rightStart();
             int rightEnd = differences[i].rightEnd();
             int kind = differences[i].kind();
-            
+
             boolean connecting = true;
-            
-            while(connecting && i+1<differences.length && differences[i + 1].kind() == kind){
-                if(differences[i+1].leftStart()==leftEnd+1
-                        && differences[i+1].rightStart()<=rightEnd+1
-                        && LeafComparator.isValidDelimiter(leftComparator.getLeaf(leftEnd).getText().toCharArray()[0])
-                        ){
-                     leftEnd = differences[i + 1].leftEnd();
-                     rightEnd = differences[i + 1].rightEnd();
-                     i++;
-                     System.out.println("bridging 1");
-                }else if(differences[i+1].leftStart()==leftEnd+2
-                        && differences[i+1].rightStart()==rightEnd+2
-                        && LeafComparator.isValidDelimiter(leftComparator.getLeaf(leftEnd).getText().toCharArray()[0])
-                        && LeafComparator.isValidDelimiter(leftComparator.getLeaf(leftEnd+1).getText().toCharArray()[0])
-                        ){
-                     leftEnd = differences[i + 1].leftEnd();
-                     rightEnd = differences[i + 1].rightEnd();
-                     i++;
-                     System.out.println("bridging 2");
-                }else{
+
+            while (connecting && i + 1 < differences.length
+                    && differences[i + 1].kind() == kind) {
+                if (differences[i + 1].leftStart() == leftEnd + 1
+                        && differences[i + 1].rightStart() <= rightEnd + 1
+                        && LeafComparator.isValidDelimiter(leftComparator
+                                .getLeaf(leftEnd).getText().toCharArray()[0])) {
+                    leftEnd = differences[i + 1].leftEnd();
+                    rightEnd = differences[i + 1].rightEnd();
+                    i++;
+                    System.out.println("bridging 1");
+                } else if (differences[i + 1].leftStart() == leftEnd + 2
+                        && differences[i + 1].rightStart() == rightEnd + 2
+                        && LeafComparator.isValidDelimiter(leftComparator
+                                .getLeaf(leftEnd).getText().toCharArray()[0])
+                        && LeafComparator
+                                .isValidDelimiter(leftComparator.getLeaf(
+                                        leftEnd + 1).getText().toCharArray()[0])) {
+                    leftEnd = differences[i + 1].leftEnd();
+                    rightEnd = differences[i + 1].rightEnd();
+                    i++;
+                    System.out.println("bridging 2");
+                } else {
                     connecting = false;
                 }
             }
-            
-//          int temp = leftEnd;
+
+            // int temp = leftEnd;
             // boolean connecting = true;
             //
             // while (connecting && i + 1 < differences.length
@@ -156,10 +159,10 @@ public class RenderedDiffer {
             // if (leftComparator.getAtom(temp).getFullText().equals(
             // " "))
             // throw new IllegalStateException(
-            //                                    "space found aiaiai");
-            //                    }
-            //                }
-            //            }
+            // "space found aiaiai");
+            // }
+            // }
+            // }
             newRanges.add(new PublicRangeDifference(kind, rightStart, rightEnd
                     - rightStart, leftStart, leftEnd - leftStart));
         }

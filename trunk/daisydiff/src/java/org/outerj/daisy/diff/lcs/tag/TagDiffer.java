@@ -23,10 +23,10 @@ import org.eclipse.compare.rangedifferencer.RangeDifference;
 import org.eclipse.compare.rangedifferencer.RangeDifferencer;
 
 /**
- * Takes 2 AtomSplitters and computes the difference between them.
- * Output is sent to a given <code>HTMLSaxDiffOutput</code> and tags are
- * diffed internally on a second iteration. The results are processed as to
- * combine small subsequent changes in to larger changes.
+ * Takes 2 AtomSplitters and computes the difference between them. Output is
+ * sent to a given <code>HTMLSaxDiffOutput</code> and tags are diffed
+ * internally on a second iteration. The results are processed as to combine
+ * small subsequent changes in to larger changes.
  */
 public class TagDiffer {
 
@@ -43,11 +43,11 @@ public class TagDiffer {
         StringBuilder sb = new StringBuilder();
 
         /*
-         * We can assume that the LCS is correct and that there are exacly as many
-         * atoms left and right
+         * We can assume that the LCS is correct and that there are exacly as
+         * many atoms left and right
          */
         while (beginLeft < endLeft) {
-            
+
             while (beginLeft < endLeft
                     && !rightComparator.getAtom(beginRight)
                             .hasInternalIdentifiers()

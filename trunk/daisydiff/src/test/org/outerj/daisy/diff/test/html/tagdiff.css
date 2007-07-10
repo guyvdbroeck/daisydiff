@@ -20,11 +20,9 @@ span.diff-tag-removed {
 }
 
 a.diff-tag-changed {
-  //border-bottom: 1px dashed brown;
   text-decoration: none;
-  //background-color: #99ccff; /* light red */
   color: black;
-  background: url(underline.gif) bottom repeat-x;
+  background: url(underline_db.gif) bottom repeat-x;
 }
 
 a.diff-tag-changed:hover {

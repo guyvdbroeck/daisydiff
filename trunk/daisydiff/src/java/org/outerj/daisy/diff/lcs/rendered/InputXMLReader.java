@@ -25,19 +25,20 @@ import org.xml.sax.helpers.XMLReaderFactory;
 
 public class InputXMLReader {
 
-    public static void readXML(URL url, LeafComparator handler) throws SAXException, IOException{
-	readXML(new InputSource(url.openStream()), handler);
+    public static void readXML(URL url, LeafComparator handler)
+            throws SAXException, IOException {
+        readXML(new InputSource(url.openStream()), handler);
     }
 
-    public static void readXML(InputSource s, LeafComparator handler) throws SAXException, IOException{
-	//TODO check what xml driver DaisyCMS uses!
-	XMLReader xr = XMLReaderFactory.createXMLReader();
-	
-	xr.setContentHandler(handler);
-	xr.setErrorHandler(handler);
+    public static void readXML(InputSource s, LeafComparator handler)
+            throws SAXException, IOException {
+        // TODO check what xml driver DaisyCMS uses!
+        XMLReader xr = XMLReaderFactory.createXMLReader();
 
-	xr.parse(s);
+        xr.setContentHandler(handler);
+        xr.setErrorHandler(handler);
+
+        xr.parse(s);
     }
 
-    
 }

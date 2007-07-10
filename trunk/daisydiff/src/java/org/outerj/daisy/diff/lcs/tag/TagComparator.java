@@ -16,8 +16,8 @@
 package org.outerj.daisy.diff.lcs.tag;
 
 /**
- * Takes a String and generates tokens/atoms that can be used by LCS.
- * This comparator is used specifically for HTML documents.
+ * Takes a String and generates tokens/atoms that can be used by LCS. This
+ * comparator is used specifically for HTML documents.
  */
 import java.util.ArrayList;
 import java.util.List;

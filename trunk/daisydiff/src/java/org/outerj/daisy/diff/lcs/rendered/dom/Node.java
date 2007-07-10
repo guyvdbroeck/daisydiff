@@ -19,80 +19,92 @@ import java.util.ArrayList;
 import java.util.List;
 
 public abstract class Node {
-    
+
     protected TagNode parent;
-    
-    public Node(TagNode parent){
+
+    public Node(TagNode parent) {
         this.parent = parent;
-        if(parent != null)
+        if (parent != null)
             parent.addChild(this);
     }
 
     public TagNode getParent() {
         return parent;
     }
-    
+
     public List<TagNode> getParentTree() {
         List<TagNode> parentTree = new ArrayList<TagNode>(5);
-        if(getParent()!=null){
+        if (getParent() != null) {
             parentTree.addAll(getParent().getParentTree());
             parentTree.add(getParent());
         }
         return parentTree;
     }
-    
+
     public abstract List<Node> getMinimalDeletedSet(int start);
 
     public TagNode getLastCommonParent(Node other) {
-        if(other == null)
+
+        splittingNeeded = false;
+
+        if (other == null)
             throw new IllegalArgumentException("The given TextNode is null");
-        
+
         List<TagNode> myParents = getParentTree();
         List<TagNode> otherParents = other.getParentTree();
+
+        int lastIndex = 0;
+
         
-        int lastIndex=0;
         
-        for(int i=1;i<myParents.size() && i<otherParents.size();i++){
-            if(myParents.get(i).isSameTag(otherParents.get(i))){
-                lastIndex=i;
-            }else{
+        for (int i = 1; i < myParents.size() && i < otherParents.size(); i++) {
+            System.out.println("comparing "+myParents.get(i)+" to "+otherParents.get(i));
+            if (myParents.get(i).isSameTag(otherParents.get(i))) {
+                lastIndex = i;
+            } else {
                 lastCommonParentIndex = myParents.get(lastIndex).getIndexOf(
-                                        myParents.get(i));
+                        myParents.get(i));
                 lastCommonParentDepth = lastIndex;
+                splittingNeeded = true;
                 return myParents.get(lastIndex);
             }
         }
-        
-        //There were no parents besides the BODY
-        if(myParents.size()<=1){
-            lastCommonParentIndex= myParents.get(0).getIndexOf(this);
-            lastCommonParentDepth= 0;
-        }
-        
-        //All tags matched
-        else if(myParents.size()<=otherParents.size()){
-           lastCommonParentIndex = myParents.get(lastIndex).getIndexOf(
-                    this);
+
+        // There were no parents besides the BODY
+        if (myParents.size() <= 1) {
+            lastCommonParentIndex = myParents.get(0).getIndexOf(this);
+            lastCommonParentDepth = 0;
+        }// All tags matched
+        else if (myParents.size() <= otherParents.size()) {
+            lastCommonParentIndex = myParents.get(lastIndex).getIndexOf(this);
             lastCommonParentDepth = lastIndex;
-        }else{
+        } else {
             lastCommonParentIndex = myParents.get(lastIndex).getIndexOf(
-                    myParents.get(lastIndex+1));
+                    myParents.get(lastIndex + 1));
             lastCommonParentDepth = lastIndex;
+            splittingNeeded = true;
         }
         return myParents.get(lastIndex);
     }
-    
-    private int lastCommonParentDepth=-1;
-    
-    public int getLastCommonParentDepth(){
+
+    private boolean splittingNeeded = false;
+
+    public boolean isSplittingNeeded() {
+        return splittingNeeded;
+    }
+
+    private int lastCommonParentDepth = -1;
+
+    public int getLastCommonParentDepth() {
         return lastCommonParentDepth;
     }
-    
-    private int lastCommonParentIndex=-1;
-    
-    public int getLastCommonParentIndex(){
+
+    private int lastCommonParentIndex = -1;
+
+    public int getLastCommonParentIndex() {
         return lastCommonParentIndex;
     }
+
     public void setParent(TagNode parent) {
         this.parent = parent;
     }

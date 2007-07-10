@@ -34,9 +34,6 @@ public class TagNode extends Node implements Iterable<Node> {
         super(parent);
         this.qName = qName;
         this.attributes = new AttributesImpl(attributesarg);
-        if(qName.equalsIgnoreCase("a")){
-            System.out.println("A tag:"+attributes.getValue(0));
-        }
     }
 
     public void addChild(Node node) {
@@ -54,6 +51,11 @@ public class TagNode extends Node implements Iterable<Node> {
         if (node.getParent() != this)
             throw new IllegalStateException(
                     "The new child must have this node as a parent.");
+        try {
+            System.out.println("inserting between "+children.get(index-1)+" and "+children.get(index));
+        } catch (RuntimeException e) {
+            System.out.println("exception caught");
+        }
         children.add(index, node);
     }
 
@@ -134,7 +136,56 @@ public class TagNode extends Node implements Iterable<Node> {
     public String toString() {
         return getOpeningTag();
     }
-    
-    
+
+    public void splitUntill(TagNode parent, Node split, boolean includeLeft) {
+        System.out.println("splitting "+parent+" at "+split);
+        System.out.println("this is "+this);
+        System.out.println("parent is "+getParent());
+        if (parent != this) {
+            TagNode part1 = new TagNode(null, getQName(), getAttributes());
+            TagNode part2 = new TagNode(null, getQName(), getAttributes());
+            part1.setParent(getParent());
+            part2.setParent(getParent());
+
+            int i = 0;
+            while (i < children.size() && children.get(i) != split) {
+                children.get(i).setParent(part1);
+                part1.addChild(children.get(i));
+                i++;
+            }
+            if (i < children.size()) {
+                if (includeLeft) {
+                    children.get(i).setParent(part1);
+                    part1.addChild(children.get(i));
+                } else {
+                    children.get(i).setParent(part2);
+                    part2.addChild(children.get(i));
+                }
+                i++;
+            }
+            while (i < children.size()) {
+                children.get(i).setParent(part2);
+                part2.addChild(children.get(i));
+                i++;
+            }
+            if (part1.getNbChildren() > 0)
+                getParent().addChildBefore(getParent().getIndexOf(this), part1);
+
+            if (part2.getNbChildren() > 0)
+                getParent().addChildBefore(getParent().getIndexOf(this), part2);
+
+            getParent().removeChild(this);
+
+            if (includeLeft)
+                getParent().splitUntill(parent, part1, includeLeft);
+            else
+                getParent().splitUntill(parent, part2, includeLeft);
+        }
+
+    }
+
+    private void removeChild(TagNode node) {
+        children.remove(node);
+    }
 
 }
