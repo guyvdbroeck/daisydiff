@@ -26,12 +26,12 @@ public class DelimiterAtom extends TextAtom {
 
     public static boolean isValidDelimiter(String s) {
         if (s.length() == 1) {
-           isValidDelimiter(s.charAt(0)); 
+            return isValidDelimiter(s.charAt(0));
         }
         return false;
     }
-    
-    public static boolean isValidDelimiter(char c ){
+
+    public static boolean isValidDelimiter(char c) {
         switch (c) {
         // Basic Delimiters
         case '/':
@@ -47,7 +47,7 @@ public class DelimiterAtom extends TextAtom {
         case '\t':
         case '\r':
         case '\n':
-        // Extra Delimiters
+            // Extra Delimiters
         case '[':
         case ']':
         case '{':
@@ -84,7 +84,7 @@ public class DelimiterAtom extends TextAtom {
 
     public boolean equalsIdentifier(Atom a) {
         return super.equalsIdentifier(a)
-                //Handling for automatically inserted newlines
+        // Handling for automatically inserted newlines
                 || ((a.getIdentifier().equals(" ") || a.getIdentifier().equals(
                         "\n")) && (this.getIdentifier().equals(" ") || this
                         .getIdentifier().equals("\n")));
