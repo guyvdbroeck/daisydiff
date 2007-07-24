@@ -112,14 +112,4 @@ public class TextNode extends Node {
         return getText();
     }
 
-    private boolean ignorable=false;
-    
-    public void markAsIgnorable() {
-        ignorable=true;
-    }
-    
-    public boolean isIgnorable(){
-        return ignorable;
-    }
-
 }

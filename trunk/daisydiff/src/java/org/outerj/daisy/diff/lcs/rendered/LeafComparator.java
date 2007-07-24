@@ -48,6 +48,7 @@ public class LeafComparator extends DefaultHandler implements IRangeComparator {
         return bodyNode;
     }
 
+    @Override
     public void startDocument() throws SAXException {
         if (documentStarted)
             throw new IllegalStateException(
@@ -55,28 +56,20 @@ public class LeafComparator extends DefaultHandler implements IRangeComparator {
         documentStarted = true;
     }
 
+    @Override
     public void endDocument() throws SAXException {
         if (!documentStarted || documentEnded)
             throw new IllegalStateException();
         endWord();
         documentEnded = true;
         documentStarted = false;
-//        getBody().detectIgnorableWhiteSpace();
-//        removeIgnorableLeafs();
-    }
-
-    private void removeIgnorableLeafs() {
-        for(int i=0;i<leafs.size();i++){
-            if(leafs.get(i).isIgnorable()){
-                leafs.remove(i);
-            }
-        }
     }
 
     private boolean bodyStarted = false;
 
     private boolean bodyEnded = false;
 
+    @Override
     public void startElement(String uri, String localName, String qName,
             Attributes attributes) throws SAXException {
 
@@ -95,6 +88,7 @@ public class LeafComparator extends DefaultHandler implements IRangeComparator {
         }
     }
 
+    @Override
     public void endElement(String uri, String localName, String qName)
             throws SAXException {
 
@@ -112,6 +106,7 @@ public class LeafComparator extends DefaultHandler implements IRangeComparator {
 
     private StringBuilder newWord = new StringBuilder();
 
+    @Override
     public void characters(char ch[], int start, int length)
             throws SAXException {
 
@@ -220,137 +215,72 @@ public class LeafComparator extends DefaultHandler implements IRangeComparator {
         }
         List<Node> deletedNodes = oldComp.getBody().getMinimalDeletedSet(start);
 
-        //Set prevLeaf to the leaf after which the old HTML needs to be inserted
+        // Set prevLeaf to the leaf after which the old HTML needs to be
+        // inserted
         Node prevLeaf = null;
         if (before > 0)
             prevLeaf = getLeaf(before - 1);
 
-        //Set nextLeaf to the leaf before which the old HTML needs to be inserted
+        // Set nextLeaf to the leaf before which the old HTML needs to be
+        // inserted
         Node nextLeaf = null;
         if (before < getRangeCount())
             nextLeaf = getLeaf(before);
-        
+
         System.out.println("Treating new nodes:");
         for (Node node : deletedNodes) {
             System.out.print("node: " + node);
         }
 
+        if (deletedNodes.size() > 0 && prevLeaf == null && nextLeaf == null) {
+            prevLeaf = deletedNodes.get(0);
+            prevLeaf.setParent(getBody());
+            getBody().addChild(0, prevLeaf);
+            deletedNodes.remove(0);
+        }
         while (deletedNodes.size() > 0) {
-            if (prevLeaf == null && nextLeaf == null) {
-                int insertIndex=0;
-                TagNode lastCommonParent = getBody();
-                prevLeaf = deletedNodes.get(0);
-                deletedNodes.remove(0);
-                prevLeaf.setParent(lastCommonParent);
-                lastCommonParent.addChildBefore(insertIndex, prevLeaf);
-            } else if (prevLeaf == null) {
-                int insertIndex;
-                int index = deletedNodes.size() - 1;
-                LastCommonParentResult result=nextLeaf
-                .getLastCommonParent(deletedNodes.get(index));
-                TagNode lastCommonParent = result.getLastCommonParent();
-                insertIndex = result.getIndexInLastCommonParent();
-
-                if (result.isSplittingNeeded()) {
-                    System.out.println("splitting needed");
-                    nextLeaf.getParent().splitUntill(lastCommonParent,
-                            nextLeaf, false);
-
-                    nextLeaf = deletedNodes.get(index);
-
-                    deletedNodes.remove(index);
-                    nextLeaf.setParent(lastCommonParent);
-                    lastCommonParent.addChildBefore(insertIndex, nextLeaf);
-                } else {
-                    nextLeaf = deletedNodes.get(index);
-
-                    deletedNodes.remove(index);
-                    nextLeaf.setParent(lastCommonParent);
-                    lastCommonParent.addChildBefore(insertIndex, nextLeaf);
-                }
-            } else if (nextLeaf == null) {
-                int insertIndex;
-                int index = 0;
-                LastCommonParentResult result=prevLeaf
-                .getLastCommonParent(deletedNodes.get(index));
-                TagNode lastCommonParent = result.getLastCommonParent();
-                insertIndex = result.getIndexInLastCommonParent() + 1;
-                if (result.isSplittingNeeded()) {
-                    System.out.println("splitting needed");
-                    prevLeaf.getParent().splitUntill(lastCommonParent,
-                            prevLeaf, true);
-
-                    prevLeaf = deletedNodes.get(index);
-                    deletedNodes.remove(index);
-                    prevLeaf.setParent(lastCommonParent);
-                    lastCommonParent.addChildBefore(insertIndex, prevLeaf);
-                } else {
-                    prevLeaf = deletedNodes.get(index);
-                    deletedNodes.remove(index);
-                    prevLeaf.setParent(lastCommonParent);
-                    lastCommonParent.addChildBefore(insertIndex, prevLeaf);
-                }
-            } else {
-                LastCommonParentResult resultPrev=prevLeaf
-                .getLastCommonParent(deletedNodes.get(0));;
-LastCommonParentResult resultNext=nextLeaf
-.getLastCommonParent(deletedNodes.get(deletedNodes
-        .size() - 1));;
-                TagNode lastCommonParentPrev =resultPrev.getLastCommonParent();
-                TagNode lastCommonParentNext = resultNext.getLastCommonParent();
-                System.out.println("=========");
-                System.out.println("comparing " + deletedNodes.get(0) + " to "
-                        + prevLeaf + ":" + resultPrev.getLastCommonParentDepth());
-
-                System.out.println("comparing "
-                        + deletedNodes.get(deletedNodes.size() - 1) + " to "
-                        + nextLeaf + ":" + resultNext.getLastCommonParentDepth());
-
-                if (resultPrev.getLastCommonParentDepth() >= resultNext
-                        .getLastCommonParentDepth()) {
-                    int insertIndex = resultPrev.getIndexInLastCommonParent() + 1;
-                    int index = 0;
-                    if (resultPrev.isSplittingNeeded()) {
-                        System.out.println("splitting needed 1");
-                        prevLeaf.getParent().splitUntill(lastCommonParentPrev,
-                                prevLeaf, true);
-
-                        prevLeaf = deletedNodes.get(index);
-                        deletedNodes.remove(index);
-                        prevLeaf.setParent(lastCommonParentPrev);
-                        lastCommonParentPrev.addChildBefore(insertIndex,
-                                prevLeaf);
-                    } else {
-                        prevLeaf = deletedNodes.get(index);
-                        deletedNodes.remove(index);
-                        prevLeaf.setParent(lastCommonParentPrev);
-                        lastCommonParentPrev.addChildBefore(insertIndex,
-                                prevLeaf);
-                    }
-                } else {
-                    int insertIndex = resultNext.getIndexInLastCommonParent();
-                    int index = deletedNodes.size() - 1;
-                    if (resultNext.isSplittingNeeded()) {
-                        System.out.println("splitting needed 2");
-                        nextLeaf.getParent().splitUntill(lastCommonParentNext,
-                                nextLeaf, false);
-
-                        nextLeaf = deletedNodes.get(index);
-                        deletedNodes.remove(index);
-                        nextLeaf.setParent(lastCommonParentNext);
-                        lastCommonParentNext.addChildBefore(insertIndex,
-                                nextLeaf);
-                    } else {
-                        nextLeaf = deletedNodes.get(index);
-                        deletedNodes.remove(index);
-                        nextLeaf.setParent(lastCommonParentNext);
-                        lastCommonParentNext.addChildBefore(insertIndex,
-                                nextLeaf);
-                    }
-
-                }
-
+            Node first=deletedNodes.get(0);
+            Node last=deletedNodes.get(deletedNodes.size() - 1);
+            
+            LastCommonParentResult prevResult, nextResult;
+            if(prevLeaf!=null){
+                prevResult = prevLeaf.getLastCommonParent(first);
+            }else{
+                prevResult = new LastCommonParentResult();
+                prevResult.setLastCommonParent(getBody());
+                prevResult.setIndexInLastCommonParent(0);
             }
+            if(nextLeaf!=null){
+                nextResult = nextLeaf.getLastCommonParent(last);
+            }else{
+                nextResult = new LastCommonParentResult();
+                nextResult.setLastCommonParent(getBody());
+                nextResult.setIndexInLastCommonParent(getBody().getNbChildren());
+            }    
+            
+            if(prevResult.getLastCommonParentDepth()>=nextResult.getLastCommonParentDepth()){
+                //Inserting at the front
+                if(prevResult.isSplittingNeeded()){
+                    prevLeaf.getParent().splitUntill(prevResult.getLastCommonParent(), prevLeaf, true);
+                }
+                prevLeaf=deletedNodes.remove(0);
+                prevLeaf.setParent(prevResult.getLastCommonParent());
+                prevResult.getLastCommonParent().addChild(prevResult.getIndexInLastCommonParent()+1,
+                        prevLeaf);
+                
+            }else{
+                //Inserting at the back
+                if(nextResult.isSplittingNeeded()){
+                    nextLeaf.getParent().splitUntill(nextResult.getLastCommonParent(),
+                        nextLeaf, false);
+                    //The place where to insert is shifted one place to the right
+                    nextResult.setIndexInLastCommonParent(nextResult.getIndexInLastCommonParent()+1);
+                }
+                nextLeaf=deletedNodes.remove(deletedNodes.size()-1);
+                nextLeaf.setParent(nextResult.getLastCommonParent());
+                nextResult.getLastCommonParent().addChild(prevResult.getIndexInLastCommonParent(), nextLeaf);
+            }
+            
         }
     }
 

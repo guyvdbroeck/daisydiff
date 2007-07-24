@@ -49,7 +49,7 @@ public class TagNode extends Node implements Iterable<Node> {
         return children.indexOf(child);
     }
 
-    public void addChildBefore(int index, Node node) {
+    public void addChild(int index, Node node) {
         if (node.getParent() != this)
             throw new IllegalStateException(
                     "The new child must have this node as a parent.");
@@ -174,10 +174,10 @@ public class TagNode extends Node implements Iterable<Node> {
                 i++;
             }
             if (part1.getNbChildren() > 0)
-                getParent().addChildBefore(getParent().getIndexOf(this), part1);
+                getParent().addChild(getParent().getIndexOf(this), part1);
 
             if (part2.getNbChildren() > 0)
-                getParent().addChildBefore(getParent().getIndexOf(this), part2);
+                getParent().addChild(getParent().getIndexOf(this), part2);
 
             getParent().removeChild(this);
 
@@ -191,85 +191,6 @@ public class TagNode extends Node implements Iterable<Node> {
 
     private void removeChild(TagNode node) {
         children.remove(node);
-    }
-
-    public void detectIgnorableWhiteSpace() {
-        if (children.size() < 2)
-            return;
-
-        int startText = 0;
-
-        for (int i = 0; i < children.size(); i++) {
-            while (i < children.size() && children.get(i) instanceof TextNode) {
-                i++;
-            }
-            if (i < children.size()) {
-                if (isBlockLevel(children.get(i))
-                        && (startText == 0 || isBlockLevel(children
-                                .get(startText - 1)))) {
-                    for (int j = startText; j < i; j++) {
-                        try {
-                            TextNode whitespace = (TextNode) children.get(j);
-                            System.out.println("Ignoring "+whitespace.getText());
-                            whitespace.markAsIgnorable();
-                        } catch (ClassCastException e) {
-                            assert (false);
-                        }
-                    }
-
-                }
-                startText = i + 1;
-                try {
-                    TagNode child = (TagNode) children.get(i);
-                    child.detectIgnorableWhiteSpace();
-                } catch (ClassCastException e) {
-                }
-            }
-        }
-        if (startText == 0 || isBlockLevel(children.get(startText - 1))) {
-            for (int j = startText; j < children.size(); j++) {
-                try {
-                    TextNode whitespace = (TextNode) children.get(j);
-                    whitespace.markAsIgnorable();
-                } catch (ClassCastException e) {
-                    assert (false);
-                }
-            }
-
-        }
-    }
-
-    private static Set<String> blocks = new HashSet<String>();
-    {
-        blocks.add("html");
-        blocks.add("body");
-        blocks.add("p");
-        blocks.add("blockquote");
-        blocks.add("h1");
-        blocks.add("h2");
-        blocks.add("h3");
-        blocks.add("h4");
-        blocks.add("h5");
-        blocks.add("pre");
-        blocks.add("div");
-        blocks.add("ul");
-        blocks.add("ol");
-        blocks.add("li");
-        blocks.add("table");
-        blocks.add("tbody");
-        blocks.add("tr");
-        blocks.add("td");
-        blocks.add("th");
-        blocks.add("br");
-    }
-
-    public static boolean isBlockLevel(Node node) {
-        try {
-            TagNode tagnode = (TagNode) node;
-            return blocks.contains(tagnode.getQName().toLowerCase());
-        } catch (ClassCastException e) {
-            return false;
-        }
     }
 
 }
