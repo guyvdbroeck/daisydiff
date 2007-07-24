@@ -66,12 +66,11 @@ public class TextNode extends Node {
         AncestorComparator acthis = new AncestorComparator(this.getParentTree());
         AncestorComparator acother = new AncestorComparator(other);
 
-        boolean changed = acthis.hasChanged(acother);
+        isChanged = acthis.hasChanged(acother);
 
-        if (changed) {
+        if (isChanged) {
             changes = acthis.getCompareTxt();
         }
-        isChanged = changed;
     }
 
     public boolean isChanged() {
@@ -84,23 +83,10 @@ public class TextNode extends Node {
         return changes;
     }
 
-    public int getTagDistance(List<TagNode> other) {
-        AncestorComparator acthis = new AncestorComparator(this.getParentTree());
-        AncestorComparator acother = new AncestorComparator(other);
-
-        acthis.hasChanged(acother);
-
-        return acthis.getDistance(acother);
-    }
-
     private boolean deleted = false;
 
-    public void setDeleted() {
-        deleted = true;
-    }
-
     public boolean isDeleted() {
-        return deleted;
+        return deletedId>-1;
     }
 
     private int deletedId = -1;
@@ -124,6 +110,16 @@ public class TextNode extends Node {
 
     public String toString() {
         return getText();
+    }
+
+    private boolean ignorable=false;
+    
+    public void markAsIgnorable() {
+        ignorable=true;
+    }
+    
+    public boolean isIgnorable(){
+        return ignorable;
     }
 
 }

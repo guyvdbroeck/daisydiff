@@ -31,8 +31,9 @@ public class RenderedDiffer {
         output = dm;
     }
 
-    public void parseNewDiff(LeafComparator leftComparator,
+    public void diff(LeafComparator leftComparator,
             LeafComparator rightComparator) throws SAXException {
+        
         RangeDifference[] differences = RangeDifferencer.findDifferences(
                 leftComparator, rightComparator);
 
@@ -41,27 +42,27 @@ public class RenderedDiffer {
         List<PublicRangeDifference> pdifferences = preProcess(differences,
                 leftComparator);
 
-        int nextleftstart = 0;
-        int nextrightstart = 0;
+        int currentIndexLeft = 0;
+        int currentIndexRight = 0;
 
         for (PublicRangeDifference d : pdifferences) {
 
-            if (d.leftStart() > nextleftstart) {
-                handleClearPart(nextleftstart, d.leftStart(), nextrightstart, d
+            if (d.leftStart() > currentIndexLeft) {
+                handleClearPart(currentIndexLeft, d.leftStart(), currentIndexRight, d
                         .rightStart(), leftComparator, rightComparator);
             }
             if (d.leftLength() > 0) {
                 rightComparator.markAsDeleted(d.leftStart(), d.leftEnd(),
-                        leftComparator, d.rightStart(), true);
+                        leftComparator, d.rightStart());
             }
             rightComparator.markAsNew(d.rightStart(), d.rightEnd());
 
-            nextleftstart = d.leftEnd();
-            nextrightstart = d.rightEnd();
+            currentIndexLeft = d.leftEnd();
+            currentIndexRight = d.rightEnd();
         }
-        if (nextleftstart < leftComparator.getRangeCount()) {
-            handleClearPart(nextleftstart, leftComparator.getRangeCount(),
-                    nextrightstart, rightComparator.getRangeCount(),
+        if (currentIndexLeft < leftComparator.getRangeCount()) {
+            handleClearPart(currentIndexLeft, leftComparator.getRangeCount(),
+                    currentIndexRight, rightComparator.getRangeCount(),
                     leftComparator, rightComparator);
         }
 
@@ -87,6 +88,7 @@ public class RenderedDiffer {
 
     private List<PublicRangeDifference> preProcess(
             RangeDifference[] differences, LeafComparator leftComparator) {
+        
         List<PublicRangeDifference> newRanges = new LinkedList<PublicRangeDifference>();
 
         for (int i = 0; i < differences.length; i++) {
@@ -124,45 +126,7 @@ public class RenderedDiffer {
                     connecting = false;
                 }
             }
-
-            // int temp = leftEnd;
-            // boolean connecting = true;
-            //
-            // while (connecting && i + 1 < differences.length
-            // && differences[i + 1].kind() == kind) {
-            //
-            // int bridgelength = 0;
-            //
-            // int nbtokens = Math.max((leftEnd - leftStart),
-            // (rightEnd - rightStart));
-            // if (nbtokens > 5) {
-            // if (nbtokens > 10) {
-            // bridgelength = 3;
-            // } else
-            // bridgelength = 2;
-            // }
-            //
-            // while ((leftComparator.getAtom(temp) instanceof DelimiterAtom ||
-            // (bridgelength-- > 0))
-            // && temp < differences[i + 1].leftStart()) {
-            //
-            // temp++;
-            // }
-            // if (temp == differences[i + 1].leftStart()) {
-            // leftEnd = differences[i + 1].leftEnd();
-            // rightEnd = differences[i + 1].rightEnd();
-            // temp = leftEnd;
-            // i++;
-            // } else {
-            // connecting = false;
-            // if (!(leftComparator.getAtom(temp) instanceof DelimiterAtom)) {
-            // if (leftComparator.getAtom(temp).getFullText().equals(
-            // " "))
-            // throw new IllegalStateException(
-            // "space found aiaiai");
-            // }
-            // }
-            // }
+            
             newRanges.add(new PublicRangeDifference(kind, rightStart, rightEnd
                     - rightStart, leftStart, leftEnd - leftStart));
         }

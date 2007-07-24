@@ -71,7 +71,7 @@ public class RenderedDiffFileWriter {
                 serializer);
 
         RenderedDiffer differ = new RenderedDiffer(output);
-        differ.parseNewDiff(leftComparator, rightComparator);
+        differ.diff(leftComparator, rightComparator);
 
         serializer.endElement("", "html", "html");
         serializer.endDocument();

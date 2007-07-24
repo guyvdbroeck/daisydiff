@@ -18,6 +18,8 @@ package org.outerj.daisy.diff.lcs.rendered.dom;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.outerj.daisy.diff.lcs.rendered.dom.helper.LastCommonParentResult;
+
 public abstract class Node {
 
     protected TagNode parent;
@@ -43,66 +45,56 @@ public abstract class Node {
 
     public abstract List<Node> getMinimalDeletedSet(int start);
 
-    public TagNode getLastCommonParent(Node other) {
-
-        splittingNeeded = false;
-
+    public LastCommonParentResult getLastCommonParent(Node other) {
         if (other == null)
             throw new IllegalArgumentException("The given TextNode is null");
+
+        LastCommonParentResult result = new LastCommonParentResult();
 
         List<TagNode> myParents = getParentTree();
         List<TagNode> otherParents = other.getParentTree();
 
-        int lastIndex = 0;
-
-        
-        
-        for (int i = 1; i < myParents.size() && i < otherParents.size(); i++) {
-            System.out.println("comparing "+myParents.get(i)+" to "+otherParents.get(i));
-            if (myParents.get(i).isSameTag(otherParents.get(i))) {
-                lastIndex = i;
+        int i = 1;
+        boolean isSame = true;
+        while (isSame && i < myParents.size() && i < otherParents.size()) {
+            System.out.println("comparing " + myParents.get(i) + " to "
+                    + otherParents.get(i));
+            if (!myParents.get(i).isSameTag(otherParents.get(i))) {
+                isSame = false;
             } else {
-                lastCommonParentIndex = myParents.get(lastIndex).getIndexOf(
-                        myParents.get(i));
-                lastCommonParentDepth = lastIndex;
-                splittingNeeded = true;
-                return myParents.get(lastIndex);
+                // After the while, the index i-1 must be the last common parent
+                i++;
             }
         }
 
-        // There were no parents besides the BODY
-        if (myParents.size() <= 1) {
-            lastCommonParentIndex = myParents.get(0).getIndexOf(this);
-            lastCommonParentDepth = 0;
-        }// All tags matched
-        else if (myParents.size() <= otherParents.size()) {
-            lastCommonParentIndex = myParents.get(lastIndex).getIndexOf(this);
-            lastCommonParentDepth = lastIndex;
+        result.setLastCommonParentDepth(i - 1);
+        result.setLastCommonParent(myParents.get(i - 1));
+        
+        if (!isSame) {
+            System.out.println("case 1");
+            // There were 2 tags that did not match
+            result.setIndexInLastCommonParent(myParents.get(i - 1).getIndexOf(
+                    myParents.get(i)));
+            result.setSplittingNeeded();
+        } else if (myParents.size() < otherParents.size()) {
+            System.out.println("case 2");
+            // All tags matched but there are tags left in the other tree
+            result.setIndexInLastCommonParent(myParents.get(i - 1).getIndexOf(
+                    this));
+        } else if (myParents.size() > otherParents.size()) {
+            System.out.println("case 3");
+            // All tags matched but there are tags left in this tree
+            result.setIndexInLastCommonParent(myParents.get(i - 1).getIndexOf(
+                    myParents.get(i)));
+            result.setSplittingNeeded();
         } else {
-            lastCommonParentIndex = myParents.get(lastIndex).getIndexOf(
-                    myParents.get(lastIndex + 1));
-            lastCommonParentDepth = lastIndex;
-            splittingNeeded = true;
+            System.out.println("case 4");
+            // All tags matched untill the very last one in both trees
+            // or there were no tags besides the BODY
+            result.setIndexInLastCommonParent(myParents.get(i - 1).getIndexOf(
+                    this));
         }
-        return myParents.get(lastIndex);
-    }
-
-    private boolean splittingNeeded = false;
-
-    public boolean isSplittingNeeded() {
-        return splittingNeeded;
-    }
-
-    private int lastCommonParentDepth = -1;
-
-    public int getLastCommonParentDepth() {
-        return lastCommonParentDepth;
-    }
-
-    private int lastCommonParentIndex = -1;
-
-    public int getLastCommonParentIndex() {
-        return lastCommonParentIndex;
+        return result;
     }
 
     public void setParent(TagNode parent) {

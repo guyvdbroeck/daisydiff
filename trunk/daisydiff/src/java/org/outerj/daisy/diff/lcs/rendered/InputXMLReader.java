@@ -18,6 +18,7 @@ package org.outerj.daisy.diff.lcs.rendered;
 import java.io.IOException;
 import java.net.URL;
 
+import org.xml.sax.DTDHandler;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 import org.xml.sax.XMLReader;
@@ -37,7 +38,7 @@ public class InputXMLReader {
 
         xr.setContentHandler(handler);
         xr.setErrorHandler(handler);
-
+        
         xr.parse(s);
     }
 

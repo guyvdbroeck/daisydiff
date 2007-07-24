@@ -16,8 +16,10 @@
 package org.outerj.daisy.diff.lcs.rendered.dom;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 
 import org.xml.sax.Attributes;
 import org.xml.sax.helpers.AttributesImpl;
@@ -52,9 +54,10 @@ public class TagNode extends Node implements Iterable<Node> {
             throw new IllegalStateException(
                     "The new child must have this node as a parent.");
         try {
-            System.out.println("inserting between "+children.get(index-1)+" and "+children.get(index));
+            System.out.println("inserting between " + children.get(index - 1)
+                    + " and " + children.get(index));
         } catch (RuntimeException e) {
-            System.out.println("exception caught");
+            System.out.println("sysout exception caught");
         }
         children.add(index, node);
     }
@@ -109,24 +112,26 @@ public class TagNode extends Node implements Iterable<Node> {
     }
 
     public List<Node> getMinimalDeletedSet(int start) {
+
         List<Node> nodes = new ArrayList<Node>();
 
         if (children.size() == 0) {
             return nodes;
         }
 
-        boolean hasNegativeChild = false;
+        boolean hasNotDeletedDescendant = false;
 
         for (Node child : children) {
             List<Node> childrenChildren = child.getMinimalDeletedSet(start);
             nodes.addAll(childrenChildren);
-            if (!hasNegativeChild
+            if (!hasNotDeletedDescendant
                     && !(childrenChildren.size() == 1 && childrenChildren
                             .contains(child))) {
-                hasNegativeChild = true;
+                // This child is not entirely deleted
+                hasNotDeletedDescendant = true;
             }
         }
-        if (!hasNegativeChild) {
+        if (!hasNotDeletedDescendant) {
             nodes.clear();
             nodes.add(this);
         }
@@ -138,9 +143,9 @@ public class TagNode extends Node implements Iterable<Node> {
     }
 
     public void splitUntill(TagNode parent, Node split, boolean includeLeft) {
-        System.out.println("splitting "+parent+" at "+split);
-        System.out.println("this is "+this);
-        System.out.println("parent is "+getParent());
+        System.out.println("splitting " + parent + " at " + split);
+        System.out.println("this is " + this);
+        System.out.println("parent is " + getParent());
         if (parent != this) {
             TagNode part1 = new TagNode(null, getQName(), getAttributes());
             TagNode part2 = new TagNode(null, getQName(), getAttributes());
@@ -186,6 +191,85 @@ public class TagNode extends Node implements Iterable<Node> {
 
     private void removeChild(TagNode node) {
         children.remove(node);
+    }
+
+    public void detectIgnorableWhiteSpace() {
+        if (children.size() < 2)
+            return;
+
+        int startText = 0;
+
+        for (int i = 0; i < children.size(); i++) {
+            while (i < children.size() && children.get(i) instanceof TextNode) {
+                i++;
+            }
+            if (i < children.size()) {
+                if (isBlockLevel(children.get(i))
+                        && (startText == 0 || isBlockLevel(children
+                                .get(startText - 1)))) {
+                    for (int j = startText; j < i; j++) {
+                        try {
+                            TextNode whitespace = (TextNode) children.get(j);
+                            System.out.println("Ignoring "+whitespace.getText());
+                            whitespace.markAsIgnorable();
+                        } catch (ClassCastException e) {
+                            assert (false);
+                        }
+                    }
+
+                }
+                startText = i + 1;
+                try {
+                    TagNode child = (TagNode) children.get(i);
+                    child.detectIgnorableWhiteSpace();
+                } catch (ClassCastException e) {
+                }
+            }
+        }
+        if (startText == 0 || isBlockLevel(children.get(startText - 1))) {
+            for (int j = startText; j < children.size(); j++) {
+                try {
+                    TextNode whitespace = (TextNode) children.get(j);
+                    whitespace.markAsIgnorable();
+                } catch (ClassCastException e) {
+                    assert (false);
+                }
+            }
+
+        }
+    }
+
+    private static Set<String> blocks = new HashSet<String>();
+    {
+        blocks.add("html");
+        blocks.add("body");
+        blocks.add("p");
+        blocks.add("blockquote");
+        blocks.add("h1");
+        blocks.add("h2");
+        blocks.add("h3");
+        blocks.add("h4");
+        blocks.add("h5");
+        blocks.add("pre");
+        blocks.add("div");
+        blocks.add("ul");
+        blocks.add("ol");
+        blocks.add("li");
+        blocks.add("table");
+        blocks.add("tbody");
+        blocks.add("tr");
+        blocks.add("td");
+        blocks.add("th");
+        blocks.add("br");
+    }
+
+    public static boolean isBlockLevel(Node node) {
+        try {
+            TagNode tagnode = (TagNode) node;
+            return blocks.contains(tagnode.getQName().toLowerCase());
+        } catch (ClassCastException e) {
+            return false;
+        }
     }
 
 }
