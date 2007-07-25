@@ -84,7 +84,7 @@ public final class RangeDifferencer {
 	}
 
 	private static boolean isUseOldDifferencer() {
-		return false;
+		return true;
 	}
 
 	/**
