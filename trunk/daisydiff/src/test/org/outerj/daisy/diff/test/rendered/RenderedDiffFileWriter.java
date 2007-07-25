@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.outerj.daisy.diff.test;
+package org.outerj.daisy.diff.test.rendered;
 
 import java.io.File;
 
@@ -59,7 +59,7 @@ public class RenderedDiffFileWriter {
         csslink = new AttributesImpl();
         csslink
                 .addAttribute("", "href", "href", "CDATA",
-                        "http://cocoondev.org/resources/skins/daisysite/css/docstyle.css");
+                        "docstyle.css");
         csslink.addAttribute("", "type", "type", "CDATA", "text/css");
         csslink.addAttribute("", "rel", "rel", "CDATA", "stylesheet");
         serializer.startElement("", "link", "link", csslink);

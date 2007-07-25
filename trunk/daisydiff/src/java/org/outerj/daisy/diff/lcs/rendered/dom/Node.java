@@ -45,6 +45,10 @@ public abstract class Node {
 
     public abstract List<Node> getMinimalDeletedSet(int start);
 
+    public void detectIgnorableWhiteSpace(){
+        //no op
+    }
+    
     public LastCommonParentResult getLastCommonParent(Node other) {
         if (other == null)
             throw new IllegalArgumentException("The given TextNode is null");
@@ -56,6 +60,7 @@ public abstract class Node {
 
         int i = 1;
         boolean isSame = true;
+        System.out.println("LastCommonParent of "+this+" in "+this.getParent()+" and "+other+" in "+other.getParent());
         while (isSame && i < myParents.size() && i < otherParents.size()) {
             System.out.println("comparing " + myParents.get(i) + " to "
                     + otherParents.get(i));
@@ -71,24 +76,24 @@ public abstract class Node {
         result.setLastCommonParent(myParents.get(i - 1));
         
         if (!isSame) {
-            System.out.println("case 1");
+            System.out.println("case 1: 2 tags did not match");
             // There were 2 tags that did not match
             result.setIndexInLastCommonParent(myParents.get(i - 1).getIndexOf(
                     myParents.get(i)));
             result.setSplittingNeeded();
         } else if (myParents.size() < otherParents.size()) {
-            System.out.println("case 2");
+            System.out.println("case 2: all matched but more in old tree");
             // All tags matched but there are tags left in the other tree
             result.setIndexInLastCommonParent(myParents.get(i - 1).getIndexOf(
                     this));
         } else if (myParents.size() > otherParents.size()) {
-            System.out.println("case 3");
+            System.out.println("case 3: all matched but more in new tree");
             // All tags matched but there are tags left in this tree
             result.setIndexInLastCommonParent(myParents.get(i - 1).getIndexOf(
                     myParents.get(i)));
             result.setSplittingNeeded();
         } else {
-            System.out.println("case 4");
+            System.out.println("case 4: everything matched or only BODY");
             // All tags matched untill the very last one in both trees
             // or there were no tags besides the BODY
             result.setIndexInLastCommonParent(myParents.get(i - 1).getIndexOf(

@@ -28,6 +28,20 @@ public class TextNode extends Node {
         super(parent);
 
         this.s = s;
+        normalizeNewlines();
+    }
+
+    //Change all newlines to spaces when this node is not inside a <pre> tag
+    private void normalizeNewlines() {
+        if(!(s.equalsIgnoreCase("\n")||s.equalsIgnoreCase("\r")))
+            return;
+        List<TagNode> ancestors = getParentTree();
+        for(TagNode ancestor:ancestors){
+            if(ancestor.getQName().equalsIgnoreCase("pre")){
+                return;
+            }
+        }
+        s=" ";
     }
 
     public String getText() {
@@ -83,8 +97,6 @@ public class TextNode extends Node {
         return changes;
     }
 
-    private boolean deleted = false;
-
     public boolean isDeleted() {
         return deletedId>-1;
     }
@@ -112,4 +124,30 @@ public class TextNode extends Node {
         return getText();
     }
 
+
+    private boolean isIgnorable;
+    
+    public void markAsIgnorable() {
+        isIgnorable=true;
+    }
+    
+    public boolean isIgnorable(){
+        return isIgnorable;
+    }
+
+    public boolean isWhitespace(){
+        if(s.length()!=1)
+            return false;
+        else
+            switch(s.charAt(0)){
+                case ' ':
+                case '\t':
+                case '\r':
+                case '\n':
+                    return true;
+                default:
+                    return false;
+            }
+    }
+    
 }

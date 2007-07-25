@@ -26,9 +26,15 @@ import org.xml.sax.helpers.AttributesImpl;
 public class HtmlSaxRenderedDiffOutput {
 
     private TransformerHandler handler;
+    private boolean addContentClassToTable;
 
     public HtmlSaxRenderedDiffOutput(TransformerHandler handler) {
+        this(handler,true);
+    }
+    
+    public HtmlSaxRenderedDiffOutput(TransformerHandler handler, boolean addContentClassToTable) {
         this.handler = handler;
+        this.addContentClassToTable=addContentClassToTable;
     }
 
     private int removeID=1;
@@ -37,8 +43,14 @@ public class HtmlSaxRenderedDiffOutput {
     
     public void toHTML(TagNode node) throws SAXException {
 
-        handler.startElement("", node.getQName(), node.getQName(), node
-                .getAttributes());
+        if(addContentClassToTable && node.getQName().equalsIgnoreCase("table") && node.getAttributes().getIndex("class")<0){
+            AttributesImpl attrs=new AttributesImpl(node
+                    .getAttributes());
+            attrs.addAttribute("", "class", "class", "CDATA", "content");
+            handler.startElement("", node.getQName(), node.getQName(), attrs);
+        }else
+            handler.startElement("", node.getQName(), node.getQName(), node
+                    .getAttributes());
 
         boolean newStarted=false;
         boolean remStarted=false;
@@ -68,13 +80,14 @@ public class HtmlSaxRenderedDiffOutput {
                         || !textChild.getChanges().equals(changeTXT))) {
                     handler.endElement("", "span", "span");
                     changeStarted=false;
+                    System.out.println("change span ended");
                 } else if (remStarted && !textChild.isDeleted()) {
                     handler.endElement("", "span", "span");
                     remStarted=false;
                 }
                 
                 
-                if (!newStarted && textChild.isNew() && !isInvisible(textChild)) {
+                if (!newStarted && textChild.isNew()) {
                     AttributesImpl attrs = new AttributesImpl();
                     attrs.addAttribute("", "class", "class", "CDATA",
                             "diff-tag-added");
@@ -85,14 +98,13 @@ public class HtmlSaxRenderedDiffOutput {
                     addID++;
                     handler.startElement("", "span", "span", attrs);
                     newStarted=true;
-                } else if (!changeStarted && textChild.isChanged() && !isInvisible(textChild)) {
+                } else if (!changeStarted && textChild.isChanged()) {
+                    System.out.println("change span started");
                     AttributesImpl attrs = new AttributesImpl();
                     attrs.addAttribute("", "class", "class", "CDATA",
                             "diff-tag-changed");
                     attrs.addAttribute("", "id", "id", "CDATA",
                             "changed"+changeID);
-
-                    changeID++;
                     handler.startElement("", "span", "span", attrs);
                     
                     attrs = new AttributesImpl();
@@ -105,9 +117,10 @@ public class HtmlSaxRenderedDiffOutput {
 
                     handler.endElement("", "span", "span");
                     
+                    changeID++;
                     changeStarted=true;
                     changeTXT=textChild.getChanges();
-                } else if (!remStarted && textChild.isDeleted() && !isInvisible(textChild)) {
+                } else if (!remStarted && textChild.isDeleted()) {
                     AttributesImpl attrs = new AttributesImpl();
                     attrs.addAttribute("", "class", "class", "CDATA",
                             "diff-tag-removed");
@@ -115,14 +128,14 @@ public class HtmlSaxRenderedDiffOutput {
                             "removed"+removeID);
                     attrs.addAttribute("", "title", "title", "CDATA",
                             "#removed"+removeID);
-                    removeID++;
+                    
                     handler.startElement("", "span", "span", attrs);
+                    removeID++;
                     remStarted=true;
                 }
 
                 char[] chars = textChild.getText().toCharArray();
                 handler.characters(chars, 0, chars.length);
-
 
             }
         }
@@ -131,6 +144,7 @@ public class HtmlSaxRenderedDiffOutput {
             handler.endElement("", "span", "span");
             newStarted=false;
         } else if (changeStarted) {
+            System.out.println("change span ended2");
             handler.endElement("", "span", "span");
             changeStarted=false;
         } else if (remStarted) {
@@ -140,11 +154,6 @@ public class HtmlSaxRenderedDiffOutput {
 
         handler.endElement("", node.getQName(), node.getQName());
 
-    }
-
-    public static boolean isInvisible(TextNode textChild) {
-        String text = textChild.getText();
-        return "\n".equals(text)||"\r".equals(text);
     }
 
 }

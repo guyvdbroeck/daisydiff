@@ -189,8 +189,106 @@ public class TagNode extends Node implements Iterable<Node> {
 
     }
 
-    private void removeChild(TagNode node) {
+    private void removeChild(Node node) {
         children.remove(node);
     }
+    
+    private void removeChild(int i) {
+        children.remove(i);
+    }
+    
+    public void detectIgnorableWhiteSpace() {
+        boolean blockBefore=true;
+        
+        System.out.println("detecting whitespace in "+this);
+        
+        for (int i = 0; i < getNbChildren(); i++) {
+            getChild(i).detectIgnorableWhiteSpace();
+            
+            //Detect a streak of whitespace and remove it if needed
+            if(getChild(i) instanceof TextNode && ((TextNode)getChild(i)).isWhitespace()){
+                int start=i;
+                while (i<getNbChildren() && getChild(i) instanceof TextNode && ((TextNode)getChild(i)).isWhitespace()) {
+                    i++;
+                }
+                if(blockBefore && (i>=getNbChildren() || isBlockLevel(getChild(i)))){
+                    markAsIgnorable(start,i);
+                }
+                if(i>=getNbChildren()){
+                    return;
+                }
+                //Make sure the next iteration of the for loop has element i as its element
+                i--;
+            }else{
+                //Detect if this is a blocklevel tag
+                if(isBlockLevel(children.get(i))){
+                    //There is a block lvl element before the next child;
+                    blockBefore=true;
+                }else{
+                    //There is text or an inline element before the next child
+                    blockBefore=false;
+                }
+            }
+        }
+    }
+
+    public void removeIgnorableWhiteSpace() {
+        List<Node> toRemove = new ArrayList<Node>();
+        for(Node child:children){
+            try {
+                TextNode textChild=(TextNode)child;
+                if(textChild.isIgnorable()){
+                    toRemove.add(child);
+                }
+            } catch (ClassCastException e) {}
+            try {
+                TagNode tagChild=(TagNode)child;
+                tagChild.removeIgnorableWhiteSpace();
+            } catch (ClassCastException e) {}
+        }
+        children.removeAll(toRemove);
+    }
+    
+    private void markAsIgnorable(int start, int end) {
+        for(int i=start;i<end;i++){
+            TextNode child=(TextNode)getChild(i);
+            child.markAsIgnorable();
+            System.out.println("IGNORING "+(child.getText()+" in "+this));
+        }
+    }
+
+    private static Set<String> blocks = new HashSet<String>();
+    {
+        blocks.add("html");
+        blocks.add("body");
+        blocks.add("p");
+        blocks.add("blockquote");
+        blocks.add("h1");
+        blocks.add("h2");
+        blocks.add("h3");
+        blocks.add("h4");
+        blocks.add("h5");
+        blocks.add("pre");
+        blocks.add("div");
+        blocks.add("ul");
+        blocks.add("ol");
+        blocks.add("li");
+        blocks.add("table");
+        blocks.add("tbody");
+        blocks.add("tr");
+        blocks.add("td");
+        blocks.add("th");
+        blocks.add("br");
+    }
+
+    public static boolean isBlockLevel(Node node) {
+        try {
+            TagNode tagnode = (TagNode) node;
+            return blocks.contains(tagnode.getQName().toLowerCase());
+        } catch (ClassCastException e) {
+            return false;
+        }
+    }
+
 
 }

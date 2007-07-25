@@ -15,7 +15,9 @@
  */
 package org.outerj.daisy.diff.lcs.rendered.dom;
 
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import org.xml.sax.helpers.AttributesImpl;
@@ -25,4 +27,6 @@ public class BodyNode extends TagNode {
     public BodyNode() {
         super(null, "body", new AttributesImpl());
     }
+
+    
 }
