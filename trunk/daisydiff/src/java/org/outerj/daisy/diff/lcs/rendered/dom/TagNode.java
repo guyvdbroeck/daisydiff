@@ -21,6 +21,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
+import org.outerj.daisy.diff.lcs.rendered.helper.TextOnlyComparator;
 import org.xml.sax.Attributes;
 import org.xml.sax.helpers.AttributesImpl;
 
@@ -54,10 +55,10 @@ public class TagNode extends Node implements Iterable<Node> {
             throw new IllegalStateException(
                     "The new child must have this node as a parent.");
         try {
-            System.out.println("inserting between " + children.get(index - 1)
-                    + " and " + children.get(index));
+//            System.out.println("inserting between " + children.get(index - 1)
+//                    + " and " + children.get(index));
         } catch (RuntimeException e) {
-            System.out.println("sysout exception caught");
+//            System.out.println("sysout exception caught");
         }
         children.add(index, node);
     }
@@ -121,7 +122,7 @@ public class TagNode extends Node implements Iterable<Node> {
 
         boolean hasNotDeletedDescendant = false;
 
-        for (Node child : children) {
+        for (Node child : this) {
             List<Node> childrenChildren = child.getMinimalDeletedSet(start);
             nodes.addAll(childrenChildren);
             if (!hasNotDeletedDescendant
@@ -143,9 +144,9 @@ public class TagNode extends Node implements Iterable<Node> {
     }
 
     public void splitUntill(TagNode parent, Node split, boolean includeLeft) {
-        System.out.println("splitting " + parent + " at " + split);
-        System.out.println("this is " + this);
-        System.out.println("parent is " + getParent());
+//        System.out.println("splitting " + parent + " at " + split);
+//        System.out.println("this is " + this);
+//        System.out.println("parent is " + getParent());
         if (parent != this) {
             TagNode part1 = new TagNode(null, getQName(), getAttributes());
             TagNode part2 = new TagNode(null, getQName(), getAttributes());
@@ -200,7 +201,7 @@ public class TagNode extends Node implements Iterable<Node> {
     public void detectIgnorableWhiteSpace() {
         boolean blockBefore=true;
         
-        System.out.println("detecting whitespace in "+this);
+        //System.out.println("detecting whitespace in "+this);
         
         for (int i = 0; i < getNbChildren(); i++) {
             getChild(i).detectIgnorableWhiteSpace();
@@ -234,7 +235,7 @@ public class TagNode extends Node implements Iterable<Node> {
 
     public void removeIgnorableWhiteSpace() {
         List<Node> toRemove = new ArrayList<Node>();
-        for(Node child:children){
+        for(Node child:this){
             try {
                 TextNode textChild=(TextNode)child;
                 if(textChild.isIgnorable()){
@@ -253,7 +254,7 @@ public class TagNode extends Node implements Iterable<Node> {
         for(int i=start;i<end;i++){
             TextNode child=(TextNode)getChild(i);
             child.markAsIgnorable();
-            System.out.println("IGNORING "+(child.getText()+" in "+this));
+//            System.out.println("IGNORING "+(child.getText()+" in "+this));
         }
     }
 
@@ -290,5 +291,22 @@ public class TagNode extends Node implements Iterable<Node> {
         }
     }
 
+    @Override
+    public Node copyTree() {
+        TagNode newThis=new TagNode(null,getQName(),new AttributesImpl(getAttributes()));
+        for(Node child:this){
+            Node newChild=child.copyTree();
+            newChild.setParent(newThis);
+            newThis.addChild(newChild);
+        }
+        return newThis;
+    }
+
+    public double getMatchRatio(TagNode other) {
+        TextOnlyComparator txtComp=new TextOnlyComparator(other);
+        double ratio=txtComp.getMatchRatio(new TextOnlyComparator(this));
+        System.out.println("match between "+this+" in "+this.getParent()+" and "+other+" in "+other.getParent()+" is "+ratio);
+        return ratio;
+    }
 
 }

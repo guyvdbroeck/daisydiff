@@ -20,6 +20,7 @@ import java.util.List;
 
 import org.eclipse.compare.rangedifferencer.IRangeComparator;
 import org.outerj.daisy.diff.lcs.rendered.dom.BodyNode;
+import org.outerj.daisy.diff.lcs.rendered.dom.ImageNode;
 import org.outerj.daisy.diff.lcs.rendered.dom.Node;
 import org.outerj.daisy.diff.lcs.rendered.dom.TagNode;
 import org.outerj.daisy.diff.lcs.rendered.dom.TextNode;
@@ -66,18 +67,18 @@ public class LeafComparator extends DefaultHandler implements IRangeComparator {
         getBody().detectIgnorableWhiteSpace();
         getBody().removeIgnorableWhiteSpace();
         removeIgnorableLeafs();
-  }
+    }
 
-  private void removeIgnorableLeafs() {
-      List<TextNode> toRemove = new ArrayList<TextNode>(30);
-      for(TextNode leaf:leafs){
-          if(leaf.isIgnorable()){
-              toRemove.add(leaf);
-          }
-      }
-      leafs.removeAll(toRemove);
-  }
-  
+    private void removeIgnorableLeafs() {
+        List<TextNode> toRemove = new ArrayList<TextNode>(30);
+        for (TextNode leaf : leafs) {
+            if (leaf.isIgnorable()) {
+                toRemove.add(leaf);
+            }
+        }
+        leafs.removeAll(toRemove);
+    }
+
     private boolean bodyStarted = false;
 
     private boolean bodyEnded = false;
@@ -111,6 +112,11 @@ public class LeafComparator extends DefaultHandler implements IRangeComparator {
         if (qName.equalsIgnoreCase("body")) {
             bodyEnded = true;
         } else if (bodyStarted && !bodyEnded) {
+            if (qName.equalsIgnoreCase("img")) {
+                // Insert a dummy leaf for the image
+                leafs.add(new ImageNode(currentParent, currentParent
+                        .getAttributes()));
+            }
             endWord();
             currentParent = currentParent.getParent();
         }
@@ -238,21 +244,13 @@ public class LeafComparator extends DefaultHandler implements IRangeComparator {
         if (before < getRangeCount())
             nextLeaf = getLeaf(before);
 
-        System.out.println("Treating new nodes:");
-        System.out.println("===================");
-        for (Node node : deletedNodes) {
-            System.out.print(node);
-        }
-        System.out.println("\n===================");
-        /* This case is handled in the while too...
-        if (deletedNodes.size() > 0 && prevLeaf == null && nextLeaf == null) {
-            prevLeaf = deletedNodes.get(0);
-            prevLeaf.setParent(getBody());
-            getBody().addChild(0, prevLeaf);
-            deletedNodes.remove(0);
-        }
-        */
-        
+        // System.out.println("Treating new nodes:");
+        // System.out.println("===================");
+        // for (Node node : deletedNodes) {
+        // System.out.print(node);
+        // }
+        // System.out.println("\n===================");
+
         while (deletedNodes.size() > 0) {
             LastCommonParentResult prevResult, nextResult;
             if (prevLeaf != null) {
@@ -263,7 +261,8 @@ public class LeafComparator extends DefaultHandler implements IRangeComparator {
                 prevResult.setIndexInLastCommonParent(0);
             }
             if (nextLeaf != null) {
-                nextResult = nextLeaf.getLastCommonParent(deletedNodes.get(deletedNodes.size() - 1));
+                nextResult = nextLeaf.getLastCommonParent(deletedNodes
+                        .get(deletedNodes.size() - 1));
             } else {
                 nextResult = new LastCommonParentResult();
                 nextResult.setLastCommonParent(getBody());
@@ -271,20 +270,49 @@ public class LeafComparator extends DefaultHandler implements IRangeComparator {
                         .setIndexInLastCommonParent(getBody().getNbChildren());
             }
 
-            //TODO == case should be seperated at a later time for better results
-            if (prevResult.getLastCommonParentDepth() >= nextResult
+            if (prevResult.getLastCommonParentDepth() == nextResult
+                    .getLastCommonParentDepth()) {
+                if (deletedNodes.get(0).getParent()==deletedNodes.get(deletedNodes.size() - 1).getParent()
+                        && prevResult.getLastCommonParent() == nextResult
+                                .getLastCommonParent()) {
+                    System.out.println("taking shortcut");
+                    prevResult.setLastCommonParentDepth(prevResult
+                            .getLastCommonParentDepth() + 1);
+
+                } else {
+
+                    // now THIS is tricky
+                    double distancePrev = deletedNodes.get(0).getParent()
+                            .getMatchRatio(prevResult.getLastCommonParent());
+                    double distanceNext = deletedNodes.get(
+                            deletedNodes.size() - 1).getParent().getMatchRatio(
+                            nextResult.getLastCommonParent());
+
+                    if (distancePrev <= distanceNext) {
+                        prevResult.setLastCommonParentDepth(prevResult
+                                .getLastCommonParentDepth() + 1);
+                    } else {
+                        nextResult.setLastCommonParentDepth(nextResult
+                                .getLastCommonParentDepth() + 1);
+                    }
+                }
+
+            }
+
+            if (prevResult.getLastCommonParentDepth() > nextResult
                     .getLastCommonParentDepth()) {
                 // Inserting at the front
                 if (prevResult.isSplittingNeeded()) {
                     prevLeaf.getParent().splitUntill(
                             prevResult.getLastCommonParent(), prevLeaf, true);
                 }
-                prevLeaf = deletedNodes.remove(0);
+                prevLeaf = deletedNodes.remove(0).copyTree();
                 prevLeaf.setParent(prevResult.getLastCommonParent());
                 prevResult.getLastCommonParent().addChild(
                         prevResult.getIndexInLastCommonParent() + 1, prevLeaf);
 
-            } else {
+            } else if (prevResult.getLastCommonParentDepth() < nextResult
+                    .getLastCommonParentDepth()) {
                 // Inserting at the back
                 if (nextResult.isSplittingNeeded()) {
                     nextLeaf.getParent().splitUntill(
@@ -294,10 +322,13 @@ public class LeafComparator extends DefaultHandler implements IRangeComparator {
                     nextResult.setIndexInLastCommonParent(nextResult
                             .getIndexInLastCommonParent() + 1);
                 }
-                nextLeaf = deletedNodes.remove(deletedNodes.size() - 1);
+                nextLeaf = deletedNodes.remove(deletedNodes.size() - 1)
+                        .copyTree();
                 nextLeaf.setParent(nextResult.getLastCommonParent());
                 nextResult.getLastCommonParent().addChild(
                         nextResult.getIndexInLastCommonParent(), nextLeaf);
+            } else {
+                throw new IllegalStateException();
             }
 
         }

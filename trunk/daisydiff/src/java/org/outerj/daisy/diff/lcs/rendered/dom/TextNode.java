@@ -18,9 +18,9 @@ package org.outerj.daisy.diff.lcs.rendered.dom;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.outerj.daisy.diff.lcs.rendered.acestor.AncestorComparator;
+import org.outerj.daisy.diff.lcs.rendered.helper.AncestorComparator;
 
-public class TextNode extends Node {
+public class TextNode extends Node implements Cloneable {
 
     private String s;
 
@@ -56,7 +56,7 @@ public class TextNode extends Node {
         try {
             otherTextNode = (TextNode) other;
         } catch (ClassCastException e) {
-            System.out.println("ClassCastException");
+//            System.out.println("ClassCastException");
             return false;
         }
         return getText().replace('\n', ' ').equals(
@@ -148,6 +148,17 @@ public class TextNode extends Node {
                 default:
                     return false;
             }
+    }
+
+    @Override
+    public Node copyTree() {
+        try {
+            Node node=(Node) this.clone();
+            node.setParent(null);
+            return node;
+        } catch (CloneNotSupportedException e) {
+            return null;
+        }
     }
     
 }

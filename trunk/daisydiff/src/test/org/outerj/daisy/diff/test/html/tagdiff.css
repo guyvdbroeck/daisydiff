@@ -25,6 +25,19 @@ span.diff-tag-changed {
   background: url(underline_db.gif) bottom repeat-x;
 }
 
+span.diff-tag-added img{
+ border: 2px solid #ccffcc;
+}
+
+span.diff-tag-removed img{
+ border: 2px solid #fdc6c6;
+}
+
+span.diff-tag-changed img{
+ border: 3px dotted #000099;
+ 
+}
+
 span.diff-tag-changed:hover {
   position: relative;
 }
@@ -49,4 +62,24 @@ span.diff-tag-changed:hover span {
   /*white-space: auto;*/
   width: auto;
   min-width: 200px;
+}
+
+div.removed, div.added{
+  height: 300px;
+  width: 200px;  
+  position: absolute;
+  opacity : 0.55;
+  filter: alpha(opacity=55);
+  -moz-opacity: 0.55;
+}
+div.removed {
+  background-color: #fdc6c6;
+  background-image: url(min.gif);
+}
+div.added {
+  background-color: #ccffcc;
+  background-image: url(plus.gif);
+  background-repeat: no-repeat;
+  background-position: 2px 2px;
+
 }

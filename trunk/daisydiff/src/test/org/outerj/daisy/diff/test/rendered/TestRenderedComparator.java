@@ -32,6 +32,7 @@ public class TestRenderedComparator {
         new TestRenderedComparator(7, "wiki/476-cd", 25, 26);
         new TestRenderedComparator(8, "daisydocs-2_0/373-cd/378-cd",1,5);
         new TestRenderedComparator(9, "wiki/476-cd", 30, 32);
+        new TestRenderedComparator(10, "wiki/476-cd", 35, 36);
     }
 
     public TestRenderedComparator(int i, String document, int version1,

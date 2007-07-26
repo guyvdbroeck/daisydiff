@@ -56,6 +56,15 @@ public class RenderedDiffFileWriter {
         serializer.startElement("", "link", "link", csslink);
         serializer.endElement("", "link", "link");
 
+        //<script src="/resources/js/daisy.js" type="text/javascript"></script>
+        AttributesImpl jslink = new AttributesImpl();
+        jslink.addAttribute("", "src", "src", "CDATA", "js.js");
+        jslink.addAttribute("", "type", "type", "CDATA", "text/javascript");
+        serializer.startElement("", "script", "script", jslink);
+        serializer.endElement("", "script", "script");
+
+        
+        
         csslink = new AttributesImpl();
         csslink
                 .addAttribute("", "href", "href", "CDATA",

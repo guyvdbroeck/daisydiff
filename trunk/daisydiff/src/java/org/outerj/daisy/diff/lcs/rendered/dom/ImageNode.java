@@ -18,28 +18,31 @@ package org.outerj.daisy.diff.lcs.rendered.dom;
 import org.xml.sax.Attributes;
 import org.xml.sax.helpers.AttributesImpl;
 
-public class BodyNode extends TagNode {
+public class ImageNode extends TextNode {
 
-    public BodyNode() {
-        super(null, "body", new AttributesImpl());
+    private AttributesImpl attributes;
+
+    public ImageNode(TagNode parent, Attributes attrs) {
+        super(parent, "<img>"+attrs.getValue("src").toLowerCase()+"</img>");
+        this.attributes = new AttributesImpl(attrs);
     }
     
-    @Override
-    public Node copyTree() {
-        BodyNode newThis=new BodyNode();
-        for(Node child:this){
-            Node newChild=child.copyTree();
-            newChild.setParent(newThis);
-            newThis.addChild(newChild);
+    public boolean isSameText(Object other) {
+        if (other == null)
+            return false;
+
+        ImageNode otherImageNode;
+        try {
+            otherImageNode = (ImageNode) other;
+        } catch (ClassCastException e) {
+            return false;
         }
-        return newThis;
+        return getText().equalsIgnoreCase(
+                otherImageNode.getText());
     }
-    
-    @Override
-    public Attributes getAttributes() {
-        AttributesImpl attrs=new AttributesImpl();
-        attrs.addAttribute("", "onload", "onload", "CDATA", "myLoad()");
-        return attrs;
+
+    public AttributesImpl getAttributes() {
+        return attributes;
     }
     
 }

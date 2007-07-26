@@ -37,8 +37,6 @@ public class RenderedDiffer {
         RangeDifference[] differences = RangeDifferencer.findDifferences(
                 leftComparator, rightComparator);
 
-        System.out.println("NBdifferences=" + differences.length);
-
         List<PublicRangeDifference> pdifferences = preProcess(differences,
                 leftComparator);
 
@@ -110,7 +108,6 @@ public class RenderedDiffer {
                     leftEnd = differences[i + 1].leftEnd();
                     rightEnd = differences[i + 1].rightEnd();
                     i++;
-                    System.out.println("bridging 1");
                 } else if (differences[i + 1].leftStart() == leftEnd + 2
                         && differences[i + 1].rightStart() == rightEnd + 2
                         && LeafComparator.isValidDelimiter(leftComparator
@@ -121,7 +118,6 @@ public class RenderedDiffer {
                     leftEnd = differences[i + 1].leftEnd();
                     rightEnd = differences[i + 1].rightEnd();
                     i++;
-                    System.out.println("bridging 2");
                 } else {
                     connecting = false;
                 }
