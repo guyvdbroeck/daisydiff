@@ -15,25 +15,24 @@
  */
 package org.outerj.daisy.diff.lcs.rendered;
 
-import javax.xml.transform.sax.TransformerHandler;
-
 import org.outerj.daisy.diff.lcs.rendered.dom.ImageNode;
 import org.outerj.daisy.diff.lcs.rendered.dom.Node;
 import org.outerj.daisy.diff.lcs.rendered.dom.TagNode;
 import org.outerj.daisy.diff.lcs.rendered.dom.TextNode;
+import org.xml.sax.ContentHandler;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.AttributesImpl;
 
 public class HtmlSaxRenderedDiffOutput {
 
-    private TransformerHandler handler;
+    private ContentHandler handler;
     private boolean addContentClassToTable;
 
-    public HtmlSaxRenderedDiffOutput(TransformerHandler handler) {
+    public HtmlSaxRenderedDiffOutput(ContentHandler handler) {
         this(handler,true);
     }
     
-    public HtmlSaxRenderedDiffOutput(TransformerHandler handler, boolean addContentClassToTable) {
+    public HtmlSaxRenderedDiffOutput(ContentHandler handler, boolean addContentClassToTable) {
         this.handler = handler;
         this.addContentClassToTable=addContentClassToTable;
     }
