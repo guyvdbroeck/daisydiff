@@ -1,2 +1,0 @@
-The documentation is also/a/c available <a href="/books/">published as a Daisybook</a>. 
-lol hahaha

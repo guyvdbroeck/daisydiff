@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.outerj.daisy.diff.test.rendered;
+package org.outerj.daisy.diff.test.tagdiff;
 
 import java.io.File;
 
@@ -22,19 +22,18 @@ import javax.xml.transform.sax.SAXTransformerFactory;
 import javax.xml.transform.sax.TransformerHandler;
 import javax.xml.transform.stream.StreamResult;
 
-import org.outerj.daisy.diff.html.HTMLDiffer;
-import org.outerj.daisy.diff.html.HtmlSaxDiffOutput;
-import org.outerj.daisy.diff.html.LeafComparator;
+import org.outerj.daisy.diff.tag.TagComparator;
+import org.outerj.daisy.diff.tag.TagDiffer;
+import org.outerj.daisy.diff.tag.TagSaxDiffOutput;
 import org.xml.sax.helpers.AttributesImpl;
 
 /**
  * Writes the generated HTML diff to a given file.
  */
-public class RenderedDiffFileWriter {
+public class TagDiffFileWriter {
 
-    public static void diff(String file, LeafComparator leftComparator,
-            LeafComparator rightComparator) throws Exception {
-
+    public static void diff(String file, TagComparator leftComparator,
+            TagComparator rightComparator) throws Exception {
         StreamResult streamResult = new StreamResult(new File(file));
         SAXTransformerFactory tf = (SAXTransformerFactory) TransformerFactory
                 .newInstance();
@@ -57,13 +56,6 @@ public class RenderedDiffFileWriter {
         serializer.startElement("", "link", "link", csslink);
         serializer.endElement("", "link", "link");
 
-        // <script src="/resources/js/daisy.js" type="text/javascript"></script>
-        AttributesImpl jslink = new AttributesImpl();
-        jslink.addAttribute("", "src", "src", "CDATA", "js.js");
-        jslink.addAttribute("", "type", "type", "CDATA", "text/javascript");
-        serializer.startElement("", "script", "script", jslink);
-        serializer.endElement("", "script", "script");
-
         csslink = new AttributesImpl();
         csslink.addAttribute("", "href", "href", "CDATA", "docstyle.css");
         csslink.addAttribute("", "type", "type", "CDATA", "text/css");
@@ -72,13 +64,11 @@ public class RenderedDiffFileWriter {
         serializer.endElement("", "link", "link");
 
         serializer.endElement("", "head", "head");
+        serializer.startElement("", "body", "body", noattrs);
 
-        AttributesImpl body = new AttributesImpl();
-        body.addAttribute("", "onload", "onload", "CDATA", "myLoad()");
-        serializer.startElement("", "body", "body", body);
+        TagSaxDiffOutput dm = new TagSaxDiffOutput(serializer);
 
-        HtmlSaxDiffOutput output = new HtmlSaxDiffOutput(serializer);
-        HTMLDiffer differ = new HTMLDiffer(output);
+        TagDiffer differ = new TagDiffer(dm);
         differ.diff(leftComparator, rightComparator);
 
         serializer.endElement("", "body", "body");

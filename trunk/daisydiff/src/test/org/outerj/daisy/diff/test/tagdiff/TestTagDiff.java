@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.outerj.daisy.diff.test.tag;
+package org.outerj.daisy.diff.test.tagdiff;
 
 import java.net.URL;
 

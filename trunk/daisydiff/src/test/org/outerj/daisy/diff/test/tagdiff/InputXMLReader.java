@@ -13,35 +13,27 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.outerj.daisy.diff.test.rendered;
+package org.outerj.daisy.diff.test.tagdiff;
 
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.net.URL;
 
 import org.outerj.daisy.diff.html.LeafComparator;
-import org.xml.sax.InputSource;
+import org.outerj.daisy.diff.tag.TagComparator;
 import org.xml.sax.SAXException;
-import org.xml.sax.XMLReader;
-import org.xml.sax.helpers.XMLReaderFactory;
 
 /**
  * Reads XML data and passes the parsed result to a {@link LeafComparator}.
  */
 public class InputXMLReader {
 
-    public static void readXML(URL url, LeafComparator handler)
-            throws SAXException, IOException {
-        readXML(new InputSource(url.openStream()), handler);
-    }
-
-    public static void readXML(InputSource s, LeafComparator handler)
-            throws SAXException, IOException {
-        XMLReader xr = XMLReaderFactory.createXMLReader();
-
-        xr.setContentHandler(handler);
-        xr.setErrorHandler(handler);
-
-        xr.parse(s);
+    public static TagComparator readXML(URL url) throws SAXException,
+            IOException {
+        BufferedReader in = new BufferedReader(new InputStreamReader(url
+                .openStream()));
+        return new TagComparator(in);
     }
 
 }
