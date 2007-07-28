@@ -13,13 +13,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.outerj.daisy.diff.lcs.rendered.dom;
+package org.outerj.daisy.diff.lcs.html.dom;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import org.outerj.daisy.diff.lcs.rendered.helper.AncestorComparator;
+import org.outerj.daisy.diff.lcs.html.helper.AncestorComparator;
 
+/**
+ * Represents a piece of text in the HTML file.
+ */
 public class TextNode extends Node implements Cloneable {
 
     private String s;
@@ -37,9 +40,8 @@ public class TextNode extends Node implements Cloneable {
             return;
         List<TagNode> ancestors = getParentTree();
         for(TagNode ancestor:ancestors){
-            if(ancestor.getQName().equalsIgnoreCase("pre")){
+            if(ancestor.getQName().equalsIgnoreCase("pre"))
                 return;
-            }
         }
         s=" ";
     }
@@ -56,7 +58,6 @@ public class TextNode extends Node implements Cloneable {
         try {
             otherTextNode = (TextNode) other;
         } catch (ClassCastException e) {
-//            System.out.println("ClassCastException");
             return false;
         }
         return getText().replace('\n', ' ').equals(
@@ -77,7 +78,7 @@ public class TextNode extends Node implements Cloneable {
 
     public void compareTags(List<TagNode> other) {
 
-        AncestorComparator acthis = new AncestorComparator(this.getParentTree());
+        AncestorComparator acthis = new AncestorComparator(getParentTree());
         AncestorComparator acother = new AncestorComparator(other);
 
         isChanged = acthis.hasChanged(acother);
@@ -108,7 +109,7 @@ public class TextNode extends Node implements Cloneable {
     }
 
     public boolean isDeleted(int id) {
-        return this.deletedId == id;
+        return deletedId == id;
     }
 
     @Override
@@ -120,6 +121,7 @@ public class TextNode extends Node implements Cloneable {
         return nodes;
     }
 
+    @Override
     public String toString() {
         return getText();
     }
@@ -153,7 +155,7 @@ public class TextNode extends Node implements Cloneable {
     @Override
     public Node copyTree() {
         try {
-            Node node=(Node) this.clone();
+            Node node=(Node) clone();
             node.setParent(null);
             return node;
         } catch (CloneNotSupportedException e) {

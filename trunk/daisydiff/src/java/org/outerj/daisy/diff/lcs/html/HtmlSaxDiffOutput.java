@@ -13,26 +13,28 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.outerj.daisy.diff.lcs.rendered;
+package org.outerj.daisy.diff.lcs.html;
 
-import org.outerj.daisy.diff.lcs.rendered.dom.ImageNode;
-import org.outerj.daisy.diff.lcs.rendered.dom.Node;
-import org.outerj.daisy.diff.lcs.rendered.dom.TagNode;
-import org.outerj.daisy.diff.lcs.rendered.dom.TextNode;
+import org.outerj.daisy.diff.lcs.html.dom.ImageNode;
+import org.outerj.daisy.diff.lcs.html.dom.Node;
+import org.outerj.daisy.diff.lcs.html.dom.TagNode;
+import org.outerj.daisy.diff.lcs.html.dom.TextNode;
 import org.xml.sax.ContentHandler;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.AttributesImpl;
-
-public class HtmlSaxRenderedDiffOutput {
+/**
+ * Takes a branch root and creates an HTML file for it.
+ */
+public class HtmlSaxDiffOutput {
 
     private ContentHandler handler;
     private boolean addContentClassToTable;
 
-    public HtmlSaxRenderedDiffOutput(ContentHandler handler) {
+    public HtmlSaxDiffOutput(ContentHandler handler) {
         this(handler,true);
     }
     
-    public HtmlSaxRenderedDiffOutput(ContentHandler handler, boolean addContentClassToTable) {
+    public HtmlSaxDiffOutput(ContentHandler handler, boolean addContentClassToTable) {
         this.handler = handler;
         this.addContentClassToTable=addContentClassToTable;
     }

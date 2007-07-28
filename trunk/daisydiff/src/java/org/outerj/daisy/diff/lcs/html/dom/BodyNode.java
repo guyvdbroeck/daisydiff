@@ -13,11 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.outerj.daisy.diff.lcs.rendered.dom;
+package org.outerj.daisy.diff.lcs.html.dom;
 
 import org.xml.sax.Attributes;
 import org.xml.sax.helpers.AttributesImpl;
 
+/**
+ * Represents the root of a HTML document.
+ */
 public class BodyNode extends TagNode {
 
     public BodyNode() {

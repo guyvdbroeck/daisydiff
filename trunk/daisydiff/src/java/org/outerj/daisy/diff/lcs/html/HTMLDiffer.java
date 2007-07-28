@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.outerj.daisy.diff.lcs.rendered;
+package org.outerj.daisy.diff.lcs.html;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -22,12 +22,16 @@ import org.eclipse.compare.rangedifferencer.PublicRangeDifference;
 import org.eclipse.compare.rangedifferencer.RangeDifference;
 import org.eclipse.compare.rangedifferencer.RangeDifferencer;
 import org.xml.sax.SAXException;
+/**
+ * Takes two {@link LeafComparator} instances, computes the difference 
+ * between them, marks the changes, and outputs a merged tree to a 
+ * {@link HtmlSaxDiffOutput} instance.
+ */
+public class HTMLDiffer {
 
-public class RenderedDiffer {
+    private HtmlSaxDiffOutput output;
 
-    private HtmlSaxRenderedDiffOutput output;
-
-    public RenderedDiffer(HtmlSaxRenderedDiffOutput dm) {
+    public HTMLDiffer(HtmlSaxDiffOutput dm) {
         output = dm;
     }
 

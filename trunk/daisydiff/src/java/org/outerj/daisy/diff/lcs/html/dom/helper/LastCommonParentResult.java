@@ -13,10 +13,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.outerj.daisy.diff.lcs.rendered.dom.helper;
+package org.outerj.daisy.diff.lcs.html.dom.helper;
 
-import org.outerj.daisy.diff.lcs.rendered.dom.TagNode;
+import org.outerj.daisy.diff.lcs.html.dom.TagNode;
 
+
+/**
+ * When detecting the last common parent of two nodes, all results are stored as 
+ * a {@link LastCommonParentResult}. 
+ */
 public class LastCommonParentResult {
 
     public LastCommonParentResult() {
@@ -53,7 +58,7 @@ public class LastCommonParentResult {
     }
     
     public void setLastCommonParentDepth(int depth){
-        this.lastCommonParentDepth=depth;
+        lastCommonParentDepth=depth;
     }
 
     //Index
@@ -64,7 +69,7 @@ public class LastCommonParentResult {
     }
     
     public void setIndexInLastCommonParent(int index){
-        this.indexInLastCommonParent=index;
+        indexInLastCommonParent=index;
     }
     
 }

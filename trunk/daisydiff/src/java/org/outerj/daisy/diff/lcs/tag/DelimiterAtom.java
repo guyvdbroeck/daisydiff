@@ -25,9 +25,8 @@ public class DelimiterAtom extends TextAtom {
     }
 
     public static boolean isValidDelimiter(String s) {
-        if (s.length() == 1) {
+        if (s.length() == 1)
             return isValidDelimiter(s.charAt(0));
-        }
         return false;
     }
 
@@ -68,6 +67,7 @@ public class DelimiterAtom extends TextAtom {
         }
     }
 
+    @Override
     public boolean isValidAtom(String s) {
         return super.isValidAtom(s) && isValidDelimiterAtom(s);
     }
@@ -76,18 +76,19 @@ public class DelimiterAtom extends TextAtom {
         return isValidDelimiter(s);
     }
 
+    @Override
     public String toString() {
         return "DelimiterAtom: "
                 + getFullText().replaceAll("\n", "\\\\n").replaceAll("\r",
                         "\\\\r").replaceAll("\t", "\\\\t");
     }
 
+    @Override
     public boolean equalsIdentifier(Atom a) {
         return super.equalsIdentifier(a)
         // Handling for automatically inserted newlines
                 || ((a.getIdentifier().equals(" ") || a.getIdentifier().equals(
-                        "\n")) && (this.getIdentifier().equals(" ") || this
-                        .getIdentifier().equals("\n")));
+                        "\n")) && (getIdentifier().equals(" ") || getIdentifier().equals("\n")));
     }
 
 }

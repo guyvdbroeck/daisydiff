@@ -17,11 +17,12 @@ package org.outerj.daisy.diff.test.tag;
 
 import java.io.File;
 
+import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.sax.SAXTransformerFactory;
 import javax.xml.transform.sax.TransformerHandler;
 import javax.xml.transform.stream.StreamResult;
 
-import org.outerj.daisy.diff.lcs.tag.HtmlSaxDiffOutput;
+import org.outerj.daisy.diff.lcs.tag.TagSaxDiffOutput;
 import org.outerj.daisy.diff.lcs.tag.TagComparator;
 import org.outerj.daisy.diff.lcs.tag.TagDiffer;
 import org.xml.sax.helpers.AttributesImpl;
@@ -34,7 +35,7 @@ public class TagDiffFileWriter {
     public static void diff(String file, TagComparator leftComparator,
             TagComparator rightComparator) throws Exception {
         StreamResult streamResult = new StreamResult(new File(file));
-        SAXTransformerFactory tf = (SAXTransformerFactory) SAXTransformerFactory
+        SAXTransformerFactory tf = (SAXTransformerFactory) TransformerFactory
                 .newInstance();
         TransformerHandler serializer = tf.newTransformerHandler();
 
@@ -67,10 +68,10 @@ public class TagDiffFileWriter {
         serializer.endElement("", "head", "head");
         serializer.startElement("", "body", "body", noattrs);
 
-        HtmlSaxDiffOutput dm = new HtmlSaxDiffOutput(serializer);
+        TagSaxDiffOutput dm = new TagSaxDiffOutput(serializer);
 
         TagDiffer differ = new TagDiffer(dm);
-        differ.parseNewDiff(leftComparator, rightComparator);
+        differ.diff(leftComparator, rightComparator);
 
         serializer.endElement("", "body", "body");
         serializer.endElement("", "html", "html");

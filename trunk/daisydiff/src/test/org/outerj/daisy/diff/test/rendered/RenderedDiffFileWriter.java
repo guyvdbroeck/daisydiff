@@ -17,13 +17,14 @@ package org.outerj.daisy.diff.test.rendered;
 
 import java.io.File;
 
+import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.sax.SAXTransformerFactory;
 import javax.xml.transform.sax.TransformerHandler;
 import javax.xml.transform.stream.StreamResult;
 
-import org.outerj.daisy.diff.lcs.rendered.HtmlSaxRenderedDiffOutput;
-import org.outerj.daisy.diff.lcs.rendered.LeafComparator;
-import org.outerj.daisy.diff.lcs.rendered.RenderedDiffer;
+import org.outerj.daisy.diff.lcs.html.HtmlSaxDiffOutput;
+import org.outerj.daisy.diff.lcs.html.LeafComparator;
+import org.outerj.daisy.diff.lcs.html.HTMLDiffer;
 import org.xml.sax.helpers.AttributesImpl;
 
 /**
@@ -35,7 +36,7 @@ public class RenderedDiffFileWriter {
             LeafComparator rightComparator) throws Exception {
 
         StreamResult streamResult = new StreamResult(new File(file));
-        SAXTransformerFactory tf = (SAXTransformerFactory) SAXTransformerFactory
+        SAXTransformerFactory tf = (SAXTransformerFactory) TransformerFactory
                 .newInstance();
         TransformerHandler serializer = tf.newTransformerHandler();
 
@@ -76,10 +77,10 @@ public class RenderedDiffFileWriter {
 
         serializer.endElement("", "head", "head");
 
-        HtmlSaxRenderedDiffOutput output = new HtmlSaxRenderedDiffOutput(
+        HtmlSaxDiffOutput output = new HtmlSaxDiffOutput(
                 serializer);
 
-        RenderedDiffer differ = new RenderedDiffer(output);
+        HTMLDiffer differ = new HTMLDiffer(output);
         differ.diff(leftComparator, rightComparator);
 
         serializer.endElement("", "html", "html");

@@ -13,13 +13,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.outerj.daisy.diff.lcs.rendered.dom;
+package org.outerj.daisy.diff.lcs.html.dom;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import org.outerj.daisy.diff.lcs.rendered.dom.helper.LastCommonParentResult;
-
+import org.outerj.daisy.diff.lcs.html.dom.helper.LastCommonParentResult;
+/**
+ * Represents any element in the DOM tree of a HTML file.
+ */
 public abstract class Node {
 
     protected TagNode parent;
@@ -60,10 +62,7 @@ public abstract class Node {
 
         int i = 1;
         boolean isSame = true;
-       // System.out.println("LastCommonParent of "+this+" in "+this.getParent()+" and "+other+" in "+other.getParent());
         while (isSame && i < myParents.size() && i < otherParents.size()) {
-           // System.out.println("comparing " + myParents.get(i) + " to "
-           //         + otherParents.get(i));
             if (!myParents.get(i).isSameTag(otherParents.get(i))) {
                 isSame = false;
             } else {
@@ -76,24 +75,18 @@ public abstract class Node {
         result.setLastCommonParent(myParents.get(i - 1));
         
         if (!isSame) {
-           // System.out.println("case 1: 2 tags did not match");
-            // There were 2 tags that did not match
             result.setIndexInLastCommonParent(myParents.get(i - 1).getIndexOf(
                     myParents.get(i)));
             result.setSplittingNeeded();
         } else if (myParents.size() < otherParents.size()) {
-           // System.out.println("case 2: all matched but more in old tree");
-            // All tags matched but there are tags left in the other tree
             result.setIndexInLastCommonParent(myParents.get(i - 1).getIndexOf(
                     this));
         } else if (myParents.size() > otherParents.size()) {
-          //  System.out.println("case 3: all matched but more in new tree");
             // All tags matched but there are tags left in this tree
             result.setIndexInLastCommonParent(myParents.get(i - 1).getIndexOf(
                     myParents.get(i)));
             result.setSplittingNeeded();
         } else {
-//            System.out.println("case 4: everything matched or only BODY");
             // All tags matched untill the very last one in both trees
             // or there were no tags besides the BODY
             result.setIndexInLastCommonParent(myParents.get(i - 1).getIndexOf(

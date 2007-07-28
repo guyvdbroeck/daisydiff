@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.outerj.daisy.diff.lcs.rendered.helper;
+package org.outerj.daisy.diff.lcs.html.helper;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -21,10 +21,12 @@ import java.util.List;
 import org.eclipse.compare.rangedifferencer.IRangeComparator;
 import org.eclipse.compare.rangedifferencer.RangeDifference;
 import org.eclipse.compare.rangedifferencer.RangeDifferencer;
-import org.outerj.daisy.diff.lcs.rendered.dom.Node;
-import org.outerj.daisy.diff.lcs.rendered.dom.TagNode;
-import org.outerj.daisy.diff.lcs.rendered.dom.TextNode;
-
+import org.outerj.daisy.diff.lcs.html.dom.Node;
+import org.outerj.daisy.diff.lcs.html.dom.TagNode;
+import org.outerj.daisy.diff.lcs.html.dom.TextNode;
+/**
+ * A comparator that compares only the elements of text inside a given tag.
+ */
 public class TextOnlyComparator implements IRangeComparator {
 
     private List<TextNode> leafs=new ArrayList<TextNode>();

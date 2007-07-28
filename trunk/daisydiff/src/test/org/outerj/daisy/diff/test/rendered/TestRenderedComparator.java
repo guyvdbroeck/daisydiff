@@ -17,8 +17,8 @@ package org.outerj.daisy.diff.test.rendered;
 
 import java.net.URL;
 
-import org.outerj.daisy.diff.lcs.rendered.InputXMLReader;
-import org.outerj.daisy.diff.lcs.rendered.LeafComparator;
+import org.outerj.daisy.diff.lcs.html.InputXMLReader;
+import org.outerj.daisy.diff.lcs.html.LeafComparator;
 
 public class TestRenderedComparator {
 

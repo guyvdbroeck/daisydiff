@@ -30,82 +30,13 @@ import org.eclipse.compare.rangedifferencer.RangeDifferencer;
  */
 public class TagDiffer {
 
-    private HtmlSaxDiffOutput markup;
+private TagSaxDiffOutput output;
 
-    public TagDiffer(HtmlSaxDiffOutput markup) {
-        this.markup = markup;
+    public TagDiffer(TagSaxDiffOutput output) {
+        this.output = output;
     }
 
-    public void parseNoChange(int beginLeft, int endLeft, int beginRight,
-            int endRight, IAtomSplitter leftComparator,
-            IAtomSplitter rightComparator) throws Exception {
-
-        StringBuilder sb = new StringBuilder();
-
-        /*
-         * We can assume that the LCS is correct and that there are exacly as
-         * many atoms left and right
-         */
-        while (beginLeft < endLeft) {
-
-            while (beginLeft < endLeft
-                    && !rightComparator.getAtom(beginRight)
-                            .hasInternalIdentifiers()
-                    && !leftComparator.getAtom(beginLeft)
-                            .hasInternalIdentifiers()) {
-                sb.append(rightComparator.getAtom(beginRight).getFullText());
-                beginRight++;
-                beginLeft++;
-            }
-
-            if (sb.length() > 0) {
-                markup.addClearPart(sb.toString());
-                sb.setLength(0);
-            }
-
-            if (beginLeft < endLeft) {
-
-                IAtomSplitter leftComparator2 = new ArgumentComparator(
-                        leftComparator.getAtom(beginLeft).getFullText());
-                IAtomSplitter rightComparator2 = new ArgumentComparator(
-                        rightComparator.getAtom(beginRight).getFullText());
-
-                RangeDifference[] differences2 = RangeDifferencer
-                        .findDifferences(leftComparator2, rightComparator2);
-                List<PublicRangeDifference> pdifferences2 = preProcess(
-                        differences2, 2);
-
-                int rightAtom2 = 0;
-                for (int j = 0; j < pdifferences2.size(); j++) {
-                    if (rightAtom2 < pdifferences2.get(j).rightStart()) {
-                        markup.addClearPart(rightComparator2.substring(
-                                rightAtom2, pdifferences2.get(j).rightStart()));
-                    }
-                    if (pdifferences2.get(j).leftLength() > 0) {
-                        markup.addRemovedPart(leftComparator2.substring(
-                                pdifferences2.get(j).leftStart(), pdifferences2
-                                        .get(j).leftEnd()));
-                    }
-                    if (pdifferences2.get(j).rightLength() > 0) {
-                        markup.addAddedPart(rightComparator2.substring(
-                                pdifferences2.get(j).rightStart(),
-                                pdifferences2.get(j).rightEnd()));
-                    }
-
-                    rightAtom2 = pdifferences2.get(j).rightEnd();
-
-                }
-                if (rightAtom2 < rightComparator2.getRangeCount())
-                    markup.addClearPart(rightComparator2.substring(rightAtom2));
-                beginLeft++;
-                beginRight++;
-            }
-
-        }
-
-    }
-
-    public void parseNewDiff(IAtomSplitter leftComparator,
+    public void diff(IAtomSplitter leftComparator,
             IAtomSplitter rightComparator) throws Exception {
 
         RangeDifference[] differences = RangeDifferencer.findDifferences(
@@ -129,10 +60,10 @@ public class TagDiffer {
                     .rightStart(), pdifferences.get(i).rightEnd());
 
             if (pdifferences.get(i).leftLength() > 0)
-                markup.addRemovedPart(leftString);
+                output.addRemovedPart(leftString);
 
             if (pdifferences.get(i).rightLength() > 0)
-                markup.addAddedPart(rightString);
+                output.addAddedPart(rightString);
 
             rightAtom = pdifferences.get(i).rightEnd();
             leftAtom = pdifferences.get(i).leftEnd();
@@ -145,6 +76,76 @@ public class TagDiffer {
 
     }
 
+    
+    private void parseNoChange(int beginLeft, int endLeft, int beginRight,
+            int endRight, IAtomSplitter leftComparator,
+            IAtomSplitter rightComparator) throws Exception {
+
+        StringBuilder sb = new StringBuilder();
+
+        /*
+         * We can assume that the LCS is correct and that there are exacly as
+         * many atoms left and right
+         */
+        while (beginLeft < endLeft) {
+
+            while (beginLeft < endLeft
+                    && !rightComparator.getAtom(beginRight)
+                            .hasInternalIdentifiers()
+                    && !leftComparator.getAtom(beginLeft)
+                            .hasInternalIdentifiers()) {
+                sb.append(rightComparator.getAtom(beginRight).getFullText());
+                beginRight++;
+                beginLeft++;
+            }
+
+            if (sb.length() > 0) {
+                output.addClearPart(sb.toString());
+                sb.setLength(0);
+            }
+
+            if (beginLeft < endLeft) {
+
+                IAtomSplitter leftComparator2 = new ArgumentComparator(
+                        leftComparator.getAtom(beginLeft).getFullText());
+                IAtomSplitter rightComparator2 = new ArgumentComparator(
+                        rightComparator.getAtom(beginRight).getFullText());
+
+                RangeDifference[] differences2 = RangeDifferencer
+                        .findDifferences(leftComparator2, rightComparator2);
+                List<PublicRangeDifference> pdifferences2 = preProcess(
+                        differences2, 2);
+
+                int rightAtom2 = 0;
+                for (int j = 0; j < pdifferences2.size(); j++) {
+                    if (rightAtom2 < pdifferences2.get(j).rightStart()) {
+                        output.addClearPart(rightComparator2.substring(
+                                rightAtom2, pdifferences2.get(j).rightStart()));
+                    }
+                    if (pdifferences2.get(j).leftLength() > 0) {
+                        output.addRemovedPart(leftComparator2.substring(
+                                pdifferences2.get(j).leftStart(), pdifferences2
+                                        .get(j).leftEnd()));
+                    }
+                    if (pdifferences2.get(j).rightLength() > 0) {
+                        output.addAddedPart(rightComparator2.substring(
+                                pdifferences2.get(j).rightStart(),
+                                pdifferences2.get(j).rightEnd()));
+                    }
+
+                    rightAtom2 = pdifferences2.get(j).rightEnd();
+
+                }
+                if (rightAtom2 < rightComparator2.getRangeCount())
+                    output.addClearPart(rightComparator2.substring(rightAtom2));
+                beginLeft++;
+                beginRight++;
+            }
+
+        }
+
+    }
+    
     private List<PublicRangeDifference> preProcess(
             RangeDifference[] differences, IAtomSplitter leftComparator) {
 

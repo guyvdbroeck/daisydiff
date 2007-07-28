@@ -81,9 +81,9 @@ public class TagComparator implements IAtomSplitter {
     }
 
     public String substring(int startAtom, int endAtom) {
-        if (startAtom == endAtom) {
+        if (startAtom == endAtom)
             return "";
-        } else {
+        else {
             StringBuilder result = new StringBuilder();
             for (int i = startAtom; i < endAtom; i++) {
                 result.append(atoms.get(i).getFullText());

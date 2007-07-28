@@ -13,15 +13,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.outerj.daisy.diff.lcs.rendered.helper;
+package org.outerj.daisy.diff.lcs.html.helper;
 
 import java.util.List;
 
 import org.eclipse.compare.rangedifferencer.IRangeComparator;
 import org.eclipse.compare.rangedifferencer.RangeDifference;
 import org.eclipse.compare.rangedifferencer.RangeDifferencer;
-import org.outerj.daisy.diff.lcs.rendered.dom.TagNode;
-
+import org.outerj.daisy.diff.lcs.html.dom.TagNode;
+/**
+ * A comparator used when calculating the difference in ancestry of two Nodes.
+ */
 public class AncestorComparator implements IRangeComparator {
 
     private List<TagNode> ancestors;
@@ -73,25 +75,25 @@ public class AncestorComparator implements IRangeComparator {
             if (d.leftLength() == 0 && d.rightLength() > 0) {
                 if (d.rightLength() == 1) {
                     compareTxt += "A new "
-                            + this.getAncestor(d.rightStart()).getOpeningTag()
+                            + getAncestor(d.rightStart()).getOpeningTag()
                             + " tag was added. \n";
                 } else if (d.rightLength() == 2) {
                     compareTxt += "A new "
-                            + this.getAncestor(d.rightStart()).getOpeningTag()
+                            + getAncestor(d.rightStart()).getOpeningTag()
                             + " ";
                     compareTxt += "and "
-                            + this.getAncestor(d.rightEnd() - 1)
+                            + getAncestor(d.rightEnd() - 1)
                                     .getOpeningTag() + " tag ";
                     compareTxt += " were added. \n";
                 } else {
                     compareTxt += "A new "
-                            + this.getAncestor(d.rightStart()).getOpeningTag();
+                            + getAncestor(d.rightStart()).getOpeningTag();
                     for (int i = d.rightStart() + 1; i < d.rightEnd() - 1; i++) {
                         compareTxt += ", "
-                                + this.getAncestor(i).getOpeningTag();
+                                + getAncestor(i).getOpeningTag();
                     }
                     compareTxt += " and "
-                            + this.getAncestor(d.rightEnd() - 1)
+                            + getAncestor(d.rightEnd() - 1)
                                     .getOpeningTag() + " tag ";
                     compareTxt += " were added. \n";
                 }
@@ -148,25 +150,25 @@ public class AncestorComparator implements IRangeComparator {
 
                 if (d.rightLength() == 1) {
                     compareTxt += "a new "
-                            + this.getAncestor(d.rightStart()).getOpeningTag()
+                            + getAncestor(d.rightStart()).getOpeningTag()
                             + " tag. \n";
                 } else if (d.rightLength() == 2) {
                     compareTxt += "a new "
-                            + this.getAncestor(d.rightStart()).getOpeningTag()
+                            + getAncestor(d.rightStart()).getOpeningTag()
                             + " tag ";
                     compareTxt += "and "
-                            + this.getAncestor(d.rightEnd() - 1)
+                            + getAncestor(d.rightEnd() - 1)
                                     .getOpeningTag() + " tag ";
                     compareTxt += ". \n";
                 } else {
                     compareTxt += "a new "
-                            + this.getAncestor(d.rightStart()).getOpeningTag();
+                            + getAncestor(d.rightStart()).getOpeningTag();
                     for (int i = d.rightStart() + 1; i < d.rightEnd() - 1; i++) {
                         compareTxt += ", "
-                                + this.getAncestor(i).getOpeningTag() + "";
+                                + getAncestor(i).getOpeningTag() + "";
                     }
                     compareTxt += " and "
-                            + this.getAncestor(d.rightEnd() - 1)
+                            + getAncestor(d.rightEnd() - 1)
                                     .getOpeningTag() + " tag ";
                     compareTxt += ". \n";
                 }

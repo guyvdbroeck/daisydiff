@@ -13,20 +13,24 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.outerj.daisy.diff.lcs.rendered.dom;
+package org.outerj.daisy.diff.lcs.html.dom;
 
 import org.xml.sax.Attributes;
 import org.xml.sax.helpers.AttributesImpl;
-
+/**
+ * Represents an image in HTML. Even though images do not contain any text they
+ * are single visible objects on the page. They are logically a {@link TextNode}.
+ */
 public class ImageNode extends TextNode {
 
     private AttributesImpl attributes;
 
     public ImageNode(TagNode parent, Attributes attrs) {
         super(parent, "<img>"+attrs.getValue("src").toLowerCase()+"</img>");
-        this.attributes = new AttributesImpl(attrs);
+        attributes = new AttributesImpl(attrs);
     }
     
+    @Override
     public boolean isSameText(Object other) {
         if (other == null)
             return false;

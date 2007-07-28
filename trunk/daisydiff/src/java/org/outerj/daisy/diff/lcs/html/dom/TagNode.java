@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.outerj.daisy.diff.lcs.rendered.dom;
+package org.outerj.daisy.diff.lcs.html.dom;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -21,10 +21,12 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
-import org.outerj.daisy.diff.lcs.rendered.helper.TextOnlyComparator;
+import org.outerj.daisy.diff.lcs.html.helper.TextOnlyComparator;
 import org.xml.sax.Attributes;
 import org.xml.sax.helpers.AttributesImpl;
-
+/**
+ * Node that can contain other nodes. Represents an HTML tag. 
+ */
 public class TagNode extends Node implements Iterable<Node> {
 
     private List<Node> children = new ArrayList<Node>();
@@ -36,7 +38,7 @@ public class TagNode extends Node implements Iterable<Node> {
     public TagNode(TagNode parent, String qName, Attributes attributesarg) {
         super(parent);
         this.qName = qName;
-        this.attributes = new AttributesImpl(attributesarg);
+        attributes = new AttributesImpl(attributesarg);
     }
 
     public void addChild(Node node) {
@@ -54,12 +56,6 @@ public class TagNode extends Node implements Iterable<Node> {
         if (node.getParent() != this)
             throw new IllegalStateException(
                     "The new child must have this node as a parent.");
-        try {
-//            System.out.println("inserting between " + children.get(index - 1)
-//                    + " and " + children.get(index));
-        } catch (RuntimeException e) {
-//            System.out.println("sysout exception caught");
-        }
         children.add(index, node);
     }
 
@@ -112,13 +108,13 @@ public class TagNode extends Node implements Iterable<Node> {
         return "</" + getQName() + ">";
     }
 
+    @Override
     public List<Node> getMinimalDeletedSet(int start) {
 
         List<Node> nodes = new ArrayList<Node>();
 
-        if (children.size() == 0) {
+        if (children.size() == 0)
             return nodes;
-        }
 
         boolean hasNotDeletedDescendant = false;
 
@@ -139,6 +135,7 @@ public class TagNode extends Node implements Iterable<Node> {
         return nodes;
     }
 
+    @Override
     public String toString() {
         return getOpeningTag();
     }
@@ -198,10 +195,9 @@ public class TagNode extends Node implements Iterable<Node> {
         children.remove(i);
     }
     
+    @Override
     public void detectIgnorableWhiteSpace() {
         boolean blockBefore=true;
-        
-        //System.out.println("detecting whitespace in "+this);
         
         for (int i = 0; i < getNbChildren(); i++) {
             getChild(i).detectIgnorableWhiteSpace();
@@ -215,9 +211,8 @@ public class TagNode extends Node implements Iterable<Node> {
                 if(blockBefore && (i>=getNbChildren() || isBlockLevel(getChild(i)))){
                     markAsIgnorable(start,i);
                 }
-                if(i>=getNbChildren()){
+                if(i>=getNbChildren())
                     return;
-                }
                 //Make sure the next iteration of the for loop has element i as its element
                 i--;
             }else{
@@ -254,7 +249,6 @@ public class TagNode extends Node implements Iterable<Node> {
         for(int i=start;i<end;i++){
             TextNode child=(TextNode)getChild(i);
             child.markAsIgnorable();
-//            System.out.println("IGNORING "+(child.getText()+" in "+this));
         }
     }
 
@@ -304,9 +298,7 @@ public class TagNode extends Node implements Iterable<Node> {
 
     public double getMatchRatio(TagNode other) {
         TextOnlyComparator txtComp=new TextOnlyComparator(other);
-        double ratio=txtComp.getMatchRatio(new TextOnlyComparator(this));
-        System.out.println("match between "+this+" in "+this.getParent()+" and "+other+" in "+other.getParent()+" is "+ratio);
-        return ratio;
+        return txtComp.getMatchRatio(new TextOnlyComparator(this));
     }
 
 }

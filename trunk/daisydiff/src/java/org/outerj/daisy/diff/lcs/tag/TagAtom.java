@@ -67,12 +67,13 @@ public class TagAtom implements Atom {
         return isValidTag(s);
     }
 
+    @Override
     public String toString() {
         return "TagAtom: " + getFullText();
     }
 
     public boolean equalsIdentifier(Atom other) {
-        return other.getIdentifier().equals(this.getIdentifier());
+        return other.getIdentifier().equals(getIdentifier());
     }
 
 }

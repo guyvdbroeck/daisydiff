@@ -13,22 +13,26 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.outerj.daisy.diff.lcs.rendered;
+package org.outerj.daisy.diff.lcs.html;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.compare.rangedifferencer.IRangeComparator;
-import org.outerj.daisy.diff.lcs.rendered.dom.BodyNode;
-import org.outerj.daisy.diff.lcs.rendered.dom.ImageNode;
-import org.outerj.daisy.diff.lcs.rendered.dom.Node;
-import org.outerj.daisy.diff.lcs.rendered.dom.TagNode;
-import org.outerj.daisy.diff.lcs.rendered.dom.TextNode;
-import org.outerj.daisy.diff.lcs.rendered.dom.helper.LastCommonParentResult;
+import org.outerj.daisy.diff.lcs.html.dom.BodyNode;
+import org.outerj.daisy.diff.lcs.html.dom.ImageNode;
+import org.outerj.daisy.diff.lcs.html.dom.Node;
+import org.outerj.daisy.diff.lcs.html.dom.TagNode;
+import org.outerj.daisy.diff.lcs.html.dom.TextNode;
+import org.outerj.daisy.diff.lcs.html.dom.helper.LastCommonParentResult;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
-
+/**
+ * A comparator that generates a DOM tree of sorts from handling SAX events.
+ * Then it can be used to compute the difference between DOM trees and mark
+ * elements accordingly.
+ */
 public class LeafComparator extends DefaultHandler implements IRangeComparator {
 
     private List<TextNode> leafs = new ArrayList<TextNode>(50);
@@ -244,13 +248,6 @@ public class LeafComparator extends DefaultHandler implements IRangeComparator {
         if (before < getRangeCount())
             nextLeaf = getLeaf(before);
 
-        // System.out.println("Treating new nodes:");
-        // System.out.println("===================");
-        // for (Node node : deletedNodes) {
-        // System.out.print(node);
-        // }
-        // System.out.println("\n===================");
-
         while (deletedNodes.size() > 0) {
             LastCommonParentResult prevResult, nextResult;
             if (prevLeaf != null) {
@@ -275,7 +272,6 @@ public class LeafComparator extends DefaultHandler implements IRangeComparator {
                 if (deletedNodes.get(0).getParent()==deletedNodes.get(deletedNodes.size() - 1).getParent()
                         && prevResult.getLastCommonParent() == nextResult
                                 .getLastCommonParent()) {
-                    System.out.println("taking shortcut");
                     prevResult.setLastCommonParentDepth(prevResult
                             .getLastCommonParentDepth() + 1);
 
@@ -327,9 +323,8 @@ public class LeafComparator extends DefaultHandler implements IRangeComparator {
                 nextLeaf.setParent(nextResult.getLastCommonParent());
                 nextResult.getLastCommonParent().addChild(
                         nextResult.getIndexInLastCommonParent(), nextLeaf);
-            } else {
+            } else
                 throw new IllegalStateException();
-            }
 
         }
     }

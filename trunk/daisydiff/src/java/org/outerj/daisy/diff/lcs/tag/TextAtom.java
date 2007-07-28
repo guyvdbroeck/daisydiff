@@ -49,12 +49,13 @@ public class TextAtom implements Atom {
         return s != null && s.length() > 0;
     }
 
+    @Override
     public String toString() {
         return "TextAtom: " + getFullText();
     }
 
     public boolean equalsIdentifier(Atom other) {
-        return other.getIdentifier().equals(this.getIdentifier());
+        return other.getIdentifier().equals(getIdentifier());
     }
 
 }

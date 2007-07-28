@@ -13,17 +13,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.outerj.daisy.diff.lcs.rendered;
+package org.outerj.daisy.diff.lcs.html;
 
 import java.io.IOException;
 import java.net.URL;
 
-import org.xml.sax.DTDHandler;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 import org.xml.sax.XMLReader;
 import org.xml.sax.helpers.XMLReaderFactory;
-
+/**
+ * Reads XML data and passes the parsed result to a {@link LeafComparator}.
+ */
 public class InputXMLReader {
 
     public static void readXML(URL url, LeafComparator handler)
