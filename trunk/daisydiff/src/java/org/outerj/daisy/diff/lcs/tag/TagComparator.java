@@ -19,6 +19,8 @@ package org.outerj.daisy.diff.lcs.tag;
  * Takes a String and generates tokens/atoms that can be used by LCS. This
  * comparator is used specifically for HTML documents.
  */
+import java.io.BufferedReader;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -34,6 +36,21 @@ public class TagComparator implements IAtomSplitter {
 
     public TagComparator(StringBuilder s) {
         generateAtoms(s.toString());
+    }
+
+    public TagComparator(BufferedReader in) throws IOException {
+        StringBuilder sb=new StringBuilder();
+        
+        boolean allRead=false;
+        while(!allRead){
+            int result=in.read();
+            if(result>=0){
+                sb.append((char)result);
+            }else{
+                generateAtoms(sb.toString());
+                allRead=true;
+            }
+        }
     }
 
     public List<Atom> getAtoms() {

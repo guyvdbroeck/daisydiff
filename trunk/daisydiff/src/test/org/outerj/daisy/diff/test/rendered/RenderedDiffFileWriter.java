@@ -22,9 +22,9 @@ import javax.xml.transform.sax.SAXTransformerFactory;
 import javax.xml.transform.sax.TransformerHandler;
 import javax.xml.transform.stream.StreamResult;
 
+import org.outerj.daisy.diff.lcs.html.HTMLDiffer;
 import org.outerj.daisy.diff.lcs.html.HtmlSaxDiffOutput;
 import org.outerj.daisy.diff.lcs.html.LeafComparator;
-import org.outerj.daisy.diff.lcs.html.HTMLDiffer;
 import org.xml.sax.helpers.AttributesImpl;
 
 /**
@@ -51,25 +51,21 @@ public class RenderedDiffFileWriter {
 
         // <link href="/css/tagdiff.css" type="text/css" rel="stylesheet">
         AttributesImpl csslink = new AttributesImpl();
-        csslink.addAttribute("", "href", "href", "CDATA", "tagdiff.css");
+        csslink.addAttribute("", "href", "href", "CDATA", "diff.css");
         csslink.addAttribute("", "type", "type", "CDATA", "text/css");
         csslink.addAttribute("", "rel", "rel", "CDATA", "stylesheet");
         serializer.startElement("", "link", "link", csslink);
         serializer.endElement("", "link", "link");
 
-        //<script src="/resources/js/daisy.js" type="text/javascript"></script>
+        // <script src="/resources/js/daisy.js" type="text/javascript"></script>
         AttributesImpl jslink = new AttributesImpl();
         jslink.addAttribute("", "src", "src", "CDATA", "js.js");
         jslink.addAttribute("", "type", "type", "CDATA", "text/javascript");
         serializer.startElement("", "script", "script", jslink);
         serializer.endElement("", "script", "script");
 
-        
-        
         csslink = new AttributesImpl();
-        csslink
-                .addAttribute("", "href", "href", "CDATA",
-                        "docstyle.css");
+        csslink.addAttribute("", "href", "href", "CDATA", "docstyle.css");
         csslink.addAttribute("", "type", "type", "CDATA", "text/css");
         csslink.addAttribute("", "rel", "rel", "CDATA", "stylesheet");
         serializer.startElement("", "link", "link", csslink);
@@ -77,12 +73,15 @@ public class RenderedDiffFileWriter {
 
         serializer.endElement("", "head", "head");
 
-        HtmlSaxDiffOutput output = new HtmlSaxDiffOutput(
-                serializer);
+        AttributesImpl body = new AttributesImpl();
+        body.addAttribute("", "onload", "onload", "CDATA", "myLoad()");
+        serializer.startElement("", "body", "body", body);
 
+        HtmlSaxDiffOutput output = new HtmlSaxDiffOutput(serializer);
         HTMLDiffer differ = new HTMLDiffer(output);
         differ.diff(leftComparator, rightComparator);
 
+        serializer.endElement("", "body", "body");
         serializer.endElement("", "html", "html");
         serializer.endDocument();
     }

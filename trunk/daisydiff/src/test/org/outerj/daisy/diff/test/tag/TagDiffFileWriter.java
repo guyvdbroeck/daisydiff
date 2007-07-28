@@ -22,9 +22,9 @@ import javax.xml.transform.sax.SAXTransformerFactory;
 import javax.xml.transform.sax.TransformerHandler;
 import javax.xml.transform.stream.StreamResult;
 
-import org.outerj.daisy.diff.lcs.tag.TagSaxDiffOutput;
 import org.outerj.daisy.diff.lcs.tag.TagComparator;
 import org.outerj.daisy.diff.lcs.tag.TagDiffer;
+import org.outerj.daisy.diff.lcs.tag.TagSaxDiffOutput;
 import org.xml.sax.helpers.AttributesImpl;
 
 /**
@@ -50,16 +50,14 @@ public class TagDiffFileWriter {
 
         // <link href="/css/tagdiff.css" type="text/css" rel="stylesheet">
         AttributesImpl csslink = new AttributesImpl();
-        csslink.addAttribute("", "href", "href", "CDATA", "tagdiff.css");
+        csslink.addAttribute("", "href", "href", "CDATA", "diff.css");
         csslink.addAttribute("", "type", "type", "CDATA", "text/css");
         csslink.addAttribute("", "rel", "rel", "CDATA", "stylesheet");
         serializer.startElement("", "link", "link", csslink);
         serializer.endElement("", "link", "link");
 
         csslink = new AttributesImpl();
-        csslink
-                .addAttribute("", "href", "href", "CDATA",
-                        "http://cocoondev.org/resources/skins/daisysite/css/docstyle.css");
+        csslink.addAttribute("", "href", "href", "CDATA", "docstyle.css");
         csslink.addAttribute("", "type", "type", "CDATA", "text/css");
         csslink.addAttribute("", "rel", "rel", "CDATA", "stylesheet");
         serializer.startElement("", "link", "link", csslink);

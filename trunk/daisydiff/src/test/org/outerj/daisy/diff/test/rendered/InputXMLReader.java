@@ -13,15 +13,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.outerj.daisy.diff.lcs.html;
+package org.outerj.daisy.diff.test.rendered;
 
 import java.io.IOException;
 import java.net.URL;
 
+import org.outerj.daisy.diff.lcs.html.LeafComparator;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 import org.xml.sax.XMLReader;
 import org.xml.sax.helpers.XMLReaderFactory;
+
 /**
  * Reads XML data and passes the parsed result to a {@link LeafComparator}.
  */
@@ -34,12 +36,11 @@ public class InputXMLReader {
 
     public static void readXML(InputSource s, LeafComparator handler)
             throws SAXException, IOException {
-        // TODO check what xml driver DaisyCMS uses!
         XMLReader xr = XMLReaderFactory.createXMLReader();
 
         xr.setContentHandler(handler);
         xr.setErrorHandler(handler);
-        
+
         xr.parse(s);
     }
 
