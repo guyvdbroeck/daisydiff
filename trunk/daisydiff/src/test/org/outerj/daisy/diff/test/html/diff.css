@@ -2,51 +2,64 @@
 /*
  * Styles for the Tag Diff
  */
-
 span.diff-tag-html {
   font-family: "Andale Mono" monospace;
   font-size: 80%;
 }
 
-span.diff-tag-added {
+span.diff-tag-removed {
   font-size: 100%;
   background-color: #ccffcc; /* light green */
 }
 
-span.diff-tag-removed {
+span.diff-tag-added {
   font-size: 100%;
   text-decoration: line-through;
   background-color: #fdc6c6; /* light red */
 }
 
-span.diff-tag-changed {
+/*
+ * Styles for the HTML Diff
+ */
+span.diff-html-added {
+  font-size: 100%;
+  background-color: #ccffcc; /* light green */
+}
+
+span.diff-html-removed {
+  font-size: 100%;
+  text-decoration: line-through;
+  background-color: #fdc6c6; /* light red */
+}
+
+span.diff-html-changed {
   /*text-decoration: none;
   color: black;*/
   background: url(underline_db.gif) bottom repeat-x;
 }
 
-span.diff-tag-added img{
+span.diff-html-added img{
  border: 2px solid #ccffcc;
 }
 
-span.diff-tag-removed img{
+span.diff-html-removed img{
  border: 2px solid #fdc6c6;
 }
 
-span.diff-tag-changed img{
+span.diff-html-changed img{
  border: 3px dotted #000099;
  
 }
 
-span.diff-tag-changed:hover {
+span.diff-html-changed:hover {
   position: relative;
 }
 
-span.diff-tag-changed span {
+span.diff-html-changed span {
   display: none;
 }
 
-span.diff-tag-changed:hover span {
+span.diff-html-changed:hover span {
   display: block;
   position: absolute; top: 5px; left: 0;
   /* formatting only styles */
@@ -64,7 +77,7 @@ span.diff-tag-changed:hover span {
   min-width: 200px;
 }
 
-div.removed, div.added{
+div.diff-removed-image, div.diff-added-image{
   height: 300px;
   width: 200px;  
   position: absolute;
@@ -72,14 +85,13 @@ div.removed, div.added{
   filter: alpha(opacity=55);
   -moz-opacity: 0.55;
 }
-div.removed {
+div.diff-removed-image {
   background-color: #fdc6c6;
   background-image: url(min.gif);
 }
-div.added {
+div.diff-added-image {
   background-color: #ccffcc;
   background-image: url(plus.gif);
   background-repeat: no-repeat;
   background-position: 2px 2px;
-
 }

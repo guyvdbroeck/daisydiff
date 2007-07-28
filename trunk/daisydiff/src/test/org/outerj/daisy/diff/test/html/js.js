@@ -2,7 +2,7 @@
         var images = document.getElementsByTagName("img");
         for (var i = 0; i < images.length; i++) {
           var image = images [i];
-          if (image.className == "removed" || image.className == "added") {
+          if (image.className == "removed-image" || image.className == "added-image") {
             var filter = document.createElement("div");
             filter.className= image.className;
             filter.style.width = image.offsetWidth;

@@ -15,7 +15,6 @@
  */
 package org.outerj.daisy.diff.lcs.html.dom;
 
-import org.xml.sax.Attributes;
 import org.xml.sax.helpers.AttributesImpl;
 
 /**
@@ -36,13 +35,6 @@ public class BodyNode extends TagNode {
             newThis.addChild(newChild);
         }
         return newThis;
-    }
-    
-    @Override
-    public Attributes getAttributes() {
-        AttributesImpl attrs=new AttributesImpl();
-        attrs.addAttribute("", "onload", "onload", "CDATA", "myLoad()");
-        return attrs;
     }
     
 }
