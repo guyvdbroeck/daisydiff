@@ -20,12 +20,12 @@ import java.io.StringReader;
 
 import org.eclipse.compare.rangedifferencer.RangeDifference;
 import org.eclipse.compare.rangedifferencer.RangeDifferencer;
-import org.outerj.daisy.diff.lcs.html.HTMLDiffer;
-import org.outerj.daisy.diff.lcs.html.HtmlSaxDiffOutput;
-import org.outerj.daisy.diff.lcs.html.LeafComparator;
-import org.outerj.daisy.diff.lcs.tag.TagComparator;
-import org.outerj.daisy.diff.lcs.tag.TagDiffer;
-import org.outerj.daisy.diff.lcs.tag.TagSaxDiffOutput;
+import org.outerj.daisy.diff.html.HTMLDiffer;
+import org.outerj.daisy.diff.html.HtmlSaxDiffOutput;
+import org.outerj.daisy.diff.html.LeafComparator;
+import org.outerj.daisy.diff.tag.TagComparator;
+import org.outerj.daisy.diff.tag.TagDiffer;
+import org.outerj.daisy.diff.tag.TagSaxDiffOutput;
 import org.xml.sax.ContentHandler;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
@@ -62,7 +62,6 @@ public class Diff {
     /**
      * Diffs two html files word for word as source, outputting the result 
      * to the specified consumer.
-     * @throws Exception 
      */
     public static void diffTag(String text1, String text2, ContentHandler consumer) throws Exception{
         TagComparator left=new TagComparator(text1);
