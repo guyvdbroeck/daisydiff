@@ -22,9 +22,9 @@ import javax.xml.transform.sax.SAXTransformerFactory;
 import javax.xml.transform.sax.TransformerHandler;
 import javax.xml.transform.stream.StreamResult;
 
-import org.outerj.daisy.diff.lcs.html.HTMLDiffer;
-import org.outerj.daisy.diff.lcs.html.HtmlSaxDiffOutput;
-import org.outerj.daisy.diff.lcs.html.LeafComparator;
+import org.outerj.daisy.diff.html.HTMLDiffer;
+import org.outerj.daisy.diff.html.HtmlSaxDiffOutput;
+import org.outerj.daisy.diff.html.LeafComparator;
 import org.xml.sax.helpers.AttributesImpl;
 
 /**

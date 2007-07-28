@@ -15,6 +15,7 @@
  */
 package org.outerj.daisy.diff;
 
+
 /**
  * A DiffOutput instance must be provided to the {@link Diff} to handle
  * the result of the diff process.

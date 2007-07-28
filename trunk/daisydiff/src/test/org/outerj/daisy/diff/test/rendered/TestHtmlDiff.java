@@ -17,7 +17,7 @@ package org.outerj.daisy.diff.test.rendered;
 
 import java.net.URL;
 
-import org.outerj.daisy.diff.lcs.html.LeafComparator;
+import org.outerj.daisy.diff.html.LeafComparator;
 
 public class TestHtmlDiff {
 

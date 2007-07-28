@@ -19,6 +19,7 @@ import java.io.Writer;
 import java.util.Locale;
 import java.util.ResourceBundle;
 
+
 public class TextDiffOutput implements DiffOutput {
     private Writer writer;
     private boolean markLines;

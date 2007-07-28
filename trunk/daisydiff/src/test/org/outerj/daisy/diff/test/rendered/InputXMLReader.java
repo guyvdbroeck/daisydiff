@@ -18,7 +18,7 @@ package org.outerj.daisy.diff.test.rendered;
 import java.io.IOException;
 import java.net.URL;
 
-import org.outerj.daisy.diff.lcs.html.LeafComparator;
+import org.outerj.daisy.diff.html.LeafComparator;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 import org.xml.sax.XMLReader;

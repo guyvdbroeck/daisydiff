@@ -20,8 +20,8 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.URL;
 
-import org.outerj.daisy.diff.lcs.html.LeafComparator;
-import org.outerj.daisy.diff.lcs.tag.TagComparator;
+import org.outerj.daisy.diff.html.LeafComparator;
+import org.outerj.daisy.diff.tag.TagComparator;
 import org.xml.sax.SAXException;
 
 /**

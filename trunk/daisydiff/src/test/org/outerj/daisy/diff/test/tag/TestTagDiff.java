@@ -17,7 +17,7 @@ package org.outerj.daisy.diff.test.tag;
 
 import java.net.URL;
 
-import org.outerj.daisy.diff.lcs.tag.TagComparator;
+import org.outerj.daisy.diff.tag.TagComparator;
 
 public class TestTagDiff {
 
