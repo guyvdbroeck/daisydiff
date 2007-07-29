@@ -9,13 +9,13 @@ span.diff-tag-html {
 
 span.diff-tag-removed {
   font-size: 100%;
-  background-color: #ccffcc; /* light green */
+  text-decoration: line-through;
+  background-color: #fdc6c6; /* light red */
 }
 
 span.diff-tag-added {
   font-size: 100%;
-  text-decoration: line-through;
-  background-color: #fdc6c6; /* light red */
+  background-color: #ccffcc; /* light green */
 }
 
 /*
