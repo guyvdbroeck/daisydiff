@@ -1,7 +1,0 @@
-#summary Log of the days worked
-
-=== Days spent in the Outerthought offices: ===
-  * May 1st: introduction, testing the DiffXML software.
-  * June 28th: LCS algorithm, using the apache implementation of LCS, trying the current code with word atoms in stead of line atoms.
-  * June 29th: LCS implementation with Tags as atoms, spanning change ranges over spaces for readability.
-
