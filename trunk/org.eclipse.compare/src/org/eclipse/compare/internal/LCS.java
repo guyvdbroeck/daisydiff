@@ -15,13 +15,13 @@ import org.eclipse.core.runtime.SubMonitor;
 
 /* Used to determine the change set responsible for each line */
 public abstract class LCS {
-    // private static final double TOO_LONG = 10000000.0; 
+	
     // the value of N*M when to start binding the run time
-    private static final double TOO_LONG = 100000000.0;
+    public static final double TOO_LONG = 10000000.0;
     
     //private static final double POW_LIMIT = 1.5; 
     // limit the time to
-    private static final double POW_LIMIT=1.7;
+    public static final double POW_LIMIT=1.5;
     
     // D^POW_LIMIT
 

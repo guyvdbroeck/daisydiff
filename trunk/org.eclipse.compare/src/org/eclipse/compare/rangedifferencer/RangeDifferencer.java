@@ -83,8 +83,10 @@ public final class RangeDifferencer {
 		return RangeComparatorLCS.findDifferences(pm, left, right);
 	}
 
+	public static boolean USE_OLD_DIFFERENCER=true;
+	
 	private static boolean isUseOldDifferencer() {
-		return true;
+		return USE_OLD_DIFFERENCER;
 	}
 
 	/**
