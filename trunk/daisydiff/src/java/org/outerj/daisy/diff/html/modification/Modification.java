@@ -27,7 +27,8 @@ public class Modification implements Cloneable{
 		this.type=type;
 	}
 	
-	public Modification clone(){
+	@Override
+    public Modification clone(){
 		Modification newM= new Modification(this.getType());
 		newM.setID(getID());
 		newM.setChanges(getChanges());

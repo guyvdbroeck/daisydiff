@@ -299,7 +299,8 @@ public class TagNode extends Node implements Iterable<Node> {
 		}
 	}
 	
-	public Node getLeftMostChild(){
+	@Override
+    public Node getLeftMostChild(){
 		if(getNbChildren()<1)
 			return this;
 		Node child = getChild(0);
@@ -307,7 +308,8 @@ public class TagNode extends Node implements Iterable<Node> {
 
 	}
 	
-	public Node getRightMostChild(){
+	@Override
+    public Node getRightMostChild(){
 		if(getNbChildren()<1)
 			return this;
 		Node child = getChild(getNbChildren()-1);

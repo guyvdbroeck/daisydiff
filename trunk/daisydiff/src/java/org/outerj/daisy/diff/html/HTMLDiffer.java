@@ -17,8 +17,6 @@ package org.outerj.daisy.diff.html;
 
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Locale;
-
 import org.eclipse.compare.internal.LCSSettings;
 import org.eclipse.compare.rangedifferencer.RangeDifference;
 import org.eclipse.compare.rangedifferencer.RangeDifferencer;

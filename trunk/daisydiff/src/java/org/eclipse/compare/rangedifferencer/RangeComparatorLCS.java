@@ -16,7 +16,9 @@ import java.util.List;
 import org.eclipse.compare.internal.CompareMessages;
 import org.eclipse.compare.internal.LCS;
 import org.eclipse.compare.internal.LCSSettings;
-import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.OperationCanceledException;
+import org.eclipse.core.runtime.SubMonitor;
 
 /* package */ class RangeComparatorLCS extends LCS {
 	
@@ -40,23 +42,28 @@ import org.eclipse.core.runtime.*;
 		this.comparator2 = comparator2;
 	}
 	
-	protected int getLength1() {
+	@Override
+    protected int getLength1() {
 		return comparator1.getRangeCount();
 	}
 
-	protected int getLength2() {
+	@Override
+    protected int getLength2() {
 		return comparator2.getRangeCount();
 	}
 
-	protected void initializeLcs(int lcsLength) {
+	@Override
+    protected void initializeLcs(int lcsLength) {
 		lcs = new int[2][lcsLength];
 	}
 
-	protected boolean isRangeEqual(int i1, int i2) {
+	@Override
+    protected boolean isRangeEqual(int i1, int i2) {
 		return comparator1.rangesEqual(i1, comparator2, i2);
 	}
 
-	protected void setLcs(int sl1, int sl2) {
+	@Override
+    protected void setLcs(int sl1, int sl2) {
 		// Add one to the values so that 0 can mean that the slot is empty
 		lcs[0][sl1] = sl1 + 1;
 		lcs[1][sl1] = sl2 + 1;

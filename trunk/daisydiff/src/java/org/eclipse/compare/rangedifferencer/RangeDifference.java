@@ -205,7 +205,8 @@ public class RangeDifference {
 		return Math.max(fRightLength, Math.max(fLeftLength, lAncestorLength));
 	}
 	
-	public boolean equals(Object obj) {
+	@Override
+    public boolean equals(Object obj) {
 		if (obj instanceof RangeDifference) {
 			RangeDifference other = (RangeDifference) obj;
 			return fKind == other.fKind
@@ -219,7 +220,8 @@ public class RangeDifference {
 		return super.equals(obj);
 	}
 	
-	public String toString() {
+	@Override
+    public String toString() {
 		String string = "Left: " + toRangeString(fLeftStart, fLeftLength) + " Right: " + toRangeString(fRightStart, fRightLength); //$NON-NLS-1$ //$NON-NLS-2$
 		if (lAncestorLength > 0 || lAncestorStart> 0)
 			string += " Ancestor: " + toRangeString(lAncestorStart, lAncestorLength); //$NON-NLS-1$

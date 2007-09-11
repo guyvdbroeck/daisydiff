@@ -28,10 +28,10 @@ public class DomTreeBuilder extends DefaultHandler implements DomTree{
     private TagNode currentParent = bodyNode;
     private StringBuilder newWord = new StringBuilder();
 
-    private boolean documentStarted = false;
-    private boolean documentEnded = false;
-    private boolean bodyStarted = false;
-    private boolean bodyEnded = false;
+    protected boolean documentStarted = false;
+    protected boolean documentEnded = false;
+    protected boolean bodyStarted = false;
+    protected boolean bodyEnded = false;
     private boolean whiteSpaceBeforeThis=false;
     private Node lastSibling=null;
     
