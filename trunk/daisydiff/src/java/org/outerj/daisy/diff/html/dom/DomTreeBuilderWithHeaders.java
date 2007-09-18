@@ -36,28 +36,12 @@ public class DomTreeBuilderWithHeaders extends DomTreeBuilder {
 
     private boolean cssWritten=false;
 
+    private boolean insideIgnoredTag=false;
+    
     public DomTreeBuilderWithHeaders(ContentHandler handler, String[] cssPath, String[] jsPath) {
         this.handler = handler;
         this.cssPath = cssPath;
         this.jsPath = jsPath;
-    }
-
-    @Override
-    public void startElement(String uri, String localName, String name,
-            Attributes attributes) throws SAXException {
-        if(documentStarted && ! bodyStarted && !bodyEnded){
-            if(name.equals("body")){
-                if(!cssWritten){
-                    handler.startElement(uri, "head", "head", new AttributesImpl());
-                    writeCSS(uri);
-                    handler.endElement(uri, "head", "head");
-                }
-                handler.startElement(uri, localName, name, attributes);
-                writeJS(uri);
-            }
-
-        }
-        super.startElement(uri, localName, name, attributes);
     }
 
     private void writeCSS(String uri) throws SAXException {
@@ -83,14 +67,39 @@ public class DomTreeBuilderWithHeaders extends DomTreeBuilder {
     }
 
     @Override
+    public void startElement(String uri, String localName, String name,
+            Attributes attributes) throws SAXException {
+        if(documentStarted && ! bodyStarted){
+            if(name.equals("body")){
+                if(!cssWritten){
+                    handler.startElement(uri, "head", "head", new AttributesImpl());
+                    writeCSS(uri);
+                    handler.endElement(uri, "head", "head");
+                }
+                handler.startElement(uri, localName, name, attributes);
+                writeJS(uri);
+            }else if(!insideIgnoredTag && !name.equals("script")){
+                handler.startElement(uri, localName, name, attributes);
+            }else{
+                insideIgnoredTag = true;
+            }
+
+        }
+        super.startElement(uri, localName, name, attributes);
+    }
+    
+    @Override
     public void endElement(String uri, String localName, String name)
     throws SAXException {
         if(name.equalsIgnoreCase("head"))
             writeCSS(uri);
         super.endElement(uri, localName, name);
         if(documentStarted && ! bodyStarted){
+            if(!insideIgnoredTag)
                 handler.endElement(uri, localName, name);
-
+            else if(name.equals("script"))
+                insideIgnoredTag=false;
+              
         }
         if(bodyEnded)
             storeTagForLater(uri, localName, name);
@@ -106,7 +115,7 @@ public class DomTreeBuilderWithHeaders extends DomTreeBuilder {
     @Override
     public void characters(char[] ch, int start, int length)
     throws SAXException {
-        if(documentStarted && ! bodyStarted && !bodyEnded){
+        if(documentStarted && ! bodyStarted && !insideIgnoredTag){
             handler.characters(ch, start, length);
         }
         super.characters(ch, start, length);

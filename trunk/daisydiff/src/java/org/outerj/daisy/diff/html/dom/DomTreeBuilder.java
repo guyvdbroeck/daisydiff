@@ -34,20 +34,20 @@ public class DomTreeBuilder extends DefaultHandler implements DomTree{
     protected boolean bodyEnded = false;
     private boolean whiteSpaceBeforeThis=false;
     private Node lastSibling=null;
-    
-	public BodyNode getBodyNode() {
+
+    public BodyNode getBodyNode() {
         return bodyNode;
     }
-	
-	public List<TextNode> getTextNodes() {
-		return textNodes;
-	}
+
+    public List<TextNode> getTextNodes() {
+        return textNodes;
+    }
 
     @Override
     public void startDocument() throws SAXException {
         if (documentStarted)
             throw new IllegalStateException(
-                    "This Handler only accepts one document");
+            "This Handler only accepts one document");
         documentStarted = true;
     }
 
@@ -59,7 +59,7 @@ public class DomTreeBuilder extends DefaultHandler implements DomTree{
         documentEnded = true;
         documentStarted = false;
     }
-    
+
     @Override
     public void startElement(String uri, String localName, String qName,
             Attributes attributes) throws SAXException {
@@ -68,47 +68,47 @@ public class DomTreeBuilder extends DefaultHandler implements DomTree{
             throw new IllegalStateException();
 
         if (bodyStarted && !bodyEnded) {
-        	endWord();
-        	
-        	TagNode newTagNode = new TagNode(currentParent, qName, attributes);
+            endWord();
+
+            TagNode newTagNode = new TagNode(currentParent, localName, attributes);
             currentParent = newTagNode;
             lastSibling=null;
             if(whiteSpaceBeforeThis && newTagNode.isInline()){
-            	newTagNode.setWhiteBefore(true);
-            	whiteSpaceBeforeThis=false;
+                newTagNode.setWhiteBefore(true);
+                whiteSpaceBeforeThis=false;
             }
-            
+
         } else if (bodyStarted) {
             // Ignoring element after body tag closed
-        } else if (qName.equalsIgnoreCase("body")) {
+        } else if (localName.equalsIgnoreCase("body")) {
             bodyStarted = true;
         }
     }
 
     @Override
     public void endElement(String uri, String localName, String qName)
-            throws SAXException {
+    throws SAXException {
 
         if (!documentStarted || documentEnded)
             throw new IllegalStateException();
 
-        if (qName.equalsIgnoreCase("body")) {
+        if (localName.equalsIgnoreCase("body")) {
             bodyEnded = true;
         } else if (bodyStarted && !bodyEnded) {
-            if (qName.equalsIgnoreCase("img")) {
+            if (localName.equalsIgnoreCase("img")) {
                 // Insert a dummy leaf for the image
-            	ImageNode img=new ImageNode(currentParent, currentParent.getAttributes());
-            	img.setWhiteBefore(whiteSpaceBeforeThis);
-            	whiteSpaceBeforeThis=false;
-            	lastSibling=img;
-            	textNodes.add(img);
+                ImageNode img=new ImageNode(currentParent, currentParent.getAttributes());
+                img.setWhiteBefore(whiteSpaceBeforeThis);
+                whiteSpaceBeforeThis=false;
+                lastSibling=img;
+                textNodes.add(img);
             }
             endWord();
             if(currentParent.isInline()){
-            	lastSibling=currentParent;
-             }else{
-            	 lastSibling=null;
-             }
+                lastSibling=currentParent;
+            }else{
+                lastSibling=null;
+            }
             currentParent = currentParent.getParent();
             whiteSpaceBeforeThis=false;
         }
@@ -116,7 +116,7 @@ public class DomTreeBuilder extends DefaultHandler implements DomTree{
 
     @Override
     public void characters(char ch[], int start, int length)
-            throws SAXException {
+    throws SAXException {
 
         if (!documentStarted || documentEnded)
             throw new IllegalStateException();
@@ -126,17 +126,17 @@ public class DomTreeBuilder extends DefaultHandler implements DomTree{
             if (isDelimiter(c)) {
                 endWord();
                 if(WhiteSpaceNode.isWhiteSpace(c) && !currentParent.isPre() && !currentParent.inPre()){
-                	if(lastSibling!=null)
-                		lastSibling.setWhiteAfter(true);
-                	whiteSpaceBeforeThis=true;
+                    if(lastSibling!=null)
+                        lastSibling.setWhiteAfter(true);
+                    whiteSpaceBeforeThis=true;
                 }else{
-                	TextNode textNode = new TextNode(currentParent, Character
+                    TextNode textNode = new TextNode(currentParent, Character
                             .toString(c));
-                	textNode.setWhiteBefore(whiteSpaceBeforeThis);
-                	whiteSpaceBeforeThis=false;
-                	lastSibling=textNode;
-                	textNodes.add(textNode);
-                	
+                    textNode.setWhiteBefore(whiteSpaceBeforeThis);
+                    whiteSpaceBeforeThis=false;
+                    lastSibling=textNode;
+                    textNodes.add(textNode);
+
                 }
             } else {
                 newWord.append(c);
@@ -150,46 +150,46 @@ public class DomTreeBuilder extends DefaultHandler implements DomTree{
             TextNode node=new TextNode(currentParent, newWord.toString());
             node.setWhiteBefore(whiteSpaceBeforeThis);
             whiteSpaceBeforeThis=false;
-        	lastSibling=node;
+            lastSibling=node;
             textNodes.add(node);
             newWord.setLength(0);
         }
     }
-    
+
     public static boolean isDelimiter(char c) {
         if(WhiteSpaceNode.isWhiteSpace(c))
-        	return true;
+            return true;
         switch (c) {
-	        // Basic Delimiters
-	        case '/':
-	        case '.':
-	        case '!':
-	        case ',':
-	        case ';':
-	        case '?':
-	        case '=':
-	        case '\'':
-	        case '"':
-	            // Extra Delimiters
-	        case '[':
-	        case ']':
-	        case '{':
-	        case '}':
-	        case '(':
-	        case ')':
-	        case '&':
-	        case '|':
-	        case '\\':
-	        case '-':
-	        case '_':
-	        case '+':
-	        case '*':
-	        case ':':
-	            return true;
-	        default:
-	            return false;
+        // Basic Delimiters
+        case '/':
+        case '.':
+        case '!':
+        case ',':
+        case ';':
+        case '?':
+        case '=':
+        case '\'':
+        case '"':
+            // Extra Delimiters
+        case '[':
+        case ']':
+        case '{':
+        case '}':
+        case '(':
+        case ')':
+        case '&':
+        case '|':
+        case '\\':
+        case '-':
+        case '_':
+        case '+':
+        case '*':
+        case ':':
+            return true;
+        default:
+            return false;
         }
     }
-        
+
 
 }
