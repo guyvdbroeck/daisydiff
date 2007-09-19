@@ -88,7 +88,8 @@ public class DelimiterAtom extends TextAtom {
         return super.equalsIdentifier(a)
         // Handling for automatically inserted newlines
                 || ((a.getIdentifier().equals(" ") || a.getIdentifier().equals(
-                        "\n")) && (getIdentifier().equals(" ") || getIdentifier().equals("\n")));
+                        "\n")) && (getIdentifier().equals(" ") || getIdentifier()
+                        .equals("\n")));
     }
 
 }

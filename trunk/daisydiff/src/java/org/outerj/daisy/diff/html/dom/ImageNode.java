@@ -17,6 +17,7 @@ package org.outerj.daisy.diff.html.dom;
 
 import org.xml.sax.Attributes;
 import org.xml.sax.helpers.AttributesImpl;
+
 /**
  * Represents an image in HTML. Even though images do not contain any text they
  * are single visible objects on the page. They are logically a {@link TextNode}.
@@ -26,10 +27,10 @@ public class ImageNode extends TextNode {
     private AttributesImpl attributes;
 
     public ImageNode(TagNode parent, Attributes attrs) {
-        super(parent, "<img>"+attrs.getValue("src").toLowerCase()+"</img>");
+        super(parent, "<img>" + attrs.getValue("src").toLowerCase() + "</img>");
         attributes = new AttributesImpl(attrs);
     }
-    
+
     @Override
     public boolean isSameText(Object other) {
         if (other == null)
@@ -41,12 +42,11 @@ public class ImageNode extends TextNode {
         } catch (ClassCastException e) {
             return false;
         }
-        return getText().equalsIgnoreCase(
-                otherImageNode.getText());
+        return getText().equalsIgnoreCase(otherImageNode.getText());
     }
 
     public AttributesImpl getAttributes() {
         return attributes;
     }
-    
+
 }

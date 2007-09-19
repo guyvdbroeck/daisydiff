@@ -30,28 +30,41 @@ import org.xml.sax.helpers.AttributesImpl;
  * names to lowercase, removes all namespaces, produces well-formed XML.
  */
 public class NekoHtmlParser {
-    
+
     public SaxBuffer parse(InputSource is) throws IOException, SAXException {
         SaxBuffer buffer = new SaxBuffer();
-        parse(is,buffer);
+        parse(is, buffer);
 
         return buffer;
     }
-    
-    public void parse(InputSource is, ContentHandler consumer) throws IOException, SAXException {
+
+    public void parse(InputSource is, ContentHandler consumer)
+            throws IOException, SAXException {
         if (is == null)
             throw new NullPointerException("is argument is required.");
 
         SAXParser parser = new SAXParser();
         parser.setFeature("http://xml.org/sax/features/namespaces", true);
-        parser.setFeature("http://cyberneko.org/html/features/override-namespaces", false);
-        parser.setFeature("http://cyberneko.org/html/features/insert-namespaces", false);
-        parser.setFeature("http://cyberneko.org/html/features/scanner/ignore-specified-charset", true);
-        parser.setProperty("http://cyberneko.org/html/properties/default-encoding", "UTF-8");
-        parser.setProperty("http://cyberneko.org/html/properties/names/elems", "lower");
-        parser.setProperty("http://cyberneko.org/html/properties/names/attrs", "lower");
+        parser
+                .setFeature(
+                        "http://cyberneko.org/html/features/override-namespaces",
+                        false);
+        parser.setFeature(
+                "http://cyberneko.org/html/features/insert-namespaces", false);
+        parser
+                .setFeature(
+                        "http://cyberneko.org/html/features/scanner/ignore-specified-charset",
+                        true);
+        parser.setProperty(
+                "http://cyberneko.org/html/properties/default-encoding",
+                "UTF-8");
+        parser.setProperty("http://cyberneko.org/html/properties/names/elems",
+                "lower");
+        parser.setProperty("http://cyberneko.org/html/properties/names/attrs",
+                "lower");
 
-        parser.setContentHandler(new RemoveNamespacesHandler(new MergeCharacterEventsHandler(consumer)));
+        parser.setContentHandler(new RemoveNamespacesHandler(
+                new MergeCharacterEventsHandler(consumer)));
         parser.parse(is);
     }
 
@@ -73,11 +86,13 @@ public class NekoHtmlParser {
             consumer.startDocument();
         }
 
-        public void characters(char ch[], int start, int length) throws SAXException {
+        public void characters(char ch[], int start, int length)
+                throws SAXException {
             consumer.characters(ch, start, length);
         }
 
-        public void ignorableWhitespace(char ch[], int start, int length) throws SAXException {
+        public void ignorableWhitespace(char ch[], int start, int length)
+                throws SAXException {
             consumer.ignorableWhitespace(ch, start, length);
         }
 
@@ -93,19 +108,23 @@ public class NekoHtmlParser {
             consumer.setDocumentLocator(locator);
         }
 
-        public void processingInstruction(String target, String data) throws SAXException {
+        public void processingInstruction(String target, String data)
+                throws SAXException {
             // dropped on purpose
         }
 
-        public void startPrefixMapping(String prefix, String uri) throws SAXException {
+        public void startPrefixMapping(String prefix, String uri)
+                throws SAXException {
             // dropped on purpose
         }
 
-        public void endElement(String namespaceURI, String localName, String qName) throws SAXException {
+        public void endElement(String namespaceURI, String localName,
+                String qName) throws SAXException {
             consumer.endElement("", localName, localName);
         }
 
-        public void startElement(String namespaceURI, String localName, String qName, Attributes atts) throws SAXException {
+        public void startElement(String namespaceURI, String localName,
+                String qName, Attributes atts) throws SAXException {
             AttributesImpl newAtts = new AttributesImpl(atts);
             for (int i = 0; i < atts.getLength(); i++) {
                 newAtts.setURI(i, "");

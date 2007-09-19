@@ -25,143 +25,153 @@ import org.xml.sax.Attributes;
 
 public class TagToString {
 
-	protected TagNode node;
-	protected TagChangeSematic sem;
-	private ResourceBundle bundle;
-	
-	protected TagToString(TagNode node, TagChangeSematic sem, ResourceBundle bundle){
-		this.node=node;
-		this.sem=sem;
-		this.bundle = bundle;
-	}
+    protected TagNode node;
 
-	public String getDescription() {
-		return getString("diff-"+node.getQName());
-	}
+    protected TagChangeSematic sem;
 
-	public void getRemovedDescription(ChangeText txt) {
-		
-		if(sem == TagChangeSematic.MOVED){
-			txt.addText(getMovedOutOf()+" "+getArticle().toLowerCase()+" ");
-			txt.addHtml("<b>");
-			txt.addText(getDescription().toLowerCase());
-			txt.addHtml("</b>");
-		}else if(sem == TagChangeSematic.STYLE){
-			txt.addHtml("<b>");
-			txt.addText(getDescription());
-			txt.addHtml("</b>");
-			txt.addText(" "+getStyleRemoved().toLowerCase());
-		}else{
-			txt.addHtml("<b>");
-			txt.addText(getDescription());
-			txt.addHtml("</b>");
-			txt.addText(" "+getRemoved().toLowerCase());
-		}
-		addAttributes(txt, node.getAttributes());
-		txt.addText(".");
-	}
+    private ResourceBundle bundle;
 
-	public void getAddedDescription(ChangeText txt) {
-		
-		if(sem == TagChangeSematic.MOVED){
-			txt.addText(getMovedTo()+" "+getArticle().toLowerCase()+" ");
-			txt.addHtml("<b>");
-			txt.addText(getDescription().toLowerCase());
-			txt.addHtml("</b>");
-		}else if(sem == TagChangeSematic.STYLE){
-			txt.addHtml("<b>");
-			txt.addText(getDescription());
-			txt.addHtml("</b>");
-			txt.addText(" "+getStyleAdded().toLowerCase());
-		}else{
-			txt.addHtml("<b>");
-			txt.addText(getDescription());
-			txt.addHtml("</b>");
-			txt.addText(" "+getAdded().toLowerCase());
-		}
-		addAttributes(txt, node.getAttributes());
-		txt.addText(".");
-	}
-	
-	protected String getMovedTo() {
-		return getString("diff-movedto");
-	}
-	
-	protected String getStyleAdded() {
-		return getString("diff-styleadded");
-	}
-	
-	protected String getAdded() {
-		return getString("diff-added");
-	}
-	
-	protected String getMovedOutOf() {
-		return getString("diff-movedoutof");
-	}
-	
-	protected String getStyleRemoved() {
-		return getString("diff-styleremoved");
-	}
-	
-	protected String getRemoved() {
-		return getString("diff-removed");
-	}
+    protected TagToString(TagNode node, TagChangeSematic sem,
+            ResourceBundle bundle) {
+        this.node = node;
+        this.sem = sem;
+        this.bundle = bundle;
+    }
 
-	protected void addAttributes(ChangeText txt, Attributes attributes) {
-		if(attributes.getLength()<1)
-			return;
-		
-		txt.addText(" "+getWith().toLowerCase()+" "+translateArgument(attributes.getQName(0))+" "+attributes.getValue(0));
-		for(int i=1;i<attributes.getLength()-1;i++){
-			txt.addText(", "+translateArgument(attributes.getQName(i))+" "+attributes.getValue(i));
-		}
-		if(attributes.getLength()>1){
-			txt.addText(" "+getAnd().toLowerCase()+" "+translateArgument(attributes.getQName(attributes.getLength()-1))+" "+attributes.getValue(attributes.getLength()-1));
-		}
-	}
+    public String getDescription() {
+        return getString("diff-" + node.getQName());
+    }
 
-	private String getAnd() {
-		return getString("diff-and");
-	}
+    public void getRemovedDescription(ChangeText txt) {
 
-	private String getWith() {
-		return getString("diff-with");
-	}
+        if (sem == TagChangeSematic.MOVED) {
+            txt.addText(getMovedOutOf() + " " + getArticle().toLowerCase()
+                    + " ");
+            txt.addHtml("<b>");
+            txt.addText(getDescription().toLowerCase());
+            txt.addHtml("</b>");
+        } else if (sem == TagChangeSematic.STYLE) {
+            txt.addHtml("<b>");
+            txt.addText(getDescription());
+            txt.addHtml("</b>");
+            txt.addText(" " + getStyleRemoved().toLowerCase());
+        } else {
+            txt.addHtml("<b>");
+            txt.addText(getDescription());
+            txt.addHtml("</b>");
+            txt.addText(" " + getRemoved().toLowerCase());
+        }
+        addAttributes(txt, node.getAttributes());
+        txt.addText(".");
+    }
 
-	protected String translateArgument(String name) {
-		if(name.equalsIgnoreCase("src"))
-			return getSource().toLowerCase();
-		if(name.equalsIgnoreCase("width"))
-			return getWidth().toLowerCase();
-		if(name.equalsIgnoreCase("height"))
-			return getHeight().toLowerCase();
-		return name;
-	}
-	
-	private String getHeight() {
-		return getString("diff-height");
-	}
+    public void getAddedDescription(ChangeText txt) {
 
-	private String getWidth() {
-		return getString("diff-width");
-	}
+        if (sem == TagChangeSematic.MOVED) {
+            txt.addText(getMovedTo() + " " + getArticle().toLowerCase() + " ");
+            txt.addHtml("<b>");
+            txt.addText(getDescription().toLowerCase());
+            txt.addHtml("</b>");
+        } else if (sem == TagChangeSematic.STYLE) {
+            txt.addHtml("<b>");
+            txt.addText(getDescription());
+            txt.addHtml("</b>");
+            txt.addText(" " + getStyleAdded().toLowerCase());
+        } else {
+            txt.addHtml("<b>");
+            txt.addText(getDescription());
+            txt.addHtml("</b>");
+            txt.addText(" " + getAdded().toLowerCase());
+        }
+        addAttributes(txt, node.getAttributes());
+        txt.addText(".");
+    }
 
-	protected String getSource(){
-		return getString("diff-source");
-	}
-	
-	protected String getArticle() {
-		return getString("diff-"+node.getQName()+"-article");
-	}
+    protected String getMovedTo() {
+        return getString("diff-movedto");
+    }
 
-	public String getString(String key) {
-		try {
-			return bundle.getString(key);
-		} catch (MissingResourceException e) {
-			return '!' + key + '!';
-		}
-	}
-	
-    
+    protected String getStyleAdded() {
+        return getString("diff-styleadded");
+    }
+
+    protected String getAdded() {
+        return getString("diff-added");
+    }
+
+    protected String getMovedOutOf() {
+        return getString("diff-movedoutof");
+    }
+
+    protected String getStyleRemoved() {
+        return getString("diff-styleremoved");
+    }
+
+    protected String getRemoved() {
+        return getString("diff-removed");
+    }
+
+    protected void addAttributes(ChangeText txt, Attributes attributes) {
+        if (attributes.getLength() < 1)
+            return;
+
+        txt.addText(" " + getWith().toLowerCase() + " "
+                + translateArgument(attributes.getQName(0)) + " "
+                + attributes.getValue(0));
+        for (int i = 1; i < attributes.getLength() - 1; i++) {
+            txt.addText(", " + translateArgument(attributes.getQName(i)) + " "
+                    + attributes.getValue(i));
+        }
+        if (attributes.getLength() > 1) {
+            txt.addText(" "
+                    + getAnd().toLowerCase()
+                    + " "
+                    + translateArgument(attributes.getQName(attributes
+                            .getLength() - 1)) + " "
+                    + attributes.getValue(attributes.getLength() - 1));
+        }
+    }
+
+    private String getAnd() {
+        return getString("diff-and");
+    }
+
+    private String getWith() {
+        return getString("diff-with");
+    }
+
+    protected String translateArgument(String name) {
+        if (name.equalsIgnoreCase("src"))
+            return getSource().toLowerCase();
+        if (name.equalsIgnoreCase("width"))
+            return getWidth().toLowerCase();
+        if (name.equalsIgnoreCase("height"))
+            return getHeight().toLowerCase();
+        return name;
+    }
+
+    private String getHeight() {
+        return getString("diff-height");
+    }
+
+    private String getWidth() {
+        return getString("diff-width");
+    }
+
+    protected String getSource() {
+        return getString("diff-source");
+    }
+
+    protected String getArticle() {
+        return getString("diff-" + node.getQName() + "-article");
+    }
+
+    public String getString(String key) {
+        try {
+            return bundle.getString(key);
+        } catch (MissingResourceException e) {
+            return '!' + key + '!';
+        }
+    }
 
 }

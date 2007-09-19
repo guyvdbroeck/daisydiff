@@ -22,6 +22,7 @@ import org.eclipse.compare.rangedifferencer.IRangeComparator;
 import org.eclipse.compare.rangedifferencer.RangeDifference;
 import org.eclipse.compare.rangedifferencer.RangeDifferencer;
 import org.outerj.daisy.diff.html.dom.TagNode;
+
 /**
  * A comparator used when calculating the difference in ancestry of two Nodes.
  */
@@ -62,26 +63,26 @@ public class AncestorComparator implements IRangeComparator {
         return compareTxt;
     }
 
-    public AncestorComparatorResult getResult(AncestorComparator other, Locale locale) {
+    public AncestorComparatorResult getResult(AncestorComparator other,
+            Locale locale) {
 
-    	AncestorComparatorResult result=new AncestorComparatorResult();
-    	
+        AncestorComparatorResult result = new AncestorComparatorResult();
+
         RangeDifference[] differences = RangeDifferencer.findDifferences(other,
                 this);
 
         if (differences.length == 0)
             return result;
 
-        ChangeTextGenerator changeTxt = new ChangeTextGenerator(this, other, locale);
-        
+        ChangeTextGenerator changeTxt = new ChangeTextGenerator(this, other,
+                locale);
+
         result.setChanged(true);
         result.setChanges(changeTxt.getChanged(differences).toString());
-        
+
         return result;
 
     }
-    
-
 
     public int getDistance(AncestorComparator other) {
         RangeDifference[] differences = RangeDifferencer.findDifferences(other,

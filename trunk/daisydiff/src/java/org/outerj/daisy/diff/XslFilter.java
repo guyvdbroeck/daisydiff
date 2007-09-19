@@ -29,38 +29,38 @@ import javax.xml.transform.stream.StreamSource;
 import org.xml.sax.ContentHandler;
 
 public class XslFilter {
-    
-    public ContentHandler xsl(ContentHandler consumer, String xslPath) throws IOException {
 
-            try {
-                // Create transformer factory
-                TransformerFactory factory = TransformerFactory.newInstance();
+    public ContentHandler xsl(ContentHandler consumer, String xslPath)
+            throws IOException {
 
-                // Use the factory to create a template containing the xsl file
-                Templates template = factory.newTemplates(new StreamSource(
-                        getClass().getClassLoader().getResourceAsStream(xslPath)));
+        try {
+            // Create transformer factory
+            TransformerFactory factory = TransformerFactory.newInstance();
 
-                // Use the template to create a transformer
-                TransformerFactory transFact = TransformerFactory.newInstance( );
-                SAXTransformerFactory saxTransFact =
-                    (SAXTransformerFactory) transFact;
-                // create a ContentHandler
-                TransformerHandler transHand = saxTransFact.newTransformerHandler(template);
-                
-                transHand.setResult(new SAXResult(consumer));
-                
-                return transHand;
-                
-            } catch (TransformerConfigurationException e) {
-                e.printStackTrace();
-            } catch (IllegalArgumentException e) {
-                e.printStackTrace();
-            } catch (TransformerFactoryConfigurationError e) {
-                e.printStackTrace();
-            }
-            throw new IllegalStateException("Can't transform xml.");
+            // Use the factory to create a template containing the xsl file
+            Templates template = factory.newTemplates(new StreamSource(
+                    getClass().getClassLoader().getResourceAsStream(xslPath)));
+
+            // Use the template to create a transformer
+            TransformerFactory transFact = TransformerFactory.newInstance();
+            SAXTransformerFactory saxTransFact = (SAXTransformerFactory) transFact;
+            // create a ContentHandler
+            TransformerHandler transHand = saxTransFact
+                    .newTransformerHandler(template);
+
+            transHand.setResult(new SAXResult(consumer));
+
+            return transHand;
+
+        } catch (TransformerConfigurationException e) {
+            e.printStackTrace();
+        } catch (IllegalArgumentException e) {
+            e.printStackTrace();
+        } catch (TransformerFactoryConfigurationError e) {
+            e.printStackTrace();
+        }
+        throw new IllegalStateException("Can't transform xml.");
 
     }
-
 
 }

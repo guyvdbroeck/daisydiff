@@ -25,16 +25,16 @@ public class BodyNode extends TagNode {
     public BodyNode() {
         super(null, "body", new AttributesImpl());
     }
-    
+
     @Override
     public Node copyTree() {
-        BodyNode newThis=new BodyNode();
-        for(Node child:this){
-            Node newChild=child.copyTree();
+        BodyNode newThis = new BodyNode();
+        for (Node child : this) {
+            Node newChild = child.copyTree();
             newChild.setParent(newThis);
             newThis.addChild(newChild);
         }
         return newThis;
     }
-    
+
 }

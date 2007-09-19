@@ -24,8 +24,9 @@ import java.util.Set;
 import org.outerj.daisy.diff.html.ancestor.TextOnlyComparator;
 import org.xml.sax.Attributes;
 import org.xml.sax.helpers.AttributesImpl;
+
 /**
- * Node that can contain other nodes. Represents an HTML tag. 
+ * Node that can contain other nodes. Represents an HTML tag.
  */
 public class TagNode extends Node implements Iterable<Node> {
 
@@ -141,9 +142,9 @@ public class TagNode extends Node implements Iterable<Node> {
     }
 
     public boolean splitUntill(TagNode parent, Node split, boolean includeLeft) {
-        boolean splitOccured=false;
-    	if (parent != this) {
-        	TagNode part1 = new TagNode(null, getQName(), getAttributes());
+        boolean splitOccured = false;
+        if (parent != this) {
+            TagNode part1 = new TagNode(null, getQName(), getAttributes());
             TagNode part2 = new TagNode(null, getQName(), getAttributes());
             part1.setParent(getParent());
             part2.setParent(getParent());
@@ -175,10 +176,10 @@ public class TagNode extends Node implements Iterable<Node> {
             if (part2.getNbChildren() > 0)
                 getParent().addChild(getParent().getIndexOf(this), part2);
 
-            if(part1.getNbChildren() > 0 && part2.getNbChildren() > 0){
-            	splitOccured=true;
+            if (part1.getNbChildren() > 0 && part2.getNbChildren() > 0) {
+                splitOccured = true;
             }
-            
+
             getParent().removeChild(this);
 
             if (includeLeft)
@@ -186,7 +187,7 @@ public class TagNode extends Node implements Iterable<Node> {
             else
                 getParent().splitUntill(parent, part2, includeLeft);
         }
-    	return splitOccured;
+        return splitOccured;
 
     }
 
@@ -217,11 +218,11 @@ public class TagNode extends Node implements Iterable<Node> {
         blocks.add("th");
         blocks.add("br");
     }
-    
-    public static boolean isBlockLevel(String qName){
-    	return blocks.contains(qName.toLowerCase());
+
+    public static boolean isBlockLevel(String qName) {
+        return blocks.contains(qName.toLowerCase());
     }
-    
+
     public static boolean isBlockLevel(Node node) {
         try {
             TagNode tagnode = (TagNode) node;
@@ -230,30 +231,31 @@ public class TagNode extends Node implements Iterable<Node> {
             return false;
         }
     }
-    
-    public boolean isBlockLevel(){
-    	return isBlockLevel(this);
-    }
-    
-    public static boolean isInline(String qName){
-    	return !isBlockLevel(qName);
+
+    public boolean isBlockLevel() {
+        return isBlockLevel(this);
     }
 
-    public static boolean isInline(Node node){
-    	return !isBlockLevel(node);
+    public static boolean isInline(String qName) {
+        return !isBlockLevel(qName);
     }
-    
-    public boolean isInline(){
-    	return isInline(this);
+
+    public static boolean isInline(Node node) {
+        return !isBlockLevel(node);
+    }
+
+    public boolean isInline() {
+        return isInline(this);
     }
 
     @Override
     public Node copyTree() {
-        TagNode newThis=new TagNode(null,getQName(),new AttributesImpl(getAttributes()));
+        TagNode newThis = new TagNode(null, getQName(), new AttributesImpl(
+                getAttributes()));
         newThis.setWhiteBefore(isWhiteBefore());
         newThis.setWhiteAfter(isWhiteAfter());
-        for(Node child:this){
-            Node newChild=child.copyTree();
+        for (Node child : this) {
+            Node newChild = child.copyTree();
             newChild.setParent(newThis);
             newThis.addChild(newChild);
         }
@@ -261,63 +263,65 @@ public class TagNode extends Node implements Iterable<Node> {
     }
 
     public double getMatchRatio(TagNode other) {
-    	TextOnlyComparator txtComp=new TextOnlyComparator(other);
+        TextOnlyComparator txtComp = new TextOnlyComparator(other);
         return txtComp.getMatchRatio(new TextOnlyComparator(this));
     }
-    
-	public void expandWhiteSpace() {
-		
-		int shift=0;
-		boolean spaceAdded=false;
-		
-		int nbOriginalChildren=getNbChildren();
-		for(int i=0;i<nbOriginalChildren;i++){
-			Node child=getChild(i+shift);
-			try {
-				TagNode tagChild=(TagNode)child;
 
-				if(!tagChild.isPre()){
-					tagChild.expandWhiteSpace();
-				}
-			} catch (ClassCastException e) {}
-			
-			if(!spaceAdded && child.isWhiteBefore()){
-				WhiteSpaceNode ws=new WhiteSpaceNode(null, " ", child.getLeftMostChild());
-				ws.setParent(this);
-				addChild(i+(shift++), ws);
-			}
-			if(child.isWhiteAfter()){
-				WhiteSpaceNode ws=new WhiteSpaceNode(null, " ", child.getRightMostChild());
-				ws.setParent(this);
-				addChild(i+1+(shift++), ws);
-				spaceAdded=true;
-			}else{
-				spaceAdded=false;
-			}
-			
-	
-		}
-	}
-	
-	@Override
-    public Node getLeftMostChild(){
-		if(getNbChildren()<1)
-			return this;
-		Node child = getChild(0);
-		return child.getLeftMostChild();
+    public void expandWhiteSpace() {
 
-	}
-	
-	@Override
-    public Node getRightMostChild(){
-		if(getNbChildren()<1)
-			return this;
-		Node child = getChild(getNbChildren()-1);
-			return child.getRightMostChild();
-	}
+        int shift = 0;
+        boolean spaceAdded = false;
 
-	public boolean isPre() {
-		return getQName().equalsIgnoreCase("pre");
-	}
+        int nbOriginalChildren = getNbChildren();
+        for (int i = 0; i < nbOriginalChildren; i++) {
+            Node child = getChild(i + shift);
+            try {
+                TagNode tagChild = (TagNode) child;
+
+                if (!tagChild.isPre()) {
+                    tagChild.expandWhiteSpace();
+                }
+            } catch (ClassCastException e) {
+            }
+
+            if (!spaceAdded && child.isWhiteBefore()) {
+                WhiteSpaceNode ws = new WhiteSpaceNode(null, " ", child
+                        .getLeftMostChild());
+                ws.setParent(this);
+                addChild(i + (shift++), ws);
+            }
+            if (child.isWhiteAfter()) {
+                WhiteSpaceNode ws = new WhiteSpaceNode(null, " ", child
+                        .getRightMostChild());
+                ws.setParent(this);
+                addChild(i + 1 + (shift++), ws);
+                spaceAdded = true;
+            } else {
+                spaceAdded = false;
+            }
+
+        }
+    }
+
+    @Override
+    public Node getLeftMostChild() {
+        if (getNbChildren() < 1)
+            return this;
+        Node child = getChild(0);
+        return child.getLeftMostChild();
+
+    }
+
+    @Override
+    public Node getRightMostChild() {
+        if (getNbChildren() < 1)
+            return this;
+        Node child = getChild(getNbChildren() - 1);
+        return child.getRightMostChild();
+    }
+
+    public boolean isPre() {
+        return getQName().equalsIgnoreCase("pre");
+    }
 
 }

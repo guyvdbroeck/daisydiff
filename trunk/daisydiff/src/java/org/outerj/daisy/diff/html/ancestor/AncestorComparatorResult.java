@@ -17,20 +17,24 @@ package org.outerj.daisy.diff.html.ancestor;
 
 public class AncestorComparatorResult {
 
-	private boolean changed=false;
-	private String changes=null;
-	
-	public boolean isChanged() {
-		return changed;
-	}
-	public void setChanged(boolean changed) {
-		this.changed = changed;
-	}
-	public String getChanges() {
-		return changes;
-	}
-	public void setChanges(String changes) {
-		this.changes = changes;
-	}
-	
+    private boolean changed = false;
+
+    private String changes = null;
+
+    public boolean isChanged() {
+        return changed;
+    }
+
+    public void setChanged(boolean changed) {
+        this.changed = changed;
+    }
+
+    public String getChanges() {
+        return changes;
+    }
+
+    public void setChanges(String changes) {
+        this.changes = changes;
+    }
+
 }

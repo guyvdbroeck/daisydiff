@@ -16,24 +16,13 @@
 package org.outerj.daisy.diff;
 
 import java.io.BufferedReader;
-import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.net.URI;
-import java.net.URISyntaxException;
 import java.util.Locale;
-
-import javax.xml.transform.TransformerFactory;
-import javax.xml.transform.sax.SAXTransformerFactory;
-import javax.xml.transform.sax.TransformerHandler;
-import javax.xml.transform.stream.StreamResult;
 
 import org.outerj.daisy.diff.html.HTMLDiffer;
 import org.outerj.daisy.diff.html.HtmlSaxDiffOutput;
 import org.outerj.daisy.diff.html.TextNodeComparator;
 import org.outerj.daisy.diff.html.dom.DomTreeBuilder;
-import org.outerj.daisy.diff.html.dom.DomTreeBuilderWithHeaders;
 import org.outerj.daisy.diff.tag.TagComparator;
 import org.outerj.daisy.diff.tag.TagDiffer;
 import org.outerj.daisy.diff.tag.TagSaxDiffOutput;
@@ -41,7 +30,6 @@ import org.xml.sax.ContentHandler;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 import org.xml.sax.XMLReader;
-import org.xml.sax.helpers.AttributesImpl;
 import org.xml.sax.helpers.XMLReaderFactory;
 
 public class DaisyDiff {
@@ -49,20 +37,24 @@ public class DaisyDiff {
     /**
      * Diffs two html files, outputting the result to the specified consumer.
      */
-    public static void diffHTML(InputSource oldSource, InputSource newSource, ContentHandler consumer, String prefix, Locale locale) throws SAXException, IOException{   
+    public static void diffHTML(InputSource oldSource, InputSource newSource,
+            ContentHandler consumer, String prefix, Locale locale)
+            throws SAXException, IOException {
 
         DomTreeBuilder oldHandler = new DomTreeBuilder();
         XMLReader xr1 = XMLReaderFactory.createXMLReader();
         xr1.setContentHandler(oldHandler);
         xr1.parse(oldSource);
-        TextNodeComparator leftComparator = new TextNodeComparator(oldHandler, locale);
+        TextNodeComparator leftComparator = new TextNodeComparator(oldHandler,
+                locale);
 
         DomTreeBuilder newHandler = new DomTreeBuilder();
         XMLReader xr2 = XMLReaderFactory.createXMLReader();
         xr2.setContentHandler(newHandler);
         xr2.parse(newSource);
 
-        TextNodeComparator rightComparator = new TextNodeComparator(newHandler, locale);
+        TextNodeComparator rightComparator = new TextNodeComparator(newHandler,
+                locale);
 
         HtmlSaxDiffOutput output = new HtmlSaxDiffOutput(consumer, prefix);
         HTMLDiffer differ = new HTMLDiffer(output);
@@ -70,32 +62,34 @@ public class DaisyDiff {
     }
 
     /**
-     * Diffs two html files word for word as source, outputting the result 
-     * to the specified consumer.
+     * Diffs two html files word for word as source, outputting the result to
+     * the specified consumer.
      */
-    public static void diffTag(String oldText, String newText, ContentHandler consumer) throws Exception{
+    public static void diffTag(String oldText, String newText,
+            ContentHandler consumer) throws Exception {
         consumer.startDocument();
-        TagComparator oldComp=new TagComparator(oldText);
-        TagComparator newComp=new TagComparator(newText);
+        TagComparator oldComp = new TagComparator(oldText);
+        TagComparator newComp = new TagComparator(newText);
 
         TagSaxDiffOutput output = new TagSaxDiffOutput(consumer);
-        TagDiffer differ=new TagDiffer(output);
+        TagDiffer differ = new TagDiffer(output);
         differ.diff(oldComp, newComp);
         consumer.endDocument();
     }
 
     /**
-     * Diffs two html files word for word as source, outputting the result 
-     * to the specified consumer.
+     * Diffs two html files word for word as source, outputting the result to
+     * the specified consumer.
      */
-    public static void diffTag(BufferedReader oldText, BufferedReader newText, ContentHandler consumer) throws Exception{
+    public static void diffTag(BufferedReader oldText, BufferedReader newText,
+            ContentHandler consumer) throws Exception {
 
-        TagComparator oldComp=new TagComparator(oldText);
-        TagComparator newComp=new TagComparator(newText);
+        TagComparator oldComp = new TagComparator(oldText);
+        TagComparator newComp = new TagComparator(newText);
 
         TagSaxDiffOutput output = new TagSaxDiffOutput(consumer);
-        TagDiffer differ=new TagDiffer(output);
+        TagDiffer differ = new TagDiffer(output);
         differ.diff(oldComp, newComp);
     }
-    
+
 }

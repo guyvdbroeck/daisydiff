@@ -29,14 +29,14 @@ import org.eclipse.compare.rangedifferencer.RangeDifferencer;
  */
 public class TagDiffer {
 
-private TagSaxDiffOutput output;
+    private TagSaxDiffOutput output;
 
     public TagDiffer(TagSaxDiffOutput output) {
         this.output = output;
     }
 
-    public void diff(IAtomSplitter leftComparator,
-            IAtomSplitter rightComparator) throws Exception {
+    public void diff(IAtomSplitter leftComparator, IAtomSplitter rightComparator)
+            throws Exception {
 
         RangeDifference[] differences = RangeDifferencer.findDifferences(
                 leftComparator, rightComparator);
@@ -75,7 +75,6 @@ private TagSaxDiffOutput output;
 
     }
 
-    
     private void parseNoChange(int beginLeft, int endLeft, int beginRight,
             int endRight, IAtomSplitter leftComparator,
             IAtomSplitter rightComparator) throws Exception {
@@ -112,8 +111,8 @@ private TagSaxDiffOutput output;
 
                 RangeDifference[] differences2 = RangeDifferencer
                         .findDifferences(leftComparator2, rightComparator2);
-                List<RangeDifference> pdifferences2 = preProcess(
-                        differences2, 2);
+                List<RangeDifference> pdifferences2 = preProcess(differences2,
+                        2);
 
                 int rightAtom2 = 0;
                 for (int j = 0; j < pdifferences2.size(); j++) {
@@ -144,9 +143,9 @@ private TagSaxDiffOutput output;
         }
 
     }
-    
-    private List<RangeDifference> preProcess(
-            RangeDifference[] differences, IAtomSplitter leftComparator) {
+
+    private List<RangeDifference> preProcess(RangeDifference[] differences,
+            IAtomSplitter leftComparator) {
 
         List<RangeDifference> newRanges = new LinkedList<RangeDifference>();
 
@@ -201,8 +200,8 @@ private TagSaxDiffOutput output;
         return newRanges;
     }
 
-    private List<RangeDifference> preProcess(
-            RangeDifference[] differences, int span) {
+    private List<RangeDifference> preProcess(RangeDifference[] differences,
+            int span) {
 
         List<RangeDifference> newRanges = new LinkedList<RangeDifference>();
 

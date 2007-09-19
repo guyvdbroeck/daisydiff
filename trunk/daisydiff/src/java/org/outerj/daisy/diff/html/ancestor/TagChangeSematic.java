@@ -17,21 +17,21 @@ package org.outerj.daisy.diff.html.ancestor;
 
 public enum TagChangeSematic {
 
-	MOVED{
-		@Override
-		public String toString() {
-			return "moved";
-		}
-	
-	},
-	
-	STYLE{
-		@Override
-		public String toString() {
-			return "style";
-		}
-	}, 
-	
-	UNKNOWN;
-	
+    MOVED {
+        @Override
+        public String toString() {
+            return "moved";
+        }
+
+    },
+
+    STYLE {
+        @Override
+        public String toString() {
+            return "style";
+        }
+    },
+
+    UNKNOWN;
+
 }

@@ -19,6 +19,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.outerj.daisy.diff.html.dom.helper.LastCommonParentResult;
+
 /**
  * Represents any element in the DOM tree of a HTML file.
  */
@@ -47,10 +48,10 @@ public abstract class Node {
 
     public abstract List<Node> getMinimalDeletedSet(long id);
 
-    public void detectIgnorableWhiteSpace(){
-        //no op
+    public void detectIgnorableWhiteSpace() {
+        // no op
     }
-    
+
     public LastCommonParentResult getLastCommonParent(Node other) {
         if (other == null)
             throw new IllegalArgumentException("The given TextNode is null");
@@ -73,7 +74,7 @@ public abstract class Node {
 
         result.setLastCommonParentDepth(i - 1);
         result.setLastCommonParent(myParents.get(i - 1));
-        
+
         if (!isSame) {
             result.setIndexInLastCommonParent(myParents.get(i - 1).getIndexOf(
                     myParents.get(i)));
@@ -101,37 +102,38 @@ public abstract class Node {
 
     public abstract Node copyTree();
 
-    public boolean inPre(){
-    	for(TagNode ancestor:getParentTree()){
-    		if(ancestor.isPre()){
-    			return true;
-    		}
-    	}
-    	return false;
+    public boolean inPre() {
+        for (TagNode ancestor : getParentTree()) {
+            if (ancestor.isPre()) {
+                return true;
+            }
+        }
+        return false;
     }
-    
-    private boolean whiteBefore=false;
-    private boolean whiteAfter=false;
-    
+
+    private boolean whiteBefore = false;
+
+    private boolean whiteAfter = false;
+
     public boolean isWhiteBefore() {
-		return whiteBefore;
-	}
+        return whiteBefore;
+    }
 
-	public void setWhiteBefore(boolean whiteBefore) {
-		this.whiteBefore = whiteBefore;
-	}
+    public void setWhiteBefore(boolean whiteBefore) {
+        this.whiteBefore = whiteBefore;
+    }
 
-	public boolean isWhiteAfter() {
-		
-		return whiteAfter;
-	}
+    public boolean isWhiteAfter() {
 
-	public void setWhiteAfter(boolean whiteAfter) {
-		this.whiteAfter = whiteAfter;
-	}
+        return whiteAfter;
+    }
 
-	public abstract Node getLeftMostChild();
+    public void setWhiteAfter(boolean whiteAfter) {
+        this.whiteAfter = whiteAfter;
+    }
 
-	public abstract Node getRightMostChild();
+    public abstract Node getLeftMostChild();
+
+    public abstract Node getRightMostChild();
 
 }

@@ -31,8 +31,9 @@ import java.io.Writer;
 
 /**
  * A class that can record SAX events and replay them later.
- *
- * <p>This class was copied form the Apache Cocoon.
+ * 
+ * <p>
+ * This class was copied form the Apache Cocoon.
  */
 public class SaxBuffer implements ContentHandler, LexicalHandler, Serializable {
 
@@ -54,7 +55,6 @@ public class SaxBuffer implements ContentHandler, LexicalHandler, Serializable {
         this.saxbits.addAll(saxBuffer.saxbits);
     }
 
-
     public void skippedEntity(String name) throws SAXException {
         saxbits.add(new SkippedEntity(name));
     }
@@ -63,11 +63,13 @@ public class SaxBuffer implements ContentHandler, LexicalHandler, Serializable {
         // don't record this event
     }
 
-    public void ignorableWhitespace(char ch[], int start, int length) throws SAXException {
+    public void ignorableWhitespace(char ch[], int start, int length)
+            throws SAXException {
         saxbits.add(new IgnorableWhitespace(ch, start, length));
     }
 
-    public void processingInstruction(String target, String data) throws SAXException {
+    public void processingInstruction(String target, String data)
+            throws SAXException {
         saxbits.add(new PI(target, data));
     }
 
@@ -75,7 +77,8 @@ public class SaxBuffer implements ContentHandler, LexicalHandler, Serializable {
         saxbits.add(StartDocument.SINGLETON);
     }
 
-    public void startElement(String namespaceURI, String localName, String qName, Attributes atts) throws SAXException {
+    public void startElement(String namespaceURI, String localName,
+            String qName, Attributes atts) throws SAXException {
         saxbits.add(new StartElement(namespaceURI, localName, qName, atts));
     }
 
@@ -83,11 +86,13 @@ public class SaxBuffer implements ContentHandler, LexicalHandler, Serializable {
         saxbits.add(new EndPrefixMapping(prefix));
     }
 
-    public void characters(char ch[], int start, int length) throws SAXException {
+    public void characters(char ch[], int start, int length)
+            throws SAXException {
         saxbits.add(new Characters(ch, start, length));
     }
 
-    public void endElement(String namespaceURI, String localName, String qName) throws SAXException {
+    public void endElement(String namespaceURI, String localName, String qName)
+            throws SAXException {
         saxbits.add(new EndElement(namespaceURI, localName, qName));
     }
 
@@ -95,7 +100,8 @@ public class SaxBuffer implements ContentHandler, LexicalHandler, Serializable {
         saxbits.add(EndDocument.SINGLETON);
     }
 
-    public void startPrefixMapping(String prefix, String uri) throws SAXException {
+    public void startPrefixMapping(String prefix, String uri)
+            throws SAXException {
         saxbits.add(new StartPrefixMapping(prefix, uri));
     }
 
@@ -115,7 +121,8 @@ public class SaxBuffer implements ContentHandler, LexicalHandler, Serializable {
         saxbits.add(EndDTD.SINGLETON);
     }
 
-    public void startDTD(String name, String publicId, String systemId) throws SAXException {
+    public void startDTD(String name, String publicId, String systemId)
+            throws SAXException {
         saxbits.add(new StartDTD(name, publicId, systemId));
     }
 
@@ -126,7 +133,6 @@ public class SaxBuffer implements ContentHandler, LexicalHandler, Serializable {
     public void endEntity(String name) throws SAXException {
         saxbits.add(new EndEntity(name));
     }
-
 
     /**
      * Adds a SaxBit to the bits list
@@ -159,11 +165,12 @@ public class SaxBuffer implements ContentHandler, LexicalHandler, Serializable {
     /*
      * NOTE: Used in i18n XML bundle implementation
      */
+    @Override
     public String toString() {
         StringBuilder value = new StringBuilder();
         for (SaxBit saxbit : saxbits) {
             if (saxbit instanceof Characters) {
-                ((Characters)saxbit).toString(value);
+                ((Characters) saxbit).toString(value);
             }
         }
 
@@ -182,15 +189,18 @@ public class SaxBuffer implements ContentHandler, LexicalHandler, Serializable {
     }
 
     /**
-     * SaxBit is a representation of the SAX event. Every SaxBit is immutable object.
+     * SaxBit is a representation of the SAX event. Every SaxBit is immutable
+     * object.
      */
     public interface SaxBit {
         public void send(ContentHandler contentHandler) throws SAXException;
+
         public void dump(Writer writer) throws IOException;
     }
 
     public static final class StartDocument implements SaxBit, Serializable {
         public static final StartDocument SINGLETON = new StartDocument();
+
         public void send(ContentHandler contentHandler) throws SAXException {
             contentHandler.startDocument();
         }
@@ -202,6 +212,7 @@ public class SaxBuffer implements ContentHandler, LexicalHandler, Serializable {
 
     public static final class EndDocument implements SaxBit, Serializable {
         public static final EndDocument SINGLETON = new EndDocument();
+
         public void send(ContentHandler contentHandler) throws SAXException {
             contentHandler.endDocument();
         }
@@ -213,6 +224,7 @@ public class SaxBuffer implements ContentHandler, LexicalHandler, Serializable {
 
     public static final class PI implements SaxBit, Serializable {
         public final String target;
+
         public final String data;
 
         public PI(String target, String data) {
@@ -225,13 +237,16 @@ public class SaxBuffer implements ContentHandler, LexicalHandler, Serializable {
         }
 
         public void dump(Writer writer) throws IOException {
-            writer.write("[ProcessingInstruction] target=" + target + ",data=" + data + "\n");
+            writer.write("[ProcessingInstruction] target=" + target + ",data="
+                    + data + "\n");
         }
     }
 
     public static final class StartDTD implements SaxBit, Serializable {
         public final String name;
+
         public final String publicId;
+
         public final String systemId;
 
         public StartDTD(String name, String publicId, String systemId) {
@@ -242,19 +257,22 @@ public class SaxBuffer implements ContentHandler, LexicalHandler, Serializable {
 
         public void send(ContentHandler contentHandler) throws SAXException {
             if (contentHandler instanceof LexicalHandler)
-                ((LexicalHandler)contentHandler).startDTD(name, publicId, systemId);
+                ((LexicalHandler) contentHandler).startDTD(name, publicId,
+                        systemId);
         }
 
         public void dump(Writer writer) throws IOException {
-            writer.write("[StartDTD] name=" + name + ",publicId=" + publicId + ",systemId=" + systemId + "\n");
+            writer.write("[StartDTD] name=" + name + ",publicId=" + publicId
+                    + ",systemId=" + systemId + "\n");
         }
     }
 
     public static final class EndDTD implements SaxBit, Serializable {
         public static final EndDTD SINGLETON = new EndDTD();
+
         public void send(ContentHandler contentHandler) throws SAXException {
             if (contentHandler instanceof LexicalHandler)
-                ((LexicalHandler)contentHandler).endDTD();
+                ((LexicalHandler) contentHandler).endDTD();
         }
 
         public void dump(Writer writer) throws IOException {
@@ -271,7 +289,7 @@ public class SaxBuffer implements ContentHandler, LexicalHandler, Serializable {
 
         public void send(ContentHandler contentHandler) throws SAXException {
             if (contentHandler instanceof LexicalHandler)
-                ((LexicalHandler)contentHandler).startEntity(name);
+                ((LexicalHandler) contentHandler).startEntity(name);
         }
 
         public void dump(Writer writer) throws IOException {
@@ -288,7 +306,7 @@ public class SaxBuffer implements ContentHandler, LexicalHandler, Serializable {
 
         public void send(ContentHandler contentHandler) throws SAXException {
             if (contentHandler instanceof LexicalHandler)
-                ((LexicalHandler)contentHandler).endEntity(name);
+                ((LexicalHandler) contentHandler).endEntity(name);
         }
 
         public void dump(Writer writer) throws IOException {
@@ -312,8 +330,10 @@ public class SaxBuffer implements ContentHandler, LexicalHandler, Serializable {
         }
     }
 
-    public static final class StartPrefixMapping implements SaxBit, Serializable {
+    public static final class StartPrefixMapping implements SaxBit,
+            Serializable {
         public final String prefix;
+
         public final String uri;
 
         public StartPrefixMapping(String prefix, String uri) {
@@ -326,7 +346,8 @@ public class SaxBuffer implements ContentHandler, LexicalHandler, Serializable {
         }
 
         public void dump(Writer writer) throws IOException {
-            writer.write("[StartPrefixMapping] prefix=" + prefix + ",uri=" + uri + "\n");
+            writer.write("[StartPrefixMapping] prefix=" + prefix + ",uri="
+                    + uri + "\n");
         }
     }
 
@@ -348,11 +369,15 @@ public class SaxBuffer implements ContentHandler, LexicalHandler, Serializable {
 
     public static final class StartElement implements SaxBit, Serializable {
         public final String namespaceURI;
+
         public final String localName;
+
         public final String qName;
+
         public final Attributes attrs;
 
-        public StartElement(String namespaceURI, String localName, String qName, Attributes attrs) {
+        public StartElement(String namespaceURI, String localName,
+                String qName, Attributes attrs) {
             this.namespaceURI = namespaceURI;
             this.localName = localName;
             this.qName = qName;
@@ -364,16 +389,23 @@ public class SaxBuffer implements ContentHandler, LexicalHandler, Serializable {
         }
 
         public void dump(Writer writer) throws IOException {
-            writer.write("[StartElement] namespaceURI=" + namespaceURI + ",localName=" + localName + ",qName=" + qName + "\n");
+            writer.write("[StartElement] namespaceURI=" + namespaceURI
+                    + ",localName=" + localName + ",qName=" + qName + "\n");
             for (int i = 0; i < attrs.getLength(); i++) {
-                writer.write("      [Attribute] namespaceURI=" + attrs.getURI(i) + ",localName=" + attrs.getLocalName(i) + ",qName=" + attrs.getQName(i) + ",type=" + attrs.getType(i) + ",value=" + attrs.getValue(i) + "\n");
+                writer.write("      [Attribute] namespaceURI="
+                        + attrs.getURI(i) + ",localName="
+                        + attrs.getLocalName(i) + ",qName=" + attrs.getQName(i)
+                        + ",type=" + attrs.getType(i) + ",value="
+                        + attrs.getValue(i) + "\n");
             }
         }
     }
 
     public static final class EndElement implements SaxBit, Serializable {
         public final String namespaceURI;
+
         public final String localName;
+
         public final String qName;
 
         public EndElement(String namespaceURI, String localName, String qName) {
@@ -387,7 +419,8 @@ public class SaxBuffer implements ContentHandler, LexicalHandler, Serializable {
         }
 
         public void dump(Writer writer) throws IOException {
-            writer.write("[EndElement] namespaceURI=" + namespaceURI + ",localName=" + localName + ",qName=" + qName + "\n");
+            writer.write("[EndElement] namespaceURI=" + namespaceURI
+                    + ",localName=" + localName + ",qName=" + qName + "\n");
         }
     }
 
@@ -395,7 +428,8 @@ public class SaxBuffer implements ContentHandler, LexicalHandler, Serializable {
         public final char[] ch;
 
         public Characters(char[] ch, int start, int length) {
-            // make a copy so that we don't hold references to a potentially large array we don't control
+            // make a copy so that we don't hold references to a potentially
+            // large array we don't control
             this.ch = new char[length];
             System.arraycopy(ch, start, this.ch, 0, length);
         }
@@ -417,14 +451,15 @@ public class SaxBuffer implements ContentHandler, LexicalHandler, Serializable {
         public final char[] ch;
 
         public Comment(char[] ch, int start, int length) {
-            // make a copy so that we don't hold references to a potentially large array we don't control
+            // make a copy so that we don't hold references to a potentially
+            // large array we don't control
             this.ch = new char[length];
             System.arraycopy(ch, start, this.ch, 0, length);
         }
 
         public void send(ContentHandler contentHandler) throws SAXException {
             if (contentHandler instanceof LexicalHandler)
-                ((LexicalHandler)contentHandler).comment(ch, 0, ch.length);
+                ((LexicalHandler) contentHandler).comment(ch, 0, ch.length);
         }
 
         public void dump(Writer writer) throws IOException {
@@ -434,9 +469,10 @@ public class SaxBuffer implements ContentHandler, LexicalHandler, Serializable {
 
     public static final class StartCDATA implements SaxBit, Serializable {
         public static final StartCDATA SINGLETON = new StartCDATA();
+
         public void send(ContentHandler contentHandler) throws SAXException {
             if (contentHandler instanceof LexicalHandler)
-                ((LexicalHandler)contentHandler).startCDATA();
+                ((LexicalHandler) contentHandler).startCDATA();
         }
 
         public void dump(Writer writer) throws IOException {
@@ -446,9 +482,10 @@ public class SaxBuffer implements ContentHandler, LexicalHandler, Serializable {
 
     public static final class EndCDATA implements SaxBit, Serializable {
         public static final EndCDATA SINGLETON = new EndCDATA();
+
         public void send(ContentHandler contentHandler) throws SAXException {
             if (contentHandler instanceof LexicalHandler)
-                ((LexicalHandler)contentHandler).endCDATA();
+                ((LexicalHandler) contentHandler).endCDATA();
         }
 
         public void dump(Writer writer) throws IOException {
@@ -456,11 +493,13 @@ public class SaxBuffer implements ContentHandler, LexicalHandler, Serializable {
         }
     }
 
-    public static final class IgnorableWhitespace implements SaxBit, Serializable {
+    public static final class IgnorableWhitespace implements SaxBit,
+            Serializable {
         public final char[] ch;
 
         public IgnorableWhitespace(char[] ch, int start, int length) {
-            // make a copy so that we don't hold references to a potentially large array we don't control
+            // make a copy so that we don't hold references to a potentially
+            // large array we don't control
             this.ch = new char[length];
             System.arraycopy(ch, start, this.ch, 0, length);
         }

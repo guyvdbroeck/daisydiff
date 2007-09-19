@@ -57,8 +57,8 @@ public class TagSaxDiffOutput {
                             "diff-tag-html");
                     consumer.startElement("", "span", "span", attrs);
                     insideTag = true;
-                } else{
-                	consumer.endElement("", "span", "span");
+                } else {
+                    consumer.endElement("", "span", "span");
                     insideTag = false;
                 }
                 consumer.characters("<".toCharArray(), 0, "<".length());
@@ -69,7 +69,7 @@ public class TagSaxDiffOutput {
                 if (insideTag == true) {
                     consumer.endElement("", "span", "span");
                     insideTag = false;
-                } 
+                }
                 break;
             default:
                 consumer.characters(c, i, 1);
@@ -77,29 +77,30 @@ public class TagSaxDiffOutput {
         }
     }
 
-    private int removedID=1;
-    private int addedID=1;
-    
+    private int removedID = 1;
+
+    private int addedID = 1;
+
     public void addRemovedPart(String text) throws Exception {
         AttributesImpl attrs = new AttributesImpl();
         attrs.addAttribute("", "class", "class", "CDATA", "diff-tag-removed");
-        attrs.addAttribute("", "id", "id", "CDATA", "removed"+removedID);
-        attrs.addAttribute("", "title", "title", "CDATA", "#removed"+removedID);
+        attrs.addAttribute("", "id", "id", "CDATA", "removed" + removedID);
+        attrs.addAttribute("", "title", "title", "CDATA", "#removed"
+                + removedID);
         removedID++;
         consumer.startElement("", "span", "span", attrs);
         addBasicText(text);
         consumer.endElement("", "span", "span");
     }
- 
+
     public void addAddedPart(String text) throws Exception {
         AttributesImpl attrs = new AttributesImpl();
         attrs.addAttribute("", "class", "class", "CDATA", "diff-tag-added");
-        attrs.addAttribute("", "id", "id", "CDATA", "added"+addedID);
-        attrs.addAttribute("", "title", "title", "CDATA", "#added"+addedID);
+        attrs.addAttribute("", "id", "id", "CDATA", "added" + addedID);
+        attrs.addAttribute("", "title", "title", "CDATA", "#added" + addedID);
         addedID++;
         consumer.startElement("", "span", "span", attrs);
         addBasicText(text);
         consumer.endElement("", "span", "span");
     }
 }
-

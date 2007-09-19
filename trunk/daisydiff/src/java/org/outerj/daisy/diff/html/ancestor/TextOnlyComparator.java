@@ -25,23 +25,24 @@ import org.eclipse.compare.rangedifferencer.RangeDifferencer;
 import org.outerj.daisy.diff.html.dom.Node;
 import org.outerj.daisy.diff.html.dom.TagNode;
 import org.outerj.daisy.diff.html.dom.TextNode;
+
 /**
  * A comparator that compares only the elements of text inside a given tag.
  */
 public class TextOnlyComparator implements IRangeComparator {
 
-    private List<TextNode> leafs=new ArrayList<TextNode>();
-    
+    private List<TextNode> leafs = new ArrayList<TextNode>();
+
     public TextOnlyComparator(TagNode tree) {
         addRecursive(tree);
     }
-    
+
     private void addRecursive(TagNode tree) {
-        for(Node child:tree){
+        for (Node child : tree) {
             if (child instanceof TagNode) {
                 TagNode tagnode = (TagNode) child;
                 addRecursive(tagnode);
-            }else if (child instanceof TextNode) {
+            } else if (child instanceof TextNode) {
                 TextNode textnode = (TextNode) child;
                 leafs.add(textnode);
             }
@@ -64,7 +65,7 @@ public class TextOnlyComparator implements IRangeComparator {
     }
 
     private TextNode getLeaf(int owni) {
-       return leafs.get(owni);
+        return leafs.get(owni);
     }
 
     public boolean skipRangeComparison(int arg0, int arg1, IRangeComparator arg2) {
@@ -72,23 +73,24 @@ public class TextOnlyComparator implements IRangeComparator {
     }
 
     public double getMatchRatio(TextOnlyComparator other) {
-    	LCSSettings settings=new LCSSettings();
-    	settings.setUseGreedyMethod(true);
-    	settings.setPowLimit(1.5);
-    	settings.setTooLong(150*150);
-    	
-    	RangeDifference[] differences = RangeDifferencer.findDifferences(settings, other, this);
+        LCSSettings settings = new LCSSettings();
+        settings.setUseGreedyMethod(true);
+        settings.setPowLimit(1.5);
+        settings.setTooLong(150 * 150);
+
+        RangeDifference[] differences = RangeDifferencer.findDifferences(
+                settings, other, this);
         int distanceOther = 0;
         for (RangeDifference d : differences) {
             distanceOther += d.leftLength();
         }
-        
+
         int distanceThis = 0;
         for (RangeDifference d : differences) {
             distanceThis += d.rightLength();
         }
-        
-        
-        return ((0.0+distanceOther)/other.getRangeCount()+(0.0+distanceThis)/getRangeCount())/2;
+
+        return ((0.0 + distanceOther) / other.getRangeCount() + (0.0 + distanceThis)
+                / getRangeCount()) / 2;
     }
 }

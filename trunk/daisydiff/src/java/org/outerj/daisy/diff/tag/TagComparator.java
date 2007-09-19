@@ -39,16 +39,16 @@ public class TagComparator implements IAtomSplitter {
     }
 
     public TagComparator(BufferedReader in) throws IOException {
-        StringBuilder sb=new StringBuilder();
-        
-        boolean allRead=false;
-        while(!allRead){
-            int result=in.read();
-            if(result>=0){
-                sb.append((char)result);
-            }else{
+        StringBuilder sb = new StringBuilder();
+
+        boolean allRead = false;
+        while (!allRead) {
+            int result = in.read();
+            if (result >= 0) {
+                sb.append((char) result);
+            } else {
                 generateAtoms(sb.toString());
-                allRead=true;
+                allRead = true;
             }
         }
     }

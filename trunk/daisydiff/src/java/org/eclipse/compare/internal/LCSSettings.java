@@ -17,35 +17,37 @@ package org.eclipse.compare.internal;
 
 public class LCSSettings {
 
-	// the value of N*M when to start binding the run time
-    private double tooLong=10000000.0;
-	private double powLimit=1.5;
-	private boolean useGreedyMethod=false;
-	
-	// the value of N*M when to start binding the run time
+    // the value of N*M when to start binding the run time
+    private double tooLong = 10000000.0;
+
+    private double powLimit = 1.5;
+
+    private boolean useGreedyMethod = false;
+
+    // the value of N*M when to start binding the run time
     public double getTooLong() {
-		return tooLong;
-	}
-	
+        return tooLong;
+    }
+
     // the value of N*M when to start binding the run time
     public void setTooLong(double too_long) {
-		this.tooLong = too_long;
-	}
-	
-	public double getPowLimit() {
-		return powLimit;
-	}
-	
-	public void setPowLimit(double pow_limit) {
-		this.powLimit = pow_limit;
-	}
-	
-	public boolean isUseGreedyMethod() {
-		return useGreedyMethod;
-	}
-	
-	public void setUseGreedyMethod(boolean useGreedyMethod) {
-		this.useGreedyMethod = useGreedyMethod;
-	}
-	
+        this.tooLong = too_long;
+    }
+
+    public double getPowLimit() {
+        return powLimit;
+    }
+
+    public void setPowLimit(double pow_limit) {
+        this.powLimit = pow_limit;
+    }
+
+    public boolean isUseGreedyMethod() {
+        return useGreedyMethod;
+    }
+
+    public void setUseGreedyMethod(boolean useGreedyMethod) {
+        this.useGreedyMethod = useGreedyMethod;
+    }
+
 }

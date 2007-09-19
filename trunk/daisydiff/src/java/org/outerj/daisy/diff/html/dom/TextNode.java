@@ -27,18 +27,19 @@ import org.outerj.daisy.diff.html.modification.ModificationType;
 public class TextNode extends Node implements Cloneable {
 
     private String s;
-	private Modification modification;
- 
+
+    private Modification modification;
+
     public TextNode(TagNode parent, String s) {
-    	super(parent);
-    	this.modification=new Modification(ModificationType.NONE);
+        super(parent);
+        this.modification = new Modification(ModificationType.NONE);
         this.s = s;
     }
 
     @Override
     public Node copyTree() {
         try {
-            Node node=(Node) clone();
+            Node node = (Node) clone();
             node.setParent(null);
             return node;
         } catch (CloneNotSupportedException e) {
@@ -47,32 +48,33 @@ public class TextNode extends Node implements Cloneable {
     }
 
     @Override
-	public Node getLeftMostChild() {
-		return this;
-	}
+    public Node getLeftMostChild() {
+        return this;
+    }
 
     @Override
     public List<Node> getMinimalDeletedSet(long id) {
         List<Node> nodes = new ArrayList<Node>(1);
-        if (getModification().getType()==ModificationType.REMOVED && getModification().getID()==id)
+        if (getModification().getType() == ModificationType.REMOVED
+                && getModification().getID() == id)
             nodes.add(this);
 
         return nodes;
     }
 
-    public Modification getModification(){
-    	return this.modification;
+    public Modification getModification() {
+        return this.modification;
     }
-    
-    @Override
-	public Node getRightMostChild() {
-		return this;
-	}
 
-	public String getText() {
+    @Override
+    public Node getRightMostChild() {
+        return this;
+    }
+
+    public String getText() {
         return s;
     }
-    
+
     public boolean isSameText(Object other) {
         if (other == null)
             return false;
@@ -87,11 +89,11 @@ public class TextNode extends Node implements Cloneable {
                 otherTextNode.getText().replace('\n', ' '));
     }
 
-	public void setModification(Modification m){
-		this.modification=m;
-	}
+    public void setModification(Modification m) {
+        this.modification = m;
+    }
 
-	@Override
+    @Override
     public String toString() {
         return getText();
     }

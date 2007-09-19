@@ -17,59 +17,58 @@ package org.outerj.daisy.diff.html.dom.helper;
 
 import org.outerj.daisy.diff.html.dom.TagNode;
 
-
 /**
- * When detecting the last common parent of two nodes, all results are stored as 
- * a {@link LastCommonParentResult}. 
+ * When detecting the last common parent of two nodes, all results are stored as
+ * a {@link LastCommonParentResult}.
  */
 public class LastCommonParentResult {
 
     public LastCommonParentResult() {
-        
+
     }
-    
-    //Parent
+
+    // Parent
     private TagNode parent;
 
-    public TagNode getLastCommonParent(){
+    public TagNode getLastCommonParent() {
         return parent;
     }
-    
-    public void setLastCommonParent(TagNode parent){
-        this.parent=parent;
+
+    public void setLastCommonParent(TagNode parent) {
+        this.parent = parent;
     }
-    
-    //Splitting
+
+    // Splitting
     private boolean splittingNeeded = false;
 
     public boolean isSplittingNeeded() {
         return splittingNeeded;
     }
 
-    public void setSplittingNeeded(){
-        splittingNeeded=true;
+    public void setSplittingNeeded() {
+        splittingNeeded = true;
     }
-    
-    //Depth
+
+    // Depth
     private int lastCommonParentDepth = -1;
 
     public int getLastCommonParentDepth() {
         return lastCommonParentDepth;
     }
-    
-    public void setLastCommonParentDepth(int depth){
-        lastCommonParentDepth=depth;
+
+    public void setLastCommonParentDepth(int depth) {
+        lastCommonParentDepth = depth;
     }
 
-    //Index
+    // Index
     private int indexInLastCommonParent = -1;
 
     public int getIndexInLastCommonParent() {
         return indexInLastCommonParent;
     }
-    
-    public void setIndexInLastCommonParent(int index){
-        indexInLastCommonParent=index;
+
+    public void setIndexInLastCommonParent(int index) {
+        indexInLastCommonParent = index;
     }
-    
+
 }

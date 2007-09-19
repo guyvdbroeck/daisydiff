@@ -21,19 +21,27 @@ import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
-public class DomTreeBuilder extends DefaultHandler implements DomTree{
+public class DomTreeBuilder extends DefaultHandler implements DomTree {
 
     private List<TextNode> textNodes = new ArrayList<TextNode>(50);
+
     private BodyNode bodyNode = new BodyNode();
+
     private TagNode currentParent = bodyNode;
+
     private StringBuilder newWord = new StringBuilder();
 
     protected boolean documentStarted = false;
+
     protected boolean documentEnded = false;
+
     protected boolean bodyStarted = false;
+
     protected boolean bodyEnded = false;
-    private boolean whiteSpaceBeforeThis=false;
-    private Node lastSibling=null;
+
+    private boolean whiteSpaceBeforeThis = false;
+
+    private Node lastSibling = null;
 
     public BodyNode getBodyNode() {
         return bodyNode;
@@ -47,7 +55,7 @@ public class DomTreeBuilder extends DefaultHandler implements DomTree{
     public void startDocument() throws SAXException {
         if (documentStarted)
             throw new IllegalStateException(
-            "This Handler only accepts one document");
+                    "This Handler only accepts one document");
         documentStarted = true;
     }
 
@@ -70,12 +78,13 @@ public class DomTreeBuilder extends DefaultHandler implements DomTree{
         if (bodyStarted && !bodyEnded) {
             endWord();
 
-            TagNode newTagNode = new TagNode(currentParent, localName, attributes);
+            TagNode newTagNode = new TagNode(currentParent, localName,
+                    attributes);
             currentParent = newTagNode;
-            lastSibling=null;
-            if(whiteSpaceBeforeThis && newTagNode.isInline()){
+            lastSibling = null;
+            if (whiteSpaceBeforeThis && newTagNode.isInline()) {
                 newTagNode.setWhiteBefore(true);
-                whiteSpaceBeforeThis=false;
+                whiteSpaceBeforeThis = false;
             }
 
         } else if (bodyStarted) {
@@ -87,7 +96,7 @@ public class DomTreeBuilder extends DefaultHandler implements DomTree{
 
     @Override
     public void endElement(String uri, String localName, String qName)
-    throws SAXException {
+            throws SAXException {
 
         if (!documentStarted || documentEnded)
             throw new IllegalStateException();
@@ -97,26 +106,27 @@ public class DomTreeBuilder extends DefaultHandler implements DomTree{
         } else if (bodyStarted && !bodyEnded) {
             if (localName.equalsIgnoreCase("img")) {
                 // Insert a dummy leaf for the image
-                ImageNode img=new ImageNode(currentParent, currentParent.getAttributes());
+                ImageNode img = new ImageNode(currentParent, currentParent
+                        .getAttributes());
                 img.setWhiteBefore(whiteSpaceBeforeThis);
-                whiteSpaceBeforeThis=false;
-                lastSibling=img;
+                whiteSpaceBeforeThis = false;
+                lastSibling = img;
                 textNodes.add(img);
             }
             endWord();
-            if(currentParent.isInline()){
-                lastSibling=currentParent;
-            }else{
-                lastSibling=null;
+            if (currentParent.isInline()) {
+                lastSibling = currentParent;
+            } else {
+                lastSibling = null;
             }
             currentParent = currentParent.getParent();
-            whiteSpaceBeforeThis=false;
+            whiteSpaceBeforeThis = false;
         }
     }
 
     @Override
     public void characters(char ch[], int start, int length)
-    throws SAXException {
+            throws SAXException {
 
         if (!documentStarted || documentEnded)
             throw new IllegalStateException();
@@ -125,16 +135,17 @@ public class DomTreeBuilder extends DefaultHandler implements DomTree{
             char c = ch[i];
             if (isDelimiter(c)) {
                 endWord();
-                if(WhiteSpaceNode.isWhiteSpace(c) && !currentParent.isPre() && !currentParent.inPre()){
-                    if(lastSibling!=null)
+                if (WhiteSpaceNode.isWhiteSpace(c) && !currentParent.isPre()
+                        && !currentParent.inPre()) {
+                    if (lastSibling != null)
                         lastSibling.setWhiteAfter(true);
-                    whiteSpaceBeforeThis=true;
-                }else{
+                    whiteSpaceBeforeThis = true;
+                } else {
                     TextNode textNode = new TextNode(currentParent, Character
                             .toString(c));
                     textNode.setWhiteBefore(whiteSpaceBeforeThis);
-                    whiteSpaceBeforeThis=false;
-                    lastSibling=textNode;
+                    whiteSpaceBeforeThis = false;
+                    lastSibling = textNode;
                     textNodes.add(textNode);
 
                 }
@@ -147,17 +158,17 @@ public class DomTreeBuilder extends DefaultHandler implements DomTree{
 
     private void endWord() {
         if (newWord.length() > 0) {
-            TextNode node=new TextNode(currentParent, newWord.toString());
+            TextNode node = new TextNode(currentParent, newWord.toString());
             node.setWhiteBefore(whiteSpaceBeforeThis);
-            whiteSpaceBeforeThis=false;
-            lastSibling=node;
+            whiteSpaceBeforeThis = false;
+            lastSibling = node;
             textNodes.add(node);
             newWord.setLength(0);
         }
     }
 
     public static boolean isDelimiter(char c) {
-        if(WhiteSpaceNode.isWhiteSpace(c))
+        if (WhiteSpaceNode.isWhiteSpace(c))
             return true;
         switch (c) {
         // Basic Delimiters
@@ -190,6 +201,5 @@ public class DomTreeBuilder extends DefaultHandler implements DomTree{
             return false;
         }
     }
-
 
 }

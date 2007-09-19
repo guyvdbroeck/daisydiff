@@ -23,48 +23,46 @@ import org.xml.sax.SAXException;
 import org.xml.sax.helpers.AttributesImpl;
 
 public class Main {
-    
-    public final static String cssPath = "css/diff.css";
-    
+
     public static void main(String[] args) throws URISyntaxException {
         System.out.println("     ______________");
         System.out.println("    /Daisy Diff 0.1\\");
         System.out.println("   /________________\\");
         System.out.println("");
         System.out.println();
-        if(args.length<2)
+        if (args.length < 2)
             help();
 
         boolean htmlDiff = true;
         String outputFile = "daisydiff.htm";
 
         try {
-            for(int i=2;i<args.length;i++){
-                String[] split =  args[i].split("=");
-                if(split[0].equalsIgnoreCase("--file")){
+            for (int i = 2; i < args.length; i++) {
+                String[] split = args[i].split("=");
+                if (split[0].equalsIgnoreCase("--file")) {
                     outputFile = split[1];
-                }else if(split[0].equalsIgnoreCase("--type")){
-                    if(split[1].equalsIgnoreCase("tag")){
-                        htmlDiff=false;
+                } else if (split[0].equalsIgnoreCase("--type")) {
+                    if (split[1].equalsIgnoreCase("tag")) {
+                        htmlDiff = false;
                     }
                 }
 
             }
 
             System.out.println("Comparing documents:");
-            System.out.println("  "+args[0]);
+            System.out.println("  " + args[0]);
             System.out.println("and");
-            System.out.println("  "+args[1]);
+            System.out.println("  " + args[1]);
             System.out.println();
-            
-            if(htmlDiff)
+
+            if (htmlDiff)
                 System.out.println("Diff type: html");
             else
                 System.out.println("Diff type: tag");
-            System.out.println("Writing output to: "+outputFile);
+            System.out.println("Writing output to: " + outputFile);
             System.out.println();
             SAXTransformerFactory tf = (SAXTransformerFactory) TransformerFactory
-            .newInstance();
+                    .newInstance();
 
             TransformerHandler result = tf.newTransformerHandler();
             result.setResult(new StreamResult(new File(outputFile)));
@@ -72,66 +70,67 @@ public class Main {
             InputStream oldStream = new URI(args[0]).toURL().openStream();
             InputStream newStream = new URI(args[1]).toURL().openStream();
 
+            XslFilter filter = new XslFilter();
 
-            if(htmlDiff){
-                
+            if (htmlDiff) {
+
+                ContentHandler postProcess = filter.xsl(result,
+                        "org/outerj/daisy/diff/htmlheader.xsl");
+
                 Locale locale = Locale.getDefault();
                 String prefix = "diff";
-                
+
                 HtmlCleaner cleaner = new HtmlCleaner();
-                
+
                 InputSource oldSource = new InputSource(oldStream);
                 InputSource newSource = new InputSource(newStream);
-                
-                DomTreeBuilder oldHandler=new DomTreeBuilder();
+
+                DomTreeBuilder oldHandler = new DomTreeBuilder();
                 cleaner.cleanAndParse(oldSource, oldHandler);
-                TextNodeComparator leftComparator = new TextNodeComparator(oldHandler, locale);
+                TextNodeComparator leftComparator = new TextNodeComparator(
+                        oldHandler, locale);
 
                 DomTreeBuilder newHandler = new DomTreeBuilder();
                 cleaner.cleanAndParse(newSource, newHandler);
-                TextNodeComparator rightComparator = new TextNodeComparator(newHandler, locale);
+                TextNodeComparator rightComparator = new TextNodeComparator(
+                        newHandler, locale);
 
-                XslFilter filter = new XslFilter();
-                ContentHandler postProcess = filter.xsl(result, "org/outerj/daisy/diff/htmlheader.xsl");
-                
                 postProcess.startDocument();
-                postProcess.startElement("", "diff", "diff", new AttributesImpl());
-                HtmlSaxDiffOutput output = new HtmlSaxDiffOutput(postProcess, prefix);
+                postProcess.startElement("", "diff", "diff",
+                        new AttributesImpl());
+                HtmlSaxDiffOutput output = new HtmlSaxDiffOutput(postProcess,
+                        prefix);
                 HTMLDiffer differ = new HTMLDiffer(output);
                 differ.diff(leftComparator, rightComparator);
                 postProcess.endElement("", "diff", "diff");
                 postProcess.endDocument();
-                
-            }else{
-                result.startDocument();
-                result.startElement("", "html", "html", new AttributesImpl());
-                result.startElement("", "head", "head", new AttributesImpl());
-                AttributesImpl attrs = new AttributesImpl();
-                attrs.addAttribute("", "href", "href", "CDATA", cssPath);
-                attrs.addAttribute("", "type", "type", "CDATA", "text/css");
-                attrs.addAttribute("", "rel", "rel", "CDATA", "stylesheet");
-                result.startElement("", "link", "link", attrs);
-                result.endElement("", "link", "link");
-                result.endElement("", "head", "head");
-                result.startElement("", "body", "body", new AttributesImpl());
 
-                DaisyDiff.diffTag(new BufferedReader(new InputStreamReader(oldStream))
-                , new BufferedReader(new InputStreamReader(newStream)), result);
-                result.endElement("", "body", "body");
-                result.endElement("", "html", "html");
-                result.endDocument();
+            } else {
+
+                ContentHandler postProcess = filter.xsl(result,
+                        "org/outerj/daisy/diff/tagheader.xsl");
+                postProcess.startDocument();
+                postProcess.startElement("", "diff", "diff",
+                        new AttributesImpl());
+
+                DaisyDiff.diffTag(new BufferedReader(new InputStreamReader(
+                        oldStream)), new BufferedReader(new InputStreamReader(
+                        newStream)), postProcess);
+
+                postProcess.endElement("", "diff", "diff");
+                postProcess.endDocument();
             }
 
         } catch (Throwable e) {
             e.printStackTrace();
-            if(e.getCause()!=null){
+            if (e.getCause() != null) {
                 e.getCause().printStackTrace();
             }
-            if(e instanceof SAXException){
-                ((SAXException)e).getException().printStackTrace();
+            if (e instanceof SAXException) {
+                ((SAXException) e).getException().printStackTrace();
             }
             help();
-        } 
+        }
         System.out.println("done");
 
     }
@@ -140,12 +139,15 @@ public class Main {
         System.out.println("==========================");
         System.out.println("DAISY DIFF HELP:");
         System.out.println("java -jar daisydiff.jar [oldHTML] [newHTML]");
-        System.out.println("--file=[filename] - Write output to the specified file.");
-        System.out.println("--type=[html/tag] - Use the html (default) diff algorithm or the tag diff.");
+        System.out
+                .println("--file=[filename] - Write output to the specified file.");
+        System.out
+                .println("--type=[html/tag] - Use the html (default) diff algorithm or the tag diff.");
         System.out.println("examples: ");
-        System.out.println("java -jar daisydiff.jar http://web.archive.org/web/20070107145418/http://news.bbc.co.uk/ http://web.archive.org/web/20070107182640/http://news.bbc.co.uk/");
+        System.out
+                .println("java -jar daisydiff.jar http://web.archive.org/web/20070107145418/http://news.bbc.co.uk/ http://web.archive.org/web/20070107182640/http://news.bbc.co.uk/");
         System.out.println("==========================");
         System.exit(0);
     }
-    
+
 }
