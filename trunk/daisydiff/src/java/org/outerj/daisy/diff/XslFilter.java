@@ -15,7 +15,6 @@
  */
 package org.outerj.daisy.diff;
 
-import java.io.FileInputStream;
 import java.io.IOException;
 
 import javax.xml.transform.Templates;

@@ -17,12 +17,13 @@ import org.outerj.daisy.diff.html.HTMLDiffer;
 import org.outerj.daisy.diff.html.HtmlSaxDiffOutput;
 import org.outerj.daisy.diff.html.TextNodeComparator;
 import org.outerj.daisy.diff.html.dom.DomTreeBuilder;
-import org.outerj.daisy.diff.html.dom.DomTreeBuilderWithHeaders;
+import org.xml.sax.ContentHandler;
 import org.xml.sax.InputSource;
+import org.xml.sax.SAXException;
 import org.xml.sax.helpers.AttributesImpl;
 
 public class Main {
-
+    
     public final static String cssPath = "css/diff.css";
     
     public static void main(String[] args) throws URISyntaxException {
@@ -35,7 +36,6 @@ public class Main {
             help();
 
         boolean htmlDiff = true;
-        boolean tidy = false;
         String outputFile = "daisydiff.htm";
 
         try {
@@ -66,17 +66,15 @@ public class Main {
             SAXTransformerFactory tf = (SAXTransformerFactory) TransformerFactory
             .newInstance();
 
-            TransformerHandler result;
-            result = tf.newTransformerHandler();
+            TransformerHandler result = tf.newTransformerHandler();
             result.setResult(new StreamResult(new File(outputFile)));
-            result.startDocument();
 
             InputStream oldStream = new URI(args[0]).toURL().openStream();
             InputStream newStream = new URI(args[1]).toURL().openStream();
 
 
             if(htmlDiff){
-                result.startDocument();
+                
                 Locale locale = Locale.getDefault();
                 String prefix = "diff";
                 
@@ -86,23 +84,24 @@ public class Main {
                 InputSource newSource = new InputSource(newStream);
                 
                 DomTreeBuilder oldHandler=new DomTreeBuilder();
-                cleaner.clean(oldSource, oldHandler);
+                cleaner.cleanAndParse(oldSource, oldHandler);
                 TextNodeComparator leftComparator = new TextNodeComparator(oldHandler, locale);
 
-                String[] cssPath = new String[]{Main.cssPath};
-                String[] jsPath = new String []{"js/tooltip/wz_tooltip.js","js/tooltip/tip_balloon.js","js/dojo/dojo.js","js/diff.js"};
-                
-                DomTreeBuilderWithHeaders newHandler = new DomTreeBuilderWithHeaders(result, cssPath, jsPath);
-                cleaner.clean(newSource, newHandler);
+                DomTreeBuilder newHandler = new DomTreeBuilder();
+                cleaner.cleanAndParse(newSource, newHandler);
                 TextNodeComparator rightComparator = new TextNodeComparator(newHandler, locale);
 
-                HtmlSaxDiffOutput output = new HtmlSaxDiffOutput(result, prefix);
+                XslFilter filter = new XslFilter();
+                ContentHandler postProcess = filter.xsl(result, "org/outerj/daisy/diff/htmlheader.xsl");
+                
+                postProcess.startDocument();
+                postProcess.startElement("", "diff", "diff", new AttributesImpl());
+                HtmlSaxDiffOutput output = new HtmlSaxDiffOutput(postProcess, prefix);
                 HTMLDiffer differ = new HTMLDiffer(output);
                 differ.diff(leftComparator, rightComparator);
-
-                newHandler.writeClosingTag();
+                postProcess.endElement("", "diff", "diff");
+                postProcess.endDocument();
                 
-                result.endDocument();
             }else{
                 result.startDocument();
                 result.startElement("", "html", "html", new AttributesImpl());
@@ -123,9 +122,14 @@ public class Main {
                 result.endDocument();
             }
 
-            result.endDocument();
         } catch (Throwable e) {
             e.printStackTrace();
+            if(e.getCause()!=null){
+                e.getCause().printStackTrace();
+            }
+            if(e instanceof SAXException){
+                ((SAXException)e).getException().printStackTrace();
+            }
             help();
         } 
         System.out.println("done");
@@ -139,7 +143,7 @@ public class Main {
         System.out.println("--file=[filename] - Write output to the specified file.");
         System.out.println("--type=[html/tag] - Use the html (default) diff algorithm or the tag diff.");
         System.out.println("examples: ");
-        System.out.println("java -jar daisydiff.jar http://www.google.com http://www.froogle.com --tidy");
+        System.out.println("java -jar daisydiff.jar http://web.archive.org/web/20070107145418/http://news.bbc.co.uk/ http://web.archive.org/web/20070107182640/http://news.bbc.co.uk/");
         System.out.println("==========================");
         System.exit(0);
     }

@@ -33,7 +33,7 @@ public class HtmlCleaner {
         this.filter = new XslFilter();
     }
     
-    public void clean(InputSource source, ContentHandler consumer) throws IOException, SAXException{
+    public void cleanAndParse(InputSource source, ContentHandler consumer) throws IOException, SAXException{
         ContentHandler cleanupFilter = filter.xsl(consumer, "org/outerj/daisy/diff/cleanup.xsl");
         parser.parse(source, cleanupFilter);
     }
