@@ -1,5 +1,5 @@
 #summary The complete project's timeline.
-#labels Featured
+#labels Deprecated
 
 = Details =
 
@@ -12,3 +12,4 @@ July 27th - August 15th: One or more graph algorithms.
 August 15th - August 31st: Finish the package, complete any unfinished documentation before the final deadline.
 
 September 1st - September 25th: Integrate the package into DaisyCMS and finish the unfinished.
+ 
