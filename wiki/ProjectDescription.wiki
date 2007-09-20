@@ -1,5 +1,5 @@
 #summary The complete project description.
-#labels Featured
+#labels Deprecated
 
 == PROJECT DESCRIPTION: ==
 The goal of the "Daisy diff" project is to provide a Java library that compares HTML files. The minimum inputs are 2 HTML files, and the minimum output file is a Java representation of the basic operations that turned the first data structure into the second. This output can be converted to an XML-based representation or, given the proper formatting guidelines (in a yet undecided data type), into an html file with a certain syntax to denote changes.
@@ -21,3 +21,4 @@ In general the fact that html tags are shown on the compare page makes it not ve
 An example of how things can go very very badly wrong can be found here: http://cocoondev.org/daisyscratchpad/291-cd/392-cd/version/5/diff?otherVersion=1
 
 In time the library could be used to compare more than just the scratchpad html. The possibilities are endless really. The integration with daisy itself however is beyond the scope of this project and needs brainstorming with the entire community.
+ 
