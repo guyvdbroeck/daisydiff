@@ -19,11 +19,12 @@ http://web.archive.org/web/20070107182640/http://news.bbc.co.uk/
 =DaisyCMS example=
 Daisy Diff is used in Daisy CMS for their compare page.
 ==Result==
-http://cocoondev.org/daisy/index/version/29/diff?otherVersion=37 Compare page]
+[http://cocoondev.org/daisy/index/version/29/diff?otherVersion=37 Compare page]
 ==Input==
 [http://cocoondev.org/daisy/index/version/29 old HTML] - [http://cocoondev.org/daisy/index/version/37 new HTML]
 ==Command==
 N/A
+ 
  
  
  
