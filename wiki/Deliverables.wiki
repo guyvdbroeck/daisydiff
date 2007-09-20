@@ -1,4 +1,4 @@
-#labels Featured
+#labels Deprecated
 === List: ===
     * A literature study with an outline of all the possible algorithms + Testing of existing (proprietary) code. + Explaining the algorithms on the community scratchpad
     * A study of the XML files used by DaisyCMS, which I would need to prioritize on. (Do we want to compare ordered or unordered XML files?)
@@ -8,3 +8,4 @@
     * A library with all the options from the project description
     * Documentation
     * Progress updates posted to the community scratchpad (at least weekly)
+ 
