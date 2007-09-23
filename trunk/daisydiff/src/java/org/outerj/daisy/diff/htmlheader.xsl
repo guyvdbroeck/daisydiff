@@ -20,6 +20,7 @@
 <xsl:template match="/">
    <html>
       <head>
+        <xsl:apply-templates select="diffreport/css/node()"/>
         <link href="css/diff.css" type="text/css" rel="stylesheet"/>
       </head>
       <body>
@@ -31,11 +32,12 @@
         htmlDiffInit();
       </script>
       
-        <xsl:variable name="spans" select="diff//span[(@class='diff-html-added' or @class='diff-html-removed' or @class='diff-html-changed')  and @id]"/>
+        <xsl:variable name="spans" select="diffreport/diff//span[(@class='diff-html-added' or @class='diff-html-removed' or @class='diff-html-changed')  and @id]"/>
       	<div class="diff-topbar">
         <table class="diffpage-html-firstlast">
         <tr><td style="text-align: left;">
             <a>
+              <xsl:attribute name="class">diffpage-html-a</xsl:attribute>
               <xsl:attribute name="onclick">scrollToEvent(event)</xsl:attribute>
               <xsl:attribute name="id">first-diff</xsl:attribute>
               <xsl:attribute name="href">
@@ -50,6 +52,7 @@
                 title="Go to first change."/>
             </a>
             <a>
+              <xsl:attribute name="class">diffpage-html-a</xsl:attribute>
               <xsl:attribute name="onclick">scrollToEvent(event)</xsl:attribute>
               <xsl:attribute name="href">
                 <xsl:text>#</xsl:text>
@@ -60,12 +63,13 @@
         </td>
         
         <td style="text-align: center; font-size: 140%;">
-            <a href="http://code.google.com/p/daisydiff/">Daisy Diff</a> compare report.<br/>
+            <a style="font-size: 100%;" class="diffpage-html-a" href="http://code.google.com/p/daisydiff/">Daisy Diff</a> compare report.<br/>
             <span style="font-style: italic; font-size: 70%;">Click on the changed parts for a detailed description. Use the left and right arrow keys to walk through the modifications.</span>
         </td>
         
         <td style="text-align: right;">
             <a>
+              <xsl:attribute name="class">diffpage-html-a</xsl:attribute>
               <xsl:attribute name="onclick">scrollToEvent(event)</xsl:attribute>
               <xsl:attribute name="href">
                 <xsl:text>#</xsl:text>
@@ -74,6 +78,7 @@
               last<xsl:text>&#160;</xsl:text>
             </a>
             <a>
+              <xsl:attribute name="class">diffpage-html-a</xsl:attribute>
               <xsl:attribute name="onclick">scrollToEvent(event)</xsl:attribute>
               <xsl:attribute name="id">last-diff</xsl:attribute>
               <xsl:attribute name="href">
@@ -89,7 +94,7 @@
             </a>
          </td></tr></table>
          </div>
-	     <xsl:apply-templates select="diff/node()"/>
+	     <xsl:apply-templates select="diffreport/diff/node()"/>
 	  </body>
    </html>
 </xsl:template>

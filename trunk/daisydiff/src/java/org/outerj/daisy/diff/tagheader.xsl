@@ -21,6 +21,7 @@
    <html>
       <head>
         <link href="css/diff.css" type="text/css" rel="stylesheet"/>
+        <xsl:apply-templates select="diffreport/css/node()"/>
       </head>
       <body>
       
@@ -29,12 +30,12 @@
         <tr>
         
         <td style="text-align: center; font-size: 140%;">
-            <a href="http://code.google.com/p/daisydiff/">Daisy Diff</a> compare report.
+            <a class="diffpage-html-a" href="http://code.google.com/p/daisydiff/">Daisy Diff</a> compare report.
         </td>
         
         </tr></table>
          </div>
-	     <xsl:apply-templates select="diff/node()"/>
+	     <xsl:apply-templates select="diffreport/diff/node()"/>
 	  </body>
    </html>
 </xsl:template>

@@ -3,6 +3,7 @@ var selectedElement=null;
 
 function htmlDiffInit() {
     dojo.event.connect(document, "onkeydown", handleShortcut);
+    dojo.event.connect(window, "onresize", updateOverlays);
     dojo.addOnLoad(resetSelectedElement);
 }
 
@@ -64,13 +65,13 @@ function constructToolTipC(elem){
           "<table class='diff-tooltip-link-changed'>"+
           "  <tr>"+
           "    <td class='diff-tooltip-prev'>"+
-          "      <a href=#"+previous_id+" onClick='scrollToEvent(event)'><img class='diff-icon' src='"+imagePath+"diff-previous.gif' title='Go to previous.'/></a>"+
+          "      <a class='diffpage-html-a' href=#"+previous_id+" onClick='scrollToEvent(event)'><img class='diff-icon' src='"+imagePath+"diff-previous.gif' title='Go to previous.'/></a>"+
           "    </td>"+
           "    <td>"+
           "      &#160;<a href='#"+change_id+"'>#"+change_id+"</a>&#160;"+
           "    </td>"+
           "    <td class='diff-tooltip-next'>"+
-          "      <a href='#"+next_id+"' onClick='scrollToEvent(event)'><img class='diff-icon' src='"+imagePath+"diff-next.gif' title='Go to next.'/></a>"+
+          "      <a class='diffpage-html-a' href='#"+next_id+"' onClick='scrollToEvent(event)'><img class='diff-icon' src='"+imagePath+"diff-next.gif' title='Go to next.'/></a>"+
           "    </td>"+
           "  </tr>"+
           "</table>";
@@ -87,13 +88,13 @@ function constructToolTipA(elem){
    return "<table class='diff-tooltip-link'>"+
           "  <tr>"+
           "    <td class='diff-tooltip-prev'>"+
-          "      <a href=#"+previous_id+" onClick='scrollToEvent(event)'><img class='diff-icon' src='"+imagePath+"diff-previous.gif' title='Go to previous.'/></a>"+
+          "      <a class='diffpage-html-a' href=#"+previous_id+" onClick='scrollToEvent(event)'><img class='diff-icon' src='"+imagePath+"diff-previous.gif' title='Go to previous.'/></a>"+
           "    </td>"+
           "    <td>"+
           "      &#160;<a href='#"+change_id+"'>#"+change_id+"</a>&#160;"+
           "    </td>"+
           "    <td class='diff-tooltip-next'>"+
-          "      <a href='#"+next_id+"' onClick='scrollToEvent(event)'><img class='diff-icon' src='"+imagePath+"diff-next.gif' title='Go to next.'/></a>"+
+          "      <a class='diffpage-html-a' href='#"+next_id+"' onClick='scrollToEvent(event)'><img class='diff-icon' src='"+imagePath+"diff-next.gif' title='Go to next.'/></a>"+
           "    </td>"+
           "  </tr>"+
           "</table>";
@@ -110,13 +111,13 @@ function constructToolTipR(elem){
    return "<table class='diff-tooltip-link'>"+
           "  <tr>"+
           "    <td class='diff-tooltip-prev'>"+
-          "      <a href=#"+previous_id+" onClick='scrollToEvent(event)'><img class='diff-icon' src='"+imagePath+"diff-previous.gif' title='Go to previous.'/></a>"+
+          "      <a class='diffpage-html-a' href=#"+previous_id+" onClick='scrollToEvent(event)'><img class='diff-icon' src='"+imagePath+"diff-previous.gif' title='Go to previous.'/></a>"+
           "    </td>"+
           "    <td>"+
           "      &#160;<a href='#"+change_id+"'>#"+change_id+"</a>&#160;"+
           "    </td>"+
           "    <td class='diff-tooltip-next'>"+
-          "      <a href='#"+next_id+"' onClick='scrollToEvent(event)'><img class='diff-icon' src='"+imagePath+"diff-next.gif' title='Go to next.'/></a>"+
+          "      <a class='diffpage-html-a' href='#"+next_id+"' onClick='scrollToEvent(event)'><img class='diff-icon' src='"+imagePath+"diff-next.gif' title='Go to next.'/></a>"+
           "    </td>"+
           "  </tr>"+
           "</table>";

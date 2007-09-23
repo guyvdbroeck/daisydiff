@@ -126,7 +126,7 @@ div.diff-topbar{
  background-color: #FFF5F5;
 }
 
-.diffpage-html-firstlast a, .dsydiff-prevnextnav a {
+a.diffpage-html-a, a.diffpage-html-a:hover, a.diffpage-html-a:link, a.diffpage-html-a:visited, a.diffpage-html-a:active {
   text-decoration: none;
   color: #FF8800;
 }

@@ -42,6 +42,10 @@
    <!-- remove script tags ! -->
 </xsl:template>
 
+<xsl:template match="*[local-name(.) = 'noscript']">
+   <xsl:apply-templates select="@*|node()"/>
+</xsl:template>
+
 <xsl:template match="@*[starts-with(., 'javascript:')]">
    <!-- remove script attribute ! -->
 </xsl:template>
