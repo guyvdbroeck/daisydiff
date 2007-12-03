@@ -15,6 +15,9 @@
  */
 package org.outerj.daisy.diff.html.dom;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.xml.sax.helpers.AttributesImpl;
 
 /**
@@ -35,6 +38,21 @@ public class BodyNode extends TagNode {
             newThis.addChild(newChild);
         }
         return newThis;
+    }
+    
+    @Override
+    public List<Node> getMinimalDeletedSet(long id) {
+        List<Node> nodes = new ArrayList<Node>();
+
+        if (getNbChildren() == 0)
+            return nodes;
+
+        for (Node child : this) {
+            List<Node> childrenChildren = child.getMinimalDeletedSet(id);
+            nodes.addAll(childrenChildren);
+
+        }        
+        return nodes;
     }
 
 }
