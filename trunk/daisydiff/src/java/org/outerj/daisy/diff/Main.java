@@ -2,6 +2,7 @@ package org.outerj.daisy.diff;
 
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.URI;
@@ -83,9 +84,21 @@ public class Main {
 
             TransformerHandler result = tf.newTransformerHandler();
             result.setResult(new StreamResult(new File(outputFile)));
-
-            InputStream oldStream = new URI(args[0]).toURL().openStream();
-            InputStream newStream = new URI(args[1]).toURL().openStream();
+            
+            InputStream oldStream, newStream;
+            
+            if (args[0].startsWith("http://")) {
+                oldStream = new URI(args[0]).toURL().openStream();
+            }
+            else {
+                oldStream = new FileInputStream(args[0]);
+            }
+            if (args[1].startsWith("http://")) {
+                newStream = new URI(args[1]).toURL().openStream();
+            }
+            else {
+                newStream = new FileInputStream(args[1]);
+            }
 
             XslFilter filter = new XslFilter();
 
