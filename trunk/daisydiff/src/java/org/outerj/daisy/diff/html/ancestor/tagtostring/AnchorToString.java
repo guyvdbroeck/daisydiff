@@ -36,13 +36,13 @@ public class AnchorToString extends TagToString {
         String href = newAttrs.getValue("href");
 
         if (href != null) {
-            txt.addText(" " + getWithDestionation().toLowerCase() + " " + href);
+            txt.addText(" " + getWithDestination().toLowerCase() + " " + href);
             newAttrs.removeAttribute(newAttrs.getIndex("href"));
         }
         super.addAttributes(txt, newAttrs);
     }
 
-    private String getWithDestionation() {
+    private String getWithDestination() {
         return getString("diff-withdestination");
     }
 

@@ -35,8 +35,6 @@ public class ChangeText {
         if (s.length() + charsThisLine > maxNbCharsPerLine) {
             addTextCarefully(s);
         } else {
-            if (s.contains("176692"))
-                System.out.println("appending");
             txt.append(s);
             charsThisLine += s.length();
         }

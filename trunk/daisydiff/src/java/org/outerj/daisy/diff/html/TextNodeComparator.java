@@ -42,7 +42,7 @@ public class TextNodeComparator implements IRangeComparator, Iterable<TextNode> 
 
     private List<Modification> lastModified = new ArrayList<Modification>();
 
-    private BodyNode bodyNode = new BodyNode();
+    private BodyNode bodyNode;
 
     private Locale locale;
 
@@ -90,9 +90,7 @@ public class TextNodeComparator implements IRangeComparator, Iterable<TextNode> 
             nextLastModified.add(mod);
             getTextNode(i).setModification(mod);
         }
-        if (start < end) {
-            getTextNode(start).getModification().setFirstOfID(true);
-        }
+        getTextNode(start).getModification().setFirstOfID(true);
         newID++;
         lastModified = nextLastModified;
     }

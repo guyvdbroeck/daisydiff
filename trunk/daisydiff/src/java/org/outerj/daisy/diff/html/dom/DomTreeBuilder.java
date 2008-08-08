@@ -84,8 +84,8 @@ public class DomTreeBuilder extends DefaultHandler implements DomTree {
             lastSibling = null;
             if (whiteSpaceBeforeThis && newTagNode.isInline()) {
                 newTagNode.setWhiteBefore(true);
-                whiteSpaceBeforeThis = false;
             }
+            whiteSpaceBeforeThis = false;
 
         } else if (bodyStarted) {
             // Ignoring element after body tag closed
@@ -109,7 +109,6 @@ public class DomTreeBuilder extends DefaultHandler implements DomTree {
                 ImageNode img = new ImageNode(currentParent, currentParent
                         .getAttributes());
                 img.setWhiteBefore(whiteSpaceBeforeThis);
-                whiteSpaceBeforeThis = false;
                 lastSibling = img;
                 textNodes.add(img);
             }

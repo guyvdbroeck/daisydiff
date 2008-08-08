@@ -43,10 +43,6 @@ public class BodyNode extends TagNode {
     @Override
     public List<Node> getMinimalDeletedSet(long id) {
         List<Node> nodes = new ArrayList<Node>();
-
-        if (getNbChildren() == 0)
-            return nodes;
-
         for (Node child : this) {
             List<Node> childrenChildren = child.getMinimalDeletedSet(id);
             nodes.addAll(childrenChildren);

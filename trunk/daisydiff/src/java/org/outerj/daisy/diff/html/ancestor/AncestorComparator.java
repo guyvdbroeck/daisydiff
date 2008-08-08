@@ -84,16 +84,4 @@ public class AncestorComparator implements IRangeComparator {
 
     }
 
-    public int getDistance(AncestorComparator other) {
-        RangeDifference[] differences = RangeDifferencer.findDifferences(other,
-                this);
-
-        int distance = 0;
-
-        for (RangeDifference d : differences) {
-            distance += d.rightLength() + d.leftLength();
-        }
-        return distance;
-    }
-
 }

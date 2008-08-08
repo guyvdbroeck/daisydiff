@@ -45,8 +45,7 @@ public class HTMLDiffer {
         RangeDifference[] differences = RangeDifferencer.findDifferences(
                 settings, leftComparator, rightComparator);
 
-        List<RangeDifference> pdifferences = preProcess(differences,
-                leftComparator);
+        List<RangeDifference> pdifferences = preProcess(differences);
 
         int currentIndexLeft = 0;
         int currentIndexRight = 0;
@@ -76,8 +75,7 @@ public class HTMLDiffer {
         output.toHTML(rightComparator.getBodyNode());
     }
 
-    private List<RangeDifference> preProcess(RangeDifference[] differences,
-            TextNodeComparator leftComparator) {
+    private List<RangeDifference> preProcess(RangeDifference[] differences) {
 
         List<RangeDifference> newRanges = new LinkedList<RangeDifference>();
 
@@ -104,8 +102,7 @@ public class HTMLDiffer {
                 i++;
             }
 
-            newRanges.add(new RangeDifference(kind, rightStart, rightEnd
-                    - rightStart, leftStart, leftEnd - leftStart));
+            newRanges.add(new RangeDifference(kind, rightStart, rightLength, leftStart, leftLength));
         }
 
         return newRanges;

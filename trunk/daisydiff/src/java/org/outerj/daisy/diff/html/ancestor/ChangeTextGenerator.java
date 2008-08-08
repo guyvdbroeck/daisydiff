@@ -101,7 +101,6 @@ public class ChangeTextGenerator {
 
         if (rootlistopened) {
             txt.addHtml("</ul>");
-            rootlistopened = false;
         }
 
         return txt;

@@ -138,7 +138,7 @@ public class HtmlSaxDiffOutput {
                 char[] chars = textChild.getText().toCharArray();
 
                 if (textChild instanceof ImageNode) {
-                    writeImage(textChild);
+                    writeImage((ImageNode)textChild);
                 } else {
                     handler.characters(chars, 0, chars.length);
                 }
@@ -163,8 +163,7 @@ public class HtmlSaxDiffOutput {
 
     }
 
-    private void writeImage(TextNode textChild) throws SAXException {
-        ImageNode imgNode = (ImageNode) textChild;
+    private void writeImage(ImageNode imgNode) throws SAXException {
         AttributesImpl attrs = imgNode.getAttributes();
         if (imgNode.getModification().getType() == ModificationType.REMOVED)
             attrs.addAttribute("", "changeType", "changeType", "CDATA",

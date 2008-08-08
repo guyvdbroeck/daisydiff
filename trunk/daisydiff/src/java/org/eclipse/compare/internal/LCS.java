@@ -67,7 +67,7 @@ public abstract class LCS {
         int forwardBound;
         int max = Math.min(length1, length2);
         for (forwardBound = 0; forwardBound < max
-                && isRangeEqual(forwardBound, forwardBound); forwardBound++) {
+        && isRangeEqual(forwardBound, forwardBound); forwardBound++) {
             setLcs(forwardBound, forwardBound);
             worked(subMonitor, 1);
         }
@@ -84,12 +84,12 @@ public abstract class LCS {
         }
 
         length = forwardBound
-                + length1
-                - backBoundL1
-                - 1
-                + lcs_rec(forwardBound, backBoundL1, forwardBound, backBoundL2,
-                        new int[2][length1 + length2 + 1], new int[3],
-                        subMonitor);
+        + length1
+        - backBoundL1
+        - 1
+        + lcs_rec(forwardBound, backBoundL1, forwardBound, backBoundL2,
+                new int[2][length1 + length2 + 1], new int[3],
+                subMonitor);
 
     }
 
@@ -151,8 +151,8 @@ public abstract class LCS {
 
         if (d > 1) {
             return len
-                    + lcs_rec(bottoml1, startx - 1, bottoml2, starty - 1, V,
-                            snake, subMonitor)
+            + lcs_rec(bottoml1, startx - 1, bottoml2, starty - 1, V,
+                    snake, subMonitor)
                     + lcs_rec(startx + len, topl1, starty + len, topl2, V,
                             snake, subMonitor);
         } else if (d == 1) {
@@ -351,12 +351,12 @@ public abstract class LCS {
         snake[1] = bottoml2 + most_progress[1];
         snake[2] = 0;
         return 5; /*
-                     * HACK: since we didn't really finish the LCS computation
-                     * we don't really know the length of the SES. We don't do
-                     * anything with the result anyway, unless it's <=1. We know
-                     * for a fact SES > 1 so 5 is as good a number as any to
-                     * return here
-                     */
+         * HACK: since we didn't really finish the LCS computation
+         * we don't really know the length of the SES. We don't do
+         * anything with the result anyway, unless it's <=1. We know
+         * for a fact SES > 1 so 5 is as good a number as any to
+         * return here
+         */
     }
 
     /**

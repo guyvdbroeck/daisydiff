@@ -80,19 +80,10 @@ public class TagNode extends Node implements Iterable<Node> {
         return attributes;
     }
 
-    public boolean isSameTag(Object other) {
+    public boolean isSameTag(TagNode other) {
         if (other == null)
             return false;
-
-        TagNode otherTagNode;
-        try {
-            otherTagNode = (TagNode) other;
-        } catch (ClassCastException e) {
-            System.out.println("ClassCastException");
-            return false;
-        }
-
-        return getOpeningTag().equals(otherTagNode.getOpeningTag());
+        return getOpeningTag().equals(other.getOpeningTag());
     }
 
     public String getOpeningTag() {
