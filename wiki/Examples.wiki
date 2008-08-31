@@ -4,9 +4,9 @@
 =DaisyCMS example=
 Daisy Diff is used in Daisy CMS for their compare page.
 ==Result==
-[http://cocoondev.org/daisy/index/version/29/diff?otherVersion=37 Compare page]
+[http://cocoondev.org/daisy/index/version/33/diff?&otherDocumentId=2-cd&otherBranch=main&otherLanguage=en&otherVersion=37&contentDiffType=html Compare page]
 ==Input==
-[http://cocoondev.org/daisy/index/version/29 old HTML] - [http://cocoondev.org/daisy/index/version/37 new HTML]
+[http://cocoondev.org/daisy/index/version/33 old HTML] - [http://cocoondev.org/daisy/index/version/37 new HTML]
 ==Command==
 N/A (runs DaisyDiff embedded)
  
