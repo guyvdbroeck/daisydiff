@@ -26,6 +26,11 @@ http://web.archive.org/web/20070107182640/http://news.bbc.co.uk/
 --css=http://web.archive.org/web/20070107145418/http://news.bbc.co.uk/nol/shared/css/news_r5.css
 }}}
  
+=Diffing local HTML files=
+==Command===
+{{{
+java -jar daisydiff.jar file:///c:/sites/old.html file:///c:/sites/new.html
+}}}
  
  
  
