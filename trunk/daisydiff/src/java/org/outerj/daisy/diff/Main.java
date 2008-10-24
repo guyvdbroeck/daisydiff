@@ -27,7 +27,7 @@ public class Main {
 
     public static void main(String[] args) throws URISyntaxException {
         System.out.println("     ______________");
-        System.out.println("    /Daisy Diff 0.1\\");
+        System.out.println("    /Daisy Diff 1.0\\");
         System.out.println("   /________________\\");
         System.out.println("");
         System.out.println();
