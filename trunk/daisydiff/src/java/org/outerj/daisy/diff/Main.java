@@ -26,9 +26,11 @@ import org.xml.sax.helpers.AttributesImpl;
 public class Main {
 
     public static void main(String[] args) throws URISyntaxException {
-        System.out.println("     ______________");
-        System.out.println("    /Daisy Diff 1.0\\");
-        System.out.println("   /________________\\");
+        System.out.println("            ______________");
+        System.out.println("           /Daisy Diff 1.0\\");
+        System.out.println("          /________________\\");
+        System.out.println();
+        System.out.println(" -= http://code.google.com/p/daisydiff/ =-");
         System.out.println("");
         System.out.println();
         if (args.length < 2)
@@ -209,7 +211,7 @@ public class Main {
         System.out
                 .println("java -jar daisydiff.jar http://web.archive.org/web/20070107145418/http://news.bbc.co.uk/ http://web.archive.org/web/20070107182640/http://news.bbc.co.uk/ --css=http://web.archive.org/web/20070107145418/http://news.bbc.co.uk/nol/shared/css/news_r5.css");
         System.out.println("(2)");
-        System.out.println("java -jar daisydiff.jar http://cocoondev.org/wiki/291-cd/version/15/part/SimpleDocumentContent/data http://cocoondev.org/wiki/291-cd/version/22/part/SimpleDocumentContent/data --css=http://cocoondev.org/resources/skins/daisysite/css/daisy.css --output=xml --file=daisysite.htm");
+        System.out.println("java -jar daisydiff.jar http://cocoondev.org/wiki/291-cd/version/15/part/SimpleDocumentContent/data http://cocoondev.org/wiki/291-cd/version/17/part/SimpleDocumentContent/data --css=http://cocoondev.org/resources/skins/daisysite/css/daisy.css --output=xml --file=daisysite.htm");
         System.out.println("==========================");
         System.exit(0);
     }
