@@ -239,14 +239,16 @@ public class TextNodeComparator implements IRangeComparator, Iterable<TextNode> 
         if (before < getRangeCount())
             nextLeaf = getTextNode(before);
 
+
         while (deletedNodes.size() > 0) {
             LastCommonParentResult prevResult, nextResult;
             if (prevLeaf != null) {
-                prevResult = prevLeaf.getLastCommonParent(deletedNodes.get(0));
+                prevResult = prevLeaf.getLastCommonParent(deletedNodes
+                        .get(0));
             } else {
                 prevResult = new LastCommonParentResult();
                 prevResult.setLastCommonParent(getBodyNode());
-                prevResult.setIndexInLastCommonParent(0);
+                prevResult.setIndexInLastCommonParent(-1);
             }
             if (nextLeaf != null) {
                 nextResult = nextLeaf.getLastCommonParent(deletedNodes
@@ -264,7 +266,7 @@ public class TextNodeComparator implements IRangeComparator, Iterable<TextNode> 
                 if (deletedNodes.get(0).getParent() == deletedNodes.get(
                         deletedNodes.size() - 1).getParent()
                         && prevResult.getLastCommonParent() == nextResult
-                                .getLastCommonParent()) {
+                        .getLastCommonParent()) {
                     // The difference is not in the parent
                     prevResult.setLastCommonParentDepth(prevResult
                             .getLastCommonParentDepth() + 1);
@@ -272,11 +274,14 @@ public class TextNodeComparator implements IRangeComparator, Iterable<TextNode> 
                 } else {
                     // The difference is in the parent, so compare them
                     // now THIS is tricky
-                    double distancePrev = deletedNodes.get(0).getParent()
-                            .getMatchRatio(prevResult.getLastCommonParent());
-                    double distanceNext = deletedNodes.get(
-                            deletedNodes.size() - 1).getParent().getMatchRatio(
-                            nextResult.getLastCommonParent());
+                    double distancePrev = deletedNodes
+                    .get(0)
+                    .getParent()
+                    .getMatchRatio(prevResult.getLastCommonParent());
+                    double distanceNext = deletedNodes
+                    .get(deletedNodes.size() - 1)
+                    .getParent()
+                    .getMatchRatio(nextResult.getLastCommonParent());
 
                     if (distancePrev <= distanceNext) {
                         prevResult.setLastCommonParentDepth(prevResult
@@ -295,19 +300,22 @@ public class TextNodeComparator implements IRangeComparator, Iterable<TextNode> 
                 // Inserting at the front
                 if (prevResult.isSplittingNeeded()) {
                     prevLeaf.getParent().splitUntill(
-                            prevResult.getLastCommonParent(), prevLeaf, true);
+                            prevResult.getLastCommonParent(), prevLeaf,
+                            true);
                 }
                 prevLeaf = deletedNodes.remove(0).copyTree();
                 prevLeaf.setParent(prevResult.getLastCommonParent());
                 prevResult.getLastCommonParent().addChild(
-                        prevResult.getIndexInLastCommonParent() + 1, prevLeaf);
+                        prevResult.getIndexInLastCommonParent() + 1,
+                        prevLeaf);
 
             } else if (prevResult.getLastCommonParentDepth() < nextResult
                     .getLastCommonParentDepth()) {
                 // Inserting at the back
                 if (nextResult.isSplittingNeeded()) {
-                    boolean splitOccured = nextLeaf.getParent().splitUntill(
-                            nextResult.getLastCommonParent(), nextLeaf, false);
+                    boolean splitOccured = nextLeaf.getParent()
+                    .splitUntill(nextResult.getLastCommonParent(),
+                            nextLeaf, false);
 
                     if (splitOccured) {
                         // The place where to insert is shifted one place to the
@@ -317,7 +325,7 @@ public class TextNodeComparator implements IRangeComparator, Iterable<TextNode> 
                     }
                 }
                 nextLeaf = deletedNodes.remove(deletedNodes.size() - 1)
-                        .copyTree();
+                .copyTree();
                 nextLeaf.setParent(nextResult.getLastCommonParent());
                 nextResult.getLastCommonParent().addChild(
                         nextResult.getIndexInLastCommonParent(), nextLeaf);
