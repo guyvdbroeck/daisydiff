@@ -23,6 +23,9 @@
  * Any element in the DOM tree of an HTML document.
  * @ingroup DifferenceEngine
  */
+
+ include_once 'Xml.php';
+ 
 class Node {
 
     public $parent;
@@ -36,7 +39,7 @@ class Node {
     function __construct($parent) {
         $this->parent = $parent;
     }
-
+    
     public function getParentTree() {
         if (!isset($this->parentTree)) {
             if (!is_null($this->parent)) {
@@ -59,8 +62,10 @@ class Node {
         $isSame = true;
         $nbMyParents = count($myParents);
         $nbOtherParents = count($otherParents);
+        
         while ($isSame && $i < $nbMyParents && $i < $nbOtherParents) {
-            if (!$myParents[$i]->openingTag === $otherParents[$i]->openingTag) {
+            if ($myParents[$i]->openingTag !== $otherParents[$i]->openingTag ||
+                $myParents[$i-1]->getIndexOf($myParents[$i]) !== $otherParents[$i-1]->getIndexOf($otherParents[$i])) {
                 $isSame = false;
             } else {
                 // After a while, the index i-1 must be the last common parent
@@ -140,6 +145,7 @@ class TagNode extends Node {
     }
 
     public function getMinimalDeletedSet($id, &$allDeleted, &$somethingDeleted) {
+
         $nodes = array();
 
         $allDeleted = false;
@@ -197,11 +203,11 @@ class TagNode extends Node {
                 }
             }
             $myindexinparent = $this->parent->getIndexOf($this);
-            if (!empty($part1->children)) {
-                $this->parent->addChildAbsolute($part1, $myindexinparent);
-            }
             if (!empty($part2->children)) {
-                $this->parent->addChildAbsolute($part2, $myindexinparent);
+                $this->parent->addChildAbsolute($part2, $myindexinparent+1);
+            }
+            if (!empty($part1->children)) {
+                $this->parent->addChildAbsolute($part1, $myindexinparent+1);
             }
             if (!empty($part1->children) && !empty($part2->children)) {
                 $splitOccured = true;
@@ -419,6 +425,37 @@ class ImageNode extends TextNode {
 
     public function isSameText($other) {
         if (is_null($other) || ! $other instanceof ImageNode) {
+            return false;
+        }
+        return $this->text === $other->text;
+    }
+
+}
+
+/**
+ * Represents a tag that represents a visible object, for example, an image
+ * in HTML. Even though images do not contain any text they are independent
+ * visible objects on the page. They are logically a TextNode.
+ * @ingroup DifferenceEngine
+ */
+class VisibleTagNode extends TextNode {
+
+    public $qName;
+    public $attributes;
+
+    function __construct(TagNode $parent, $qName, /*array*/ $attrs) {
+        if(strcasecmp($qName,'img') == 0 && !array_key_exists('src', $attrs)) {
+            HTMLDiffer::diffDebug( "Image without a source\n" );
+            parent::__construct($parent, '<' . $qName . '></' . $qName . '>');
+        }else{
+            parent::__construct($parent, '<' . $qName . '>' . strtolower($attrs['src']) . '</' . $qName . '>');
+        }
+        $this->qName = strtolower($qName);
+        $this->attributes = $attrs;
+    }
+
+    public function isSameText($other) {
+        if (is_null($other) || ! $other instanceof VisibleTextNode) {
             return false;
         }
         return $this->text === $other->text;

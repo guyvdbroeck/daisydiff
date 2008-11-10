@@ -17,13 +17,19 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  * or see http://www.gnu.org/
  * 
- * @ingroup DifferenceEngineã
+ * @ingroup DifferenceEngine
  */
 
 /**
  * When detecting the last common parent of two nodes, all results are stored as
  * a LastCommonParentResult.
  */
+
+include_once 'Diff.php'; 
+include_once 'Nodes.php';
+include_once 'Sanitizer.php';
+include_once 'Xml.php';
+
 class LastCommonParentResult {
 
     // Parent
@@ -123,13 +129,15 @@ class DomTreeBuilder {
     public function endElement($parser, $name) {
         if(strcasecmp($name, 'body') != 0) {
             HTMLDiffer::diffDebug( "Ending $name node.\n");
-            if (0 == strcasecmp($name,'img')) {
-                // Insert a dummy leaf for the image
-                $img = new ImageNode($this->currentParent, $this->currentParent->attributes);
-                $this->currentParent->children[] = $img;
+            if (0 == strcasecmp($name,'img') ||
+                0 == strcasecmp($name,'br') ||
+                0 == strcasecmp($name,'hr')) {
+                // Insert a dummy leaf for the element
+                $tag = new VisibleTagNode($this->currentParent, $name, $this->currentParent->attributes);
+                $this->currentParent->children[] = $tag;
                 $img->whiteBefore = $this->whiteSpaceBeforeThis;
-                $this->lastSibling = $img;
-                $this->textNodes[] = $img;
+                $this->lastSibling = $tag;
+                $this->textNodes[] = $tag;
             }
             $this->endWord();
             if (!in_array(strtolower($this->currentParent->qName),TagNode::$blocks)) {
@@ -236,7 +244,7 @@ class TextNodeDiffer {
         ++$this->newID;
     }
 
-    public function handlePossibleChangedPart($leftstart, $leftend,    $rightstart, $rightend) {
+    public function handlePossibleChangedPart($leftstart, $leftend, $rightstart, $rightend) {
         $i = $rightstart;
         $j = $leftstart;
 
@@ -298,7 +306,7 @@ class TextNodeDiffer {
             $this->oldTextNodes[$i]->modification = $mod;
         }
         $this->oldTextNodes[$start]->modification->firstOfID = true;
-
+        
         $root = $this->oldTextNodes[$start]->getLastCommonParent($this->oldTextNodes[$end-1])->parent;
 
         $junk1 = $junk2 = null;
@@ -325,7 +333,7 @@ class TextNodeDiffer {
                 $prevResult->parent = $this->bodyNode;
                 $prevResult->indexInLastCommonParent = -1;
             }
-            if (isset($nextleaf)) {
+            if (isset($nextLeaf)) {
                 $nextResult = $nextLeaf->getLastCommonParent($deletedNodes[count($deletedNodes) - 1]);
             } else {
                 $nextResult = new LastCommonParentResult();
@@ -399,12 +407,8 @@ class TextNodeDiffer {
 
 class HTMLDiffer {
 
-    private $output;
     private static $debug = '';
-
-    function __construct($output) {
-        $this->output = $output;
-    }
+    private $output;
 
     function htmlDiff($from, $to) {
 
@@ -453,33 +457,34 @@ class HTMLDiffer {
 
         $diffengine = new WikiDiff3();
         $differences = $this->preProcess($diffengine->diff_range($domfrom->getDiffLines(), $domto->getDiffLines()));
+
         unset($xml_parser, $diffengine);
 
-        $domdiffer = new TextNodeDiffer($domto, $domfrom);
+        $textNodeDiffer = new TextNodeDiffer($domto, $domfrom);
 
         $currentIndexLeft = 0;
         $currentIndexRight = 0;
         foreach ($differences as &$d) {
             if ($d->leftstart > $currentIndexLeft) {
-                $domdiffer->handlePossibleChangedPart($currentIndexLeft, $d->leftstart,
+                $textNodeDiffer->handlePossibleChangedPart($currentIndexLeft, $d->leftstart,
                     $currentIndexRight, $d->rightstart);
             }
             if ($d->leftlength > 0) {
-                $domdiffer->markAsDeleted($d->leftstart, $d->leftend, $d->rightstart);
+                $textNodeDiffer->markAsDeleted($d->leftstart, $d->leftend, $d->rightstart);
             }
-            $domdiffer->markAsNew($d->rightstart, $d->rightend);
+            $textNodeDiffer->markAsNew($d->rightstart, $d->rightend);
 
             $currentIndexLeft = $d->leftend;
             $currentIndexRight = $d->rightend;
         }
-        $oldLength = $domdiffer->lengthOld();
+        $oldLength = $textNodeDiffer->lengthOld();
         if ($currentIndexLeft < $oldLength) {
-            $domdiffer->handlePossibleChangedPart($currentIndexLeft, $oldLength, $currentIndexRight, $domdiffer->lengthNew());
+            $textNodeDiffer->handlePossibleChangedPart($currentIndexLeft, $oldLength, $currentIndexRight, $textNodeDiffer->lengthNew());
         }
-        $domdiffer->expandWhiteSpace();
-        $output = new HTMLOutput('htmldiff', $this->output);
-        $output->parse($domdiffer->bodyNode);
-
+        $textNodeDiffer->expandWhiteSpace();
+        
+        $output = new HTMLOutput('htmldiff');
+        return $output->parse($textNodeDiffer->bodyNode);
     }
 
     private function preProcess(/*array*/ $differences) {
@@ -707,7 +712,7 @@ class ChangeText {
 }
 
 class TagToStringFactory {
-
+        
     private static $containerTags = array('html', 'body', 'p', 'blockquote',
         'h1', 'h2', 'h3', 'h4', 'h5', 'pre', 'div', 'ul', 'ol', 'li',
         'table', 'tbody', 'tr', 'td', 'th', 'br', 'hr', 'code', 'dl',
@@ -725,7 +730,9 @@ class TagToStringFactory {
         if (strcasecmp($node->qName,'a') == 0) {
             return new AnchorToString($node, $sem);
         }
-        if (strcasecmp($node->qName,'img') == 0) {
+        if (strcasecmp($node->qName,'img') == 0 ||
+            strcasecmp($node->qName,'br') == 0 ||
+            strcasecmp($node->qName,'hr') == 0) {
             return new NoContentTagToString($node, $sem);
         }
         return new TagToString($node, $sem);
@@ -754,32 +761,26 @@ class TagToString {
     }
 
     public function getRemovedDescription(ChangeText $txt) {
-        $tagDescription = wfMsgExt('diff-' . $this->node->qName, 'parseinline' );
-        if( wfEmptyMsg( 'diff-' . $this->node->qName, $tagDescription ) ){
-            $tagDescription = "&lt;" . $this->node->qName . "&gt;";
-        }
+        $tagDescription = "&lt;" . $this->node->qName . "&gt;";
         if ($this->sem == TagToStringFactory::MOVED) {
-            $txt->addHtml( wfMsgExt( 'diff-movedoutof', 'parseinline', $tagDescription ) );
+            $txt->addHtml( 'Moved out of: ' . $tagDescription);
         } else if ($this->sem == TagToStringFactory::STYLE) {
-            $txt->addHtml( wfMsgExt( 'diff-styleremoved' , 'parseinline', $tagDescription ) );
+            $txt->addHtml( 'Style removed: ' . $tagDescription);
         } else {
-            $txt->addHtml( wfMsgExt( 'diff-removed' , 'parseinline', $tagDescription ) );
+            $txt->addHtml( 'Removed: ' . $tagDescription);
         }
         $this->addAttributes($txt, $this->node->attributes);
         $txt->addHtml('.');
     }
 
     public function getAddedDescription(ChangeText $txt) {
-        $tagDescription = wfMsgExt('diff-' . $this->node->qName, 'parseinline' );
-        if( wfEmptyMsg( 'diff-' . $this->node->qName, $tagDescription ) ){
-            $tagDescription = "&lt;" . $this->node->qName . "&gt;";
-        }
+        $tagDescription = "&lt;" . $this->node->qName . "&gt;";
         if ($this->sem == TagToStringFactory::MOVED) {
-            $txt->addHtml( wfMsgExt( 'diff-movedto' , 'parseinline', $tagDescription) );
+            $txt->addHtml( 'Moved into: ' . $tagDescription);
         } else if ($this->sem == TagToStringFactory::STYLE) {
-            $txt->addHtml( wfMsgExt( 'diff-styleadded', 'parseinline', $tagDescription ) );
+            $txt->addHtml( 'Style added: ' . $tagDescription);
         } else {
-            $txt->addHtml( wfMsgExt( 'diff-added', 'parseinline', $tagDescription ) );
+            $txt->addHtml( 'Added: ' . $tagDescription);
         }
         $this->addAttributes($txt, $this->node->attributes);
         $txt->addHtml('.');
@@ -797,27 +798,19 @@ class TagToString {
             $attr = $attributes[$key];
             if($firstOne) {
                 $firstOne = false;
-                $txt->addHtml( wfMsgExt('diff-with', 'escapenoentities', $this->translateArgument($key), htmlspecialchars($attr) ) );
+                $txt->addHtml(Sanitizer::normalizeCharReferences(  ' with ' . $this->translateArgument($key) . ' as ' . htmlspecialchars($attr)));
                 continue;
             }
-            $txt->addHtml( wfMsgExt( 'comma-separator', 'escapenoentities' ) .
-                wfMsgExt( 'diff-with-additional', 'escapenoentities',
-                $this->translateArgument( $key ), htmlspecialchars( $attr ) )
-            );
+            $txt->addHtml(Sanitizer::normalizeCharReferences(  ', with : ' . $this->translateArgument($key) . ' as ' . htmlspecialchars($attr)));
         }
 
         if ($nbAttributes_min_1 > 0) {
-            $txt->addHtml( wfMsgExt( 'diff-with-final', 'escapenoentities',
-            $this->translateArgument($keys[$nbAttributes_min_1]),
-            htmlspecialchars($attributes[$keys[$nbAttributes_min_1]]) ) );
+            $txt->addHtml(Sanitizer::normalizeCharReferences(  ', and with : ' . $this->translateArgument($keys[$nbAttributes_min_1]) . ' as ' . htmlspecialchars($attributes[$keys[$nbAttributes_min_1]])));
         }
     }
 
     protected function translateArgument($name) {
-        $translation = wfMsgExt('diff-' . $name, 'parseinline' );
-        if ( wfEmptyMsg( 'diff-' . $name, $translation ) ) {
-            $translation = "&lt;" . $name . "&gt;";;
-        }
+        $translation = "&lt;" . $name . "&gt;";;
         return htmlspecialchars( $translation );
     }
 }
@@ -829,17 +822,15 @@ class NoContentTagToString extends TagToString {
     }
 
     public function getAddedDescription(ChangeText $txt) {
-        $tagDescription = wfMsgExt('diff-' . $this->node->qName, 'parseinline' );
-        if( wfEmptyMsg( 'diff-' . $this->node->qName, $tagDescription ) ){
-            $tagDescription = "&lt;" . $this->node->qName . "&gt;";
-        }
-        $txt->addHtml( wfMsgExt('diff-changedto', 'parseinline', $tagDescription ) );
+        $tagDescription = "&lt;" . $this->node->qName . "&gt;";
+        $txt->addHtml( 'Changed to ' . $tagDescription );
         $this->addAttributes($txt, $this->node->attributes);
         $txt->addHtml('.');
     }
 
     public function getRemovedDescription(ChangeText $txt) {
-        $txt->addHtml( wfMsgExt('diff-changedfrom', 'parseinline', $tagDescription ) );
+        $tagDescription = "&lt;" . $this->node->qName . "&gt;";
+        $txt->addHtml( 'Changed from ' . $tagDescription );
         $this->addAttributes($txt, $this->node->attributes);
         $txt->addHtml('.');
     }
@@ -853,7 +844,7 @@ class AnchorToString extends TagToString {
 
     protected function addAttributes(ChangeText $txt, array $attributes) {
         if (array_key_exists('href', $attributes)) {
-            $txt->addHtml(' ' . wfMsgExt( 'diff-withdestination', 'parseinline', htmlspecialchars($attributes['href']) ) );
+            $txt->addHtml(' with destination ' . htmlspecialchars($attributes['href']));
             unset($attributes['href']);
         }
         parent::addAttributes($txt, $attributes);
@@ -868,15 +859,18 @@ class HTMLOutput{
     private $prefix;
     private $handler;
 
-    function __construct($prefix, $handler) {
+    function __construct($prefix) {
         $this->prefix = $prefix;
-        $this->handler = $handler;
+        $this->handler = new ContentHandler();
     }
 
     public function parse(TagNode $node) {
         $handler = &$this->handler;
 
-        if (strcasecmp($node->qName, 'img') != 0 && strcasecmp($node->qName, 'body') != 0) {
+        if (strcasecmp($node->qName, 'img') != 0 &&
+            strcasecmp($node->qName, 'br') != 0 &&
+            strcasecmp($node->qName, 'hr') != 0 &&
+            strcasecmp($node->qName, 'body') != 0) {
             $handler->startElement($node->qName, $node->attributes);
         }
 
@@ -947,8 +941,8 @@ class HTMLOutput{
 
                 $chars = $child->text;
 
-                if ($child instanceof ImageNode) {
-                    $this->writeImage($child);
+                if ($child instanceof VisibleTagNode) {
+                    $this->writeVisibleTag($child);
                 } else {
                     $handler->characters($chars);
                 }
@@ -966,40 +960,50 @@ class HTMLOutput{
             $remStarted = false;
         }
 
-        if (strcasecmp($node->qName, 'img') != 0
-                && strcasecmp($node->qName, 'body') != 0) {
+        if (strcasecmp($node->qName, 'img') != 0 &&
+            strcasecmp($node->qName, 'br') != 0 &&
+            strcasecmp($node->qName, 'hr') != 0 &&
+            strcasecmp($node->qName, 'body') != 0) {
             $handler->endElement($node->qName);
         }
+        
+        return $handler->getContent();
     }
 
-    private function writeImage(ImageNode  $imgNode) {
-        $attrs = $imgNode->attributes;
-        $this->handler->startElement('img', $attrs);
-        $this->handler->endElement('img');
+    private function writeVisibleTag(VisibleTagNode $vtNode) {
+        $qName = $vtNode->qName;
+        $attrs = $vtNode->attributes;
+        $this->handler->startElement($qName, $attrs);
+        $this->handler->endElement($qName);
     }
+
 }
 
-class DelegatingContentHandler {
+class ContentHandler {
 
-    private $delegate;
+    private $string;
 
-    function __construct($delegate) {
-        $this->delegate = $delegate;
+    function __construct() {
+        $this->string = '';
     }
 
     function startElement($qname, /*array*/ $arguments) {
-        $this->delegate->addHtml(Xml::openElement($qname, $arguments));
+        $this->string .= Xml::openElement($qname, $arguments);
     }
 
     function endElement($qname){
-        $this->delegate->addHtml(Xml::closeElement($qname));
+        $this->string .= Xml::closeElement($qname);
     }
 
     function characters($chars){
-        $this->delegate->addHtml(htmlspecialchars($chars));
+        $this->string .= htmlspecialchars($chars);
     }
 
     function html($html){
-        $this->delegate->addHtml($html);
+        $this->string .= $html;
+    }
+    
+    function getContent() {
+        return $this->string;
     }
 }

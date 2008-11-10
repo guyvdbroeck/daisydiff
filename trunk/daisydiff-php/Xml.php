@@ -4,6 +4,8 @@
  * Module of static functions for generating XML
  */
 
+include_once 'Sanitizer.php';
+
 class Xml {
     /**
      * Format an XML element with given attributes and, optionally, text content.
@@ -69,9 +71,7 @@ class Xml {
             $attribs = array_map( array( 'UtfNormal', 'cleanUp' ), $attribs );
         }
         if( $contents ) {
-            wfProfileIn( __METHOD__ . '-norm' );
             $contents = UtfNormal::cleanUp( $contents );
-            wfProfileOut( __METHOD__ . '-norm' );
         }
         return self::element( $element, $attribs, $contents );
     }
@@ -105,111 +105,6 @@ class Xml {
      */
     public static function tags( $element, $attribs = null, $contents ) {
         return self::openElement( $element, $attribs ) . $contents . "</$element>";
-    }
-
-    /**
-     * Build a drop-down box for selecting a namespace
-     *
-     * @param $selected Mixed: Namespace which should be pre-selected
-     * @param $all Mixed: Value of an item denoting all namespaces, or null to omit
-     * @param $element_name String: value of the "name" attribute of the select tag
-     * @param $label String: optional label to add to the field
-     * @return string
-     */
-    public static function namespaceSelector( $selected = '', $all = null, $element_name = 'namespace', $label = null ) {
-        global $wgContLang;
-        $namespaces = $wgContLang->getFormattedNamespaces();
-        $options = array();
-
-        // Godawful hack... we'll be frequently passed selected namespaces
-        // as strings since PHP is such a shithole.
-        // But we also don't want blanks and nulls and "all"s matching 0,
-        // so let's convert *just* string ints to clean ints.
-        if( preg_match( '/^\d+$/', $selected ) ) {
-            $selected = intval( $selected );
-        }
-
-        if( !is_null( $all ) )
-            $namespaces = array( $all => wfMsg( 'namespacesall' ) ) + $namespaces;
-        foreach( $namespaces as $index => $name ) {
-            if( $index < NS_MAIN )
-                continue;
-            if( $index === 0 )
-                $name = wfMsg( 'blanknamespace' );
-            $options[] = self::option( $name, $index, $index === $selected );
-        }
-
-        $ret = Xml::openElement( 'select', array( 'id' => 'namespace', 'name' => $element_name,
-            'class' => 'namespaceselector' ) )
-            . "\n"
-            . implode( "\n", $options )
-            . "\n"
-            . Xml::closeElement( 'select' );
-        if ( !is_null( $label ) ) {
-            $ret = Xml::label( $label, $element_name ) . '&nbsp;' . $ret;
-        }
-        return $ret;
-    }
-
-    /**
-     * Create a date selector
-     *
-     * @param $selected Mixed: the month which should be selected, default ''
-     * @param $allmonths String: value of a special item denoting all month. Null to not include (default)
-     * @param $id String: Element identifier
-     * @return String: Html string containing the month selector
-     */
-    public static function monthSelector( $selected = '', $allmonths = null, $id = 'month' ) {
-        global $wgLang;
-        $options = array();
-        if( is_null( $selected ) )
-            $selected = '';
-        if( !is_null( $allmonths ) )
-            $options[] = self::option( wfMsg( 'monthsall' ), $allmonths, $selected === $allmonths );
-        for( $i = 1; $i < 13; $i++ )
-                $options[] = self::option( $wgLang->getMonthName( $i ), $i, $selected === $i );
-        return self::openElement( 'select', array( 'id' => $id, 'name' => 'month', 'class' => 'mw-month-selector' ) )
-            . implode( "\n", $options )
-            . self::closeElement( 'select' );
-    }
-
-    /**
-     *
-     * @param $selected The language code of the selected language
-     * @param $customisedOnly If true only languages which have some content are listed
-     * @return array of label and select
-     */
-    public static function languageSelector( $selected, $customisedOnly = true ) {
-        global $wgContLanguageCode;
-        /**
-         * Make sure the site language is in the list; a custom language code
-         * might not have a defined name...
-         */
-        $languages = Language::getLanguageNames( $customisedOnly );
-        if( !array_key_exists( $wgContLanguageCode, $languages ) ) {
-            $languages[$wgContLanguageCode] = $wgContLanguageCode;
-        }
-        ksort( $languages );
-
-        /**
-         * If a bogus value is set, default to the content language.
-         * Otherwise, no default is selected and the user ends up
-         * with an Afrikaans interface since it's first in the list.
-         */
-        $selected = isset( $languages[$selected] ) ? $selected : $wgContLanguageCode;
-        $options = "\n";
-        foreach( $languages as $code => $name ) {
-            $options .= Xml::option( "$code - $name", $code, ($code == $selected) ) . "\n";
-        }
-
-        return array(
-            Xml::label( wfMsg('yourlanguage'), 'wpUserLanguage' ),
-            Xml::tags( 'select',
-                array( 'id' => 'wpUserLanguage', 'name' => 'wpUserLanguage' ),
-                $options
-            )
-        );
-
     }
 
     /**
@@ -631,19 +526,19 @@ class Xml {
     /**
     * Generate a form (without the opening form element).
     * Output optionally includes a submit button.
-    * @param $fields Associative array, key is message corresponding to a description for the field (colon is in the message), value is appropriate input.
-    * @param $submitLabel A message containing a label for the submit button.
+    * @param $fields Associative array, key is html corresponding to a description for the field, value is appropriate input.
+    * @param $submitLabel Label for the submit button.
     * @return string HTML form.
     */
     public static function buildForm( $fields, $submitLabel = null ) {
         $form = '';
         $form .= "<table><tbody>";
     
-        foreach( $fields as $labelmsg => $input ) {
-            $id = "mw-$labelmsg";
+        foreach( $fields as $labelHtml => $input ) {
+            $id = "mw-$labelHtml";
             
             $form .= Xml::openElement( 'tr', array( 'id' => $id ) );
-            $form .= Xml::tags( 'td', array('class' => 'mw-label'), wfMsgExt( $labelmsg, array('parseinline') ) );
+            $form .= Xml::tags( 'td', array('class' => 'mw-label'), $labelHtml);
             $form .= Xml::openElement( 'td', array( 'class' => 'mw-input' ) ) . $input . Xml::closeElement( 'td' );
             $form .= Xml::closeElement( 'tr' );
         }
@@ -651,7 +546,7 @@ class Xml {
         if( $submitLabel ) {
             $form .= Xml::openElement( 'tr', array( 'id' => $id ) );
             $form .= Xml::tags( 'td', array(), '' );
-            $form .= Xml::openElement( 'td', array( 'class' => 'mw-submit' ) ) . Xml::submitButton( wfMsg( $submitLabel ) ) . Xml::closeElement( 'td' );
+            $form .= Xml::openElement( 'td', array( 'class' => 'mw-submit' ) ) . Xml::submitButton( $submitLabel ) . Xml::closeElement( 'td' );
             $form .= Xml::closeElement( 'tr' );
         }
     
