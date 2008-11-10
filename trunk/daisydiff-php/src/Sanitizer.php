@@ -321,7 +321,7 @@ $wgHtmlEntities = array(
  */
 global $wgHtmlEntityAliases;
 $wgHtmlEntityAliases = array(
-    '???' => 'rlm',
+    'øìî' => 'rlm',
     '???' => 'rlm',
 );
 
@@ -348,8 +348,6 @@ class Sanitizer {
 
         static $htmlpairs, $htmlsingle, $htmlsingleonly, $htmlnest, $tabletags,
             $htmllist, $listtags, $htmlsingleallowed, $htmlelements, $staticInitialised;
-
-        wfProfileIn( __METHOD__ );
 
         if ( !$staticInitialised ) {
 
@@ -515,7 +513,6 @@ class Sanitizer {
                 }
             }
         }
-        wfProfileOut( __METHOD__ );
         return $text;
     }
 
@@ -530,7 +527,6 @@ class Sanitizer {
      * @return string
      */
     static function removeHTMLcomments( $text ) {
-        wfProfileIn( __METHOD__ );
         while (($start = strpos($text, '<!--')) !== false) {
             $end = strpos($text, '-->', $start + 4);
             if ($end === false) {
@@ -560,7 +556,6 @@ class Sanitizer {
                 $text = substr_replace($text, '', $start, $end - $start);
             }
         }
-        wfProfileOut( __METHOD__ );
         return $text;
     }
 
@@ -761,8 +756,25 @@ class Sanitizer {
         ) );
 
         # Stupid hack
+        $rawProtocols = array(
+            'http://',
+            'https://',
+            'ftp://',
+            'irc://',
+            'gopher://',
+            'telnet://', // Well if we're going to support the above.. -ævar
+            'nntp://', // @bug 3808 RFC 1738
+            'worldwind://',
+            'mailto:',
+            'news:'
+        );
+
+        $protocols = array();
+        foreach ($rawProtocols as $protocol)
+            $protocols[] = preg_quote( $protocol, '/' );
+        
         $encValue = preg_replace_callback(
-            '/(' . wfUrlProtocols() . ')/',
+            '/(' . implode( '|', $protocols ) . ')/',
             array( 'Sanitizer', 'armorLinksCallback' ),
             $encValue );
         return $encValue;
