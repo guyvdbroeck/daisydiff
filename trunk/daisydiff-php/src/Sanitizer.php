@@ -24,6 +24,8 @@
  * @ingroup Parser
  */
 
+include_once 'StringUtils.php';
+
 /**
  * Regular expression to match various types of character references in
  * Sanitizer::normalizeCharReferences and Sanitizer::decodeCharReferences
@@ -1280,6 +1282,7 @@ class Sanitizer {
             # 'title' may not be 100% valid here; it's XHTML
             # http://www.w3.org/TR/REC-MathML/
             'math'       => array( 'class', 'style', 'id', 'title' ),
+
             );
         return $whitelist;
     }

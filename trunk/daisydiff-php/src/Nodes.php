@@ -24,8 +24,8 @@
  * @ingroup DifferenceEngine
  */
 
- include_once 'Xml.php';
- 
+include_once 'Xml.php';
+
 class Node {
 
     public $parent;
@@ -39,7 +39,7 @@ class Node {
     function __construct($parent) {
         $this->parent = $parent;
     }
-    
+
     public function getParentTree() {
         if (!isset($this->parentTree)) {
             if (!is_null($this->parent)) {
@@ -51,7 +51,7 @@ class Node {
         }
         return $this->parentTree;
     }
-
+    
     public function getLastCommonParent(Node $other) {
         $result = new LastCommonParentResult();
 
@@ -64,7 +64,7 @@ class Node {
         $nbOtherParents = count($otherParents);
         
         while ($isSame && $i < $nbMyParents && $i < $nbOtherParents) {
-            if ($myParents[$i]->openingTag !== $otherParents[$i]->openingTag ||
+            if ($myParents[$i]->toDiffTag !== $otherParents[$i]->toDiffTag ||
                 $myParents[$i-1]->getIndexOf($myParents[$i]) !== $otherParents[$i-1]->getIndexOf($otherParents[$i])) {
                 $isSame = false;
             } else {
@@ -116,18 +116,25 @@ class TagNode extends Node {
     public $attributes = array();
 
     public $openingTag;
+    public $toDiffTag;
+
+    public static $uncomparableAttributes = array('style');
 
     function __construct($parent, $qName, /*array*/ $attributes) {
         parent::__construct($parent);
         $this->qName = strtolower($qName);
         foreach($attributes as $key => &$value){
+            if (!in_array(strtolower($key),self::$uncomparableAttributes)) {
+                $toDiffAttributes[strtolower($key)] = $value;
+            }
             $this->attributes[strtolower($key)] = $value;
         }
-        return $this->openingTag = Xml::openElement($this->qName, $this->attributes);
+        return ($this->openingTag = Xml::openElement($this->qName, $this->attributes)) &&
+               ($this->toDiffTag = Xml::openElement($this->qName, $toDiffAttributes));
     }
 
     public function addChildAbsolute(Node $node, $index) {
-        array_splice($this->children, $index, 0, array($node));
+        array_splice($this->children, $index, 0, array(&$node));
     }
 
     public function getIndexOf(Node $child) {
@@ -178,6 +185,7 @@ class TagNode extends Node {
     public function splitUntil(TagNode $parent, Node $split, $includeLeft) {
         $splitOccured = false;
         if ($parent !== $this) {
+
             $part1 = new TagNode(null, $this->qName, $this->attributes);
             $part2 = new TagNode(null, $this->qName, $this->attributes);
             $part1->setParent($this->parent);
@@ -185,12 +193,13 @@ class TagNode extends Node {
 
             $onSplit = false;
             $pastSplit = false;
+
             foreach ($this->children as &$child)
             {
                 if ($child === $split) {
                     $onSplit = true;
                 }
-                if(!$pastSplit || ($onSplit && $includeLeft)) {
+                if((!$pastSplit && !$onSplit) || ($onSplit && $includeLeft)) {
                     $child->setParent($part1);
                     $part1->children[] = $child;
                 } else {
@@ -203,17 +212,18 @@ class TagNode extends Node {
                 }
             }
             $myindexinparent = $this->parent->getIndexOf($this);
+            $this->parent->removeChild($myindexinparent);
+            
             if (!empty($part2->children)) {
-                $this->parent->addChildAbsolute($part2, $myindexinparent+1);
+                $this->parent->addChildAbsolute($part2, $myindexinparent);
             }
             if (!empty($part1->children)) {
-                $this->parent->addChildAbsolute($part1, $myindexinparent+1);
+                $this->parent->addChildAbsolute($part1, $myindexinparent);
             }
+
             if (!empty($part1->children) && !empty($part2->children)) {
                 $splitOccured = true;
             }
-
-            $this->parent->removeChild($myindexinparent);
 
             if ($includeLeft) {
                 $this->parent->splitUntil($parent, $part1, $includeLeft);
@@ -300,7 +310,7 @@ class TagNode extends Node {
     }
 
     public static function toDiffLine(TagNode $node) {
-        return $node->openingTag;
+        return $node->toDiffTag;
     }
 }
 
@@ -348,11 +358,11 @@ class TextNode extends Node {
         if (is_null($other) || ! $other instanceof TextNode) {
             return false;
         }
-        return str_replace('\n', ' ',$this->text) === str_replace('\n', ' ',$other->text);
+        return preg_replace('/[\n\r]/',' ',$this->text) === preg_replace('/[\n\r]/',' ',$html2);
     }
 
     public static function toDiffLine(TextNode $node) {
-        return str_replace('\n', ' ',$node->text);
+        return preg_replace('/[\n\r]/',' ',$node->text);
     }
 }
 
@@ -370,6 +380,7 @@ class WhiteSpaceNode extends TextNode {
             $this->modification = $newModification;
         }
     }
+
 }
 
 /**
@@ -444,10 +455,10 @@ class VisibleTagNode extends TextNode {
     public $attributes;
 
     function __construct(TagNode $parent, $qName, /*array*/ $attrs) {
-        if(strcasecmp($qName,'img') == 0 && !array_key_exists('src', $attrs)) {
+        if (strcasecmp($qName,'img') == 0 && !array_key_exists('src', $attrs)) {
             HTMLDiffer::diffDebug( "Image without a source\n" );
             parent::__construct($parent, '<' . $qName . '></' . $qName . '>');
-        }else{
+        } else {
             parent::__construct($parent, '<' . $qName . '>' . strtolower($attrs['src']) . '</' . $qName . '>');
         }
         $this->qName = strtolower($qName);

@@ -306,7 +306,7 @@ class TextNodeDiffer {
             $this->oldTextNodes[$i]->modification = $mod;
         }
         $this->oldTextNodes[$start]->modification->firstOfID = true;
-        
+
         $root = $this->oldTextNodes[$start]->getLastCommonParent($this->oldTextNodes[$end-1])->parent;
 
         $junk1 = $junk2 = null;
@@ -382,8 +382,8 @@ class TextNodeDiffer {
                         $nextResult->indexInLastCommonParent = $nextResult->indexInLastCommonParent + 1;
                     }
                 }
-                $nextLeaf = $deletedNodes[count(deletedNodes) - 1]->copyTree();
-                unset($deletedNodes[count(deletedNodes) - 1]);
+                $nextLeaf = $deletedNodes[count($deletedNodes) - 1]->copyTree();
+                unset($deletedNodes[count($deletedNodes) - 1]);
                 $deletedNodes = array_values($deletedNodes);
                 $nextLeaf->setParent($nextResult->parent);
                 $nextResult->parent->addChildAbsolute($nextLeaf,$nextResult->indexInLastCommonParent);
@@ -412,6 +412,9 @@ class HTMLDiffer {
 
     function htmlDiff($from, $to) {
 
+        $from = Sanitizer::removeHTMLtags($from);
+        $to = Sanitizer::removeHTMLtags($to);
+
         // Create an XML parser
         $xml_parser = xml_parser_create('');
 
@@ -429,7 +432,8 @@ class HTMLDiffer {
                     || !xml_parse($xml_parser, '</body>', true)){
             $error = xml_error_string(xml_get_error_code($xml_parser));
             $line = xml_get_current_line_number($xml_parser);
-            HTMLDiffer::diffDebug( "XML error: $error at line $line\n" );
+            $col = xml_get_current_column_number($xml_parser);
+            HTMLDiffer::diffDebug( "XML error: $error at line $line and column $col\n" );
         }
         xml_parser_free($xml_parser);
         unset($from);
@@ -450,14 +454,15 @@ class HTMLDiffer {
         || !xml_parse($xml_parser, '</body>', true)){
             $error = xml_error_string(xml_get_error_code($xml_parser));
             $line = xml_get_current_line_number($xml_parser);
-            HTMLDiffer::diffDebug( "XML error: $error at line $line\n" );
+            $col = xml_get_current_column_number($xml_parser);
+            HTMLDiffer::diffDebug( "XML error: $error at line $line and column $col\n" );
         }
         xml_parser_free($xml_parser);
         unset($to);
 
         $diffengine = new WikiDiff3();
         $differences = $this->preProcess($diffengine->diff_range($domfrom->getDiffLines(), $domto->getDiffLines()));
-
+        
         unset($xml_parser, $diffengine);
 
         $textNodeDiffer = new TextNodeDiffer($domto, $domfrom);
@@ -484,6 +489,7 @@ class HTMLDiffer {
         $textNodeDiffer->expandWhiteSpace();
         
         $output = new HTMLOutput('htmldiff');
+
         return $output->parse($textNodeDiffer->bodyNode);
     }
 
@@ -560,7 +566,7 @@ class TextOnlyComparator {
 
     public $leafs = array();
 
-    function _construct(TagNode $tree) {
+    function __construct(TagNode $tree) {
         $this->addRecursive($tree);
         $this->leafs = array_map(array('TextNode','toDiffLine'), $this->leafs);
     }
@@ -570,7 +576,7 @@ class TextOnlyComparator {
             if ($child instanceof TagNode) {
                 $this->addRecursive($child);
             } else if ($child instanceof TextNode) {
-                $this->leafs[] = $node;
+                $this->leafs[] = $child;
             }
         }
     }
@@ -712,7 +718,7 @@ class ChangeText {
 }
 
 class TagToStringFactory {
-        
+
     private static $containerTags = array('html', 'body', 'p', 'blockquote',
         'h1', 'h2', 'h3', 'h4', 'h5', 'pre', 'div', 'ul', 'ol', 'li',
         'table', 'tbody', 'tr', 'td', 'th', 'br', 'hr', 'code', 'dl',
@@ -765,7 +771,7 @@ class TagToString {
         if ($this->sem == TagToStringFactory::MOVED) {
             $txt->addHtml( 'Moved out of: ' . $tagDescription);
         } else if ($this->sem == TagToStringFactory::STYLE) {
-            $txt->addHtml( 'Style removed: ' . $tagDescription);
+            $txt->addHtml( 'Style removed: <' . $this->node->qName . '>' . $tagDescription . '</' . $this->node->qName . '>');
         } else {
             $txt->addHtml( 'Removed: ' . $tagDescription);
         }
@@ -778,7 +784,7 @@ class TagToString {
         if ($this->sem == TagToStringFactory::MOVED) {
             $txt->addHtml( 'Moved into: ' . $tagDescription);
         } else if ($this->sem == TagToStringFactory::STYLE) {
-            $txt->addHtml( 'Style added: ' . $tagDescription);
+            $txt->addHtml( 'Style added: <' . $this->node->qName . '>' . $tagDescription . '</' . $this->node->qName . '>');
         } else {
             $txt->addHtml( 'Added: ' . $tagDescription);
         }
@@ -790,29 +796,22 @@ class TagToString {
         if (count($attributes) < 1) {
             return;
         }
-        $firstOne = true;
-        $nbAttributes_min_1 = count($attributes)-1;
+
         $keys = array_keys($attributes);
-        for ($i=0;$i<$nbAttributes_min_1;$i++) {
+        $txt->addHtml(Sanitizer::normalizeCharReferences( ' with "' . $keys[0] . '" attribute as "' . $attributes[$keys[0]] . '"'));
+
+        $nbAttributes_min_1 = count($attributes)-1;
+        for ($i=1;$i<$nbAttributes_min_1;$i++) {
             $key = $keys[$i];
             $attr = $attributes[$key];
-            if($firstOne) {
-                $firstOne = false;
-                $txt->addHtml(Sanitizer::normalizeCharReferences(  ' with ' . $this->translateArgument($key) . ' as ' . htmlspecialchars($attr)));
-                continue;
-            }
-            $txt->addHtml(Sanitizer::normalizeCharReferences(  ', with : ' . $this->translateArgument($key) . ' as ' . htmlspecialchars($attr)));
+            $txt->addHtml(Sanitizer::normalizeCharReferences( ', with "' . $key . '" attribute as "' . $attr . '"'));
         }
 
-        if ($nbAttributes_min_1 > 0) {
-            $txt->addHtml(Sanitizer::normalizeCharReferences(  ', and with : ' . $this->translateArgument($keys[$nbAttributes_min_1]) . ' as ' . htmlspecialchars($attributes[$keys[$nbAttributes_min_1]])));
+        if ($nbAttributes_min_1 > 1) {
+            $txt->addHtml(Sanitizer::normalizeCharReferences( ' and with "' . $keys[$nbAttributes_min_1] . '" attribute as "' . $attributes[$keys[$nbAttributes_min_1]] . '"'));
         }
     }
 
-    protected function translateArgument($name) {
-        $translation = "&lt;" . $name . "&gt;";;
-        return htmlspecialchars( $translation );
-    }
 }
 
 class NoContentTagToString extends TagToString {
@@ -865,7 +864,7 @@ class HTMLOutput{
     }
 
     public function parse(TagNode $node) {
-        $handler = &$this->handler;
+        $handler = $this->handler;
 
         if (strcasecmp($node->qName, 'img') != 0 &&
             strcasecmp($node->qName, 'br') != 0 &&
@@ -942,6 +941,9 @@ class HTMLOutput{
                 $chars = $child->text;
 
                 if ($child instanceof VisibleTagNode) {
+                    if (strcasecmp($child->qName, 'br') == 0 && $remStarted) {
+                        $handler->rawCharacters('&nbsp;');
+                    }
                     $this->writeVisibleTag($child);
                 } else {
                     $handler->characters($chars);
@@ -999,6 +1001,10 @@ class ContentHandler {
         $this->string .= htmlspecialchars($chars);
     }
 
+    function rawCharacters($chars){
+        $this->string .= $chars;
+    }
+
     function html($html){
         $this->string .= $html;
     }
@@ -1006,4 +1012,5 @@ class ContentHandler {
     function getContent() {
         return $this->string;
     }
+
 }
