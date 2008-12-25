@@ -160,7 +160,8 @@ class DomTreeBuilder {
     const delimiter = '/^[\s\.\,\"\\\'\(\)\?\:\;\!\{\}\-\+\*\=\_\[\]\&\|\$]{1}$/';
 
     public function characters($parser, $data) {
-        $matches = preg_split(self::regex, $data, -1, PREG_SPLIT_DELIM_CAPTURE);
+
+        $matches = preg_split(self::regex, htmlentities($data,ENT_NOQUOTES,'UTF-8'), -1, PREG_SPLIT_DELIM_CAPTURE);
 
         foreach($matches as &$word) {
             if (preg_match(self::whitespace, $word) && $this->notInPre) {
@@ -411,9 +412,6 @@ class HTMLDiffer {
     private $output;
 
     function htmlDiff($from, $to) {
-
-        $from = Sanitizer::removeHTMLtags($from);
-        $to = Sanitizer::removeHTMLtags($to);
 
         // Create an XML parser
         $xml_parser = xml_parser_create('');
@@ -941,10 +939,10 @@ class HTMLOutput{
                 $chars = $child->text;
 
                 if ($child instanceof VisibleTagNode) {
-                    if (strcasecmp($child->qName, 'br') == 0 && $remStarted) {
-                        $handler->rawCharacters('&nbsp;');
+                    if (strcasecmp($child->qName, 'br') == 0 && ($newStarted || $changeStarted || $remStarted)) {
+                        $handler->characters('&nbsp;');
                     }
-                    $this->writeVisibleTag($child);
+                    $this->handler->element($child->qName, $child->attributes);
                 } else {
                     $handler->characters($chars);
                 }
@@ -972,13 +970,6 @@ class HTMLOutput{
         return $handler->getContent();
     }
 
-    private function writeVisibleTag(VisibleTagNode $vtNode) {
-        $qName = $vtNode->qName;
-        $attrs = $vtNode->attributes;
-        $this->handler->startElement($qName, $attrs);
-        $this->handler->endElement($qName);
-    }
-
 }
 
 class ContentHandler {
@@ -997,11 +988,11 @@ class ContentHandler {
         $this->string .= Xml::closeElement($qname);
     }
 
+    function element($qname, /*array*/ $arguments) {
+        $this->string .= Xml::element($qname, $arguments);
+    }    
+    
     function characters($chars){
-        $this->string .= htmlspecialchars($chars);
-    }
-
-    function rawCharacters($chars){
         $this->string .= $chars;
     }
 
