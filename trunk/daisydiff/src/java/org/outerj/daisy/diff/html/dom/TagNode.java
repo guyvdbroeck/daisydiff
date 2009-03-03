@@ -22,6 +22,7 @@ import java.util.List;
 import java.util.Set;
 
 import org.outerj.daisy.diff.html.ancestor.TextOnlyComparator;
+import org.outerj.daisy.diff.html.dom.helper.AttributesMap;
 import org.xml.sax.Attributes;
 import org.xml.sax.helpers.AttributesImpl;
 
@@ -83,9 +84,25 @@ public class TagNode extends Node implements Iterable<Node> {
     public boolean isSameTag(TagNode other) {
         if (other == null)
             return false;
-        return getOpeningTag().equals(other.getOpeningTag());
+        return equals(other);
     }
 
+    @Override
+    public boolean equals(Object obj) {
+    	boolean result = false;
+    	
+    	if (obj instanceof TagNode) {
+			TagNode tagNode = (TagNode) obj;
+			
+			if(this.getQName().equalsIgnoreCase(tagNode.getQName())){
+				AttributesMap localAttributesMap = new AttributesMap(getAttributes());
+				AttributesMap externalAttributesMap = new AttributesMap(tagNode.getAttributes());
+				result = localAttributesMap.equals(externalAttributesMap);
+			}
+		}
+    	return result;
+    }
+    
     public String getOpeningTag() {
         String s = "<" + getQName();
         Attributes localAttributes = getAttributes();
