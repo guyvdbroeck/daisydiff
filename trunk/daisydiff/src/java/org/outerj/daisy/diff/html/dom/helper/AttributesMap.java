@@ -100,6 +100,23 @@ public class AttributesMap extends HashMap<String, String> {
 		return equals;
 	}
 	
+	@Override
+	public int hashCode(){
+		int simple = 19;
+		int result = 0;
+		for (String attr: keySet()){
+			result += attr.hashCode()*simple;
+			if (attr.equals(STYLE_ATTR)){
+				result += normalizeStyleString(get(attr)).hashCode();
+			} else if (attr.equals(CLASS_ATTR)){
+				result += normalizeClassString(get(attr)).hashCode();
+			} else {
+				result += get(attr).hashCode();
+			}
+		}
+		return result;
+	}
+	
 	/**
 	 * Checks if 2 values for "style" attribute of an HTML tag
 	 * are equivalent (contain same CSS property : value pairs,
@@ -226,6 +243,97 @@ public class AttributesMap extends HashMap<String, String> {
 		return Arrays.equals(set1, set2);
 	}
 
+	/**
+	 * The <code>hashCode()</code> method should correspond to
+	 * <code>equals</code> method, so we need a way to get the
+	 * styles attribute value in the same representation we use
+	 * when we're comparing. We could use this method in comparison
+	 * method, however the way comparison method is written now
+	 * is much faster, because it can fail or succeed long before 
+	 * normalization is finished.
+	 * @param styleVal - value of "style" attribute of an HTML tag.
+	 * @return normalized representation of the provided value
+	 */
+	public static String normalizeStyleString(String styleVal){
+		if (styleVal == null || styleVal.length() == 0){
+			return styleVal; //nothing to Normalize
+		} 
+		//no nulls at this point
+		//get rid of the new line symbols and tabulation
+		//substituting them with spaces to not "jam" separate tokens together 
+		styleVal = styleVal.replaceAll(NL_TAB_REGEXP, SPACE);
+		//get rid of consecutive spaces
+		styleVal = styleVal.replaceAll(SPACE + "++", SPACE);
+		//get rid of leading/trailing spaces
+		styleVal = styleVal.trim();
+		//check if they there's anything left
+		if (styleVal.length() == 0){
+			return styleVal;
+		}
+		//style rules in the style attribute value are
+		//separated by semicolon with any amount of space on either side
+		final char SEMICOLON = ';';
+		//notice, that this delimiter will "eat up" all the empty styles
+		//like in this case: "prop1:val1  ;  ;  ;;;; prop2 : val2"
+		//you will only get 2 tokens and this: "  ;  ;  ;;;; " will be 
+		//considered as a single delimiter.
+		//atomic group and possessive quantifier used to speed up regexp
+		final String DELIM = SPACE + "*+(?>" + SEMICOLON + SPACE + "*+)++";
+		//split those to CSS property name : value pairs
+		String[] styleRules = styleVal.split(DELIM);
+		//sort by CSS property name
+		Arrays.sort(styleRules);
+		//remove the spaces between property name,
+		//the colon and the value 
+		final String COLON_W_SPACES = 
+			SPACE + "*+:" + SPACE + "*+";
+		final String COLON = ":";
+		StringBuffer result = new StringBuffer();
+		for (int i = 0; i < styleRules.length; i++){
+			result.append(styleRules[i].replaceFirst(COLON_W_SPACES, COLON))
+				  .append("; ");
+		}
+		//take away last trailing "; "
+		result.setLength(result.length() - 2);
+		return result.toString();
+	}
+
+	/**
+	 * The <code>hashCode()</code> method should correspond to
+	 * <code>equals</code> method, so we need a way to get the
+	 * class attribute value in the same representation we use
+	 * when we're comparing. We could use this method in comparison
+	 * method, however the way comparison method is written now
+	 * is much faster, because it can fail or succeed long before 
+	 * normalization is finished.
+	 * @param classVal - value of "class" attribute of an HTML tag.
+	 * @return normalized representation of the provided value
+	 */
+	public static String normalizeClassString(String classVal){
+		if (classVal == null || classVal.length() == 0){
+			return classVal; //nothing to normalize
+		}
+		//no nulls at this point
+		//get rid of new line and tabulation symbols
+		classVal = classVal.replaceAll(NL_TAB_REGEXP, SPACE);
+		//trim leading/trailing spaces
+		classVal = classVal.trim();
+		//multiple class names in the class attributes
+		//are separated by spaces - split into array of single classes
+		final String DELIM = SPACE + "++";//"++" is possessive quantifier
+		//splitting by any amount of spaces in between
+		String[] classNames = classVal.split(DELIM);
+		//sorting classes
+		Arrays.sort(classNames);
+		StringBuffer result = new StringBuffer();
+		for (int i = 0; i < classNames.length; i++){
+			result.append(classNames[i]).append(SPACE);
+		}
+		//take away last space
+		result.setLength(result.length() - 1);
+		return result.toString();
+	}
+	
 	//just for a quick test
 	public static void main(String[] args){
 		String s1 = "margin-left:50px;font-size:16pt;";
