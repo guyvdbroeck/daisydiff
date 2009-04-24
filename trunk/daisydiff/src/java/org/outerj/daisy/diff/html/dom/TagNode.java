@@ -159,7 +159,8 @@ public class TagNode extends Node implements Iterable<Node> {
 				//to get root. comparing parents,
 				//as most often equals method is used
 				//when operating with children collection
-				if (tagNode.getParent() == this.getParent()){
+				if (tagNode.getParent() != null && 
+					tagNode.getParent() == this.getParent()){
 					differentTrees = false;
 				} else {
 					TagNode myRoot = this.getRoot();
