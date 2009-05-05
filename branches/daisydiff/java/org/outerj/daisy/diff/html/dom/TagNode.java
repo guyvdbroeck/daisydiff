@@ -40,10 +40,10 @@ public class TagNode extends Node implements Iterable<Node> {
     public TagNode(TagNode parent, String qName, Attributes attributesarg) {
         super(parent);
         this.qName = qName;
-        attributes = new AttributesImpl(attributesarg);
+        attributes = new AttributesImpl(attributesarg);        
     }
 
-    /**
+    /**************************************************************************
      * appends the provided node to the collection of children if 
      * <code>this</code> node is set as the parameter's parent.
      * This method is used in the <code>Node</code>'s constructor
@@ -59,7 +59,7 @@ public class TagNode extends Node implements Iterable<Node> {
         children.add(node);
     }
 
-    /**
+    /**************************************************************************
      * If the provided parameter is in the same tree with
      * <code>this</code> object then this method fetches 
      * index of the parameter object in the children collection. 
@@ -74,7 +74,7 @@ public class TagNode extends Node implements Iterable<Node> {
         return children.indexOf(child);
     }
     
-    /**
+    /**************************************************************************
      * Inserts provided node in the collection of children at the specified index 
      * if <code>this</code> node is set as a parent for the parameter.
      * @param index - desired position among the children
@@ -93,7 +93,7 @@ public class TagNode extends Node implements Iterable<Node> {
         return children.get(i);
     }
 
-    /**
+    /**************************************************************************
      * @return <code>Iterator&lt;Node></code> over children collection
      * @throws java.lang.NullPointerException - if children collection is null
      */
@@ -101,7 +101,7 @@ public class TagNode extends Node implements Iterable<Node> {
         return children.iterator();
     }
 
-    /**
+    /**************************************************************************
      * @return number of elements in the children collection or 0 if 
      * the collection is <code>null</code>
      */
@@ -121,7 +121,7 @@ public class TagNode extends Node implements Iterable<Node> {
         return attributes;
     }
 
-    /**
+    /**************************************************************************
      * checks tags for being semantically equivalent if it's from 
      * a different tree and for being the same object if it's 
      * from the same tree as <code>this</code> tag.
@@ -133,7 +133,7 @@ public class TagNode extends Node implements Iterable<Node> {
         return equals(other);
     }
 
-    /**
+    /**************************************************************************
      * Considers tags from different trees equal 
      * if they have same name and equivalent attributes.
      * No attention paid to the content (children) of the tag.
@@ -181,7 +181,7 @@ public class TagNode extends Node implements Iterable<Node> {
     	return result;
     }
     
-    /**
+    /**************************************************************************
      * Since we only consider so much information of the TagNode in
      * <code>equals</code> method, we need to re-write 
      * <code>hashCode</code> method to correspond. Otherwise 
@@ -197,7 +197,7 @@ public class TagNode extends Node implements Iterable<Node> {
     	return result;
     }
     
-    /**
+    /**************************************************************************
      * Produces <code>String</code> for the opening HTML tag for this node.
      * Includes the attributes. This probably doesn't work for image tag.
      * @return the <code>String</code> representation of the corresponding
@@ -213,7 +213,7 @@ public class TagNode extends Node implements Iterable<Node> {
         return s += ">";
     }
 
-    /**
+    /**************************************************************************
      * @return <code>String</code> representation of the closing HTML tag that
      * corresponds to the current node. Probably doesn't work for image tag.
      */
@@ -221,7 +221,7 @@ public class TagNode extends Node implements Iterable<Node> {
         return "</" + getQName() + ">";
     }
 
-    /**
+    /**************************************************************************
      * <p> This recursive method considers a descendant deleted if all its 
      * children had <code>TextNode</code>s that now are marked as removed 
      * with the provided id. If all children of a descendant is considered 
@@ -272,7 +272,7 @@ public class TagNode extends Node implements Iterable<Node> {
         return getOpeningTag();
     }
 
-    /**
+    /**************************************************************************
      * Attempts to create 2 <code>TagNode</code>s with 
      * the same name and attributes as the original <code>this</code> node.
      * All children preceding split parameter are placed into the left part,
@@ -340,11 +340,17 @@ public class TagNode extends Node implements Iterable<Node> {
             //we won't have a case where we removed this and did not
             //substitute it with anything
             getParent().removeChild(this);
-
+            
+            //this part was corrected to return true if the parents
+            //has been split
             if (includeLeft)
-                getParent().splitUntill(parent, part1, includeLeft);
+                splitOccured = 
+                	getParent().splitUntill(parent, part1, includeLeft) ||
+                	splitOccured;
             else
-                getParent().splitUntill(parent, part2, includeLeft);
+                splitOccured = 
+                	getParent().splitUntill(parent, part2, includeLeft) ||
+                	splitOccured;
         }
         return splitOccured;
 
@@ -381,6 +387,35 @@ public class TagNode extends Node implements Iterable<Node> {
         blocks.add("tfoot");
     }
 
+    /**************************************************************************
+     * List of tags that accept only certain kind of kids
+     */
+    private static Set<String> specials = new HashSet<String>();
+    static {
+    	specials.add("table");
+    	specials.add("tr");
+    	specials.add("tbody");
+    	specials.add("thead");
+    	specials.add("tfoot");
+    	specials.add("caption");
+    	specials.add("ul");
+    	specials.add("ol");
+    	specials.add("dl");
+    }
+    
+    /**************************************************************************
+     * list of tags that can have only certain kind of parent
+     */
+    private static Set<String> dependants = new HashSet<String>();
+    static {
+    	dependants.add("tr");
+    	dependants.add("td");
+    	dependants.add("th");
+    	dependants.add("li");
+    	dependants.add("dt");
+    	dependants.add("dd");
+    }
+    
     public static boolean isBlockLevel(String qName) {
         return blocks.contains(qName.toLowerCase());
     }
@@ -410,6 +445,30 @@ public class TagNode extends Node implements Iterable<Node> {
         return isInline(this);
     }
 
+    /**************************************************************************
+     * @return <code>true</code> if the tag can have only certain type of kids
+     * (e.g. a table row (tr) can only have table cells for children (td or th)
+     */
+    public boolean isSpecial(){
+    	String name = this.getQName();
+    	if (name == null || name.length() == 0){
+    		return false;
+    	}
+    	return specials.contains(name.toLowerCase());
+    }
+    
+    /**************************************************************************
+     * @return <code>true</code> if the tag requires certain type of parents
+     * (e.g. list item (li) can belong only to a list (ol, ul)
+     */
+    public boolean needsSpecialParent(){
+    	String name = this.getQName();
+    	if (name == null || name.length() == 0){
+    		return false;
+    	}
+    	return dependants.contains(name.toLowerCase());
+    }
+    
     @Override
     public Node copyTree() {
         TagNode newThis = new TagNode(null, getQName(), new AttributesImpl(
@@ -422,6 +481,22 @@ public class TagNode extends Node implements Iterable<Node> {
             newThis.addChild(newChild);
         }
         return newThis;
+    }
+    
+    /**
+     * This method copies only "whiteBefore" and "whiteAfter" parts.
+     * The attributes of the returned node are blank; the parent
+     * is <code>null</code> and the name is the provided parameter. 
+     * @param newName - name of the new tag
+     * @return the <code>TagNode</code> with the provided name
+     * that has the same white space settings as <code>this</code>
+     */
+    public TagNode shallowCopy(String newName){
+    	TagNode newThis = new TagNode(
+    			null, newName, new AttributesImpl(getAttributes()));
+    	newThis.setWhiteBefore(isWhiteBefore());
+    	newThis.setWhiteAfter(isWhiteAfter());
+    	return newThis;
     }
 
     public double getMatchRatio(TagNode other) {

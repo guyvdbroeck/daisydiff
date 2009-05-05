@@ -15,6 +15,7 @@
  */
 package org.outerj.daisy.diff.html.dom;
 
+import java.util.HashMap;
 import java.util.List;
 
 public interface DomTree {
@@ -22,5 +23,7 @@ public interface DomTree {
     public List<TextNode> getTextNodes();
 
     public BodyNode getBodyNode();
+    
+    public HashMap<TagNode, Range> getTablesBoundaries();
 
 }

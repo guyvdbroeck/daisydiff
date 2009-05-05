@@ -20,6 +20,8 @@ import java.util.List;
 import org.eclipse.compare.internal.LCSSettings;
 import org.eclipse.compare.rangedifferencer.RangeDifference;
 import org.eclipse.compare.rangedifferencer.RangeDifferencer;
+import org.outerj.daisy.diff.html.dom.table.TableDiffChecker;
+import org.outerj.daisy.diff.html.dom.table.TableDifference;
 import org.xml.sax.SAXException;
 
 /**
@@ -46,6 +48,28 @@ public class HTMLDiffer {
                 settings, leftComparator, rightComparator);
 
         List<RangeDifference> pdifferences = preProcess(differences);
+
+        //try to handle tables differently
+        if (pdifferences != null &&
+        	pdifferences.size() > 0 &&
+            leftComparator instanceof TextNodeComparator){
+        	
+        	TextNodeComparator oldTextComp = 
+        		(TextNodeComparator)leftComparator;
+        	if (oldTextComp.hasTableContent()){
+        		TextNodeComparator newTextComp = 
+        			(TextNodeComparator) rightComparator;
+        		if (newTextComp.hasTableContent()){
+        			TableDiffChecker tableDiffChecker = 
+        				new TableDiffChecker();
+        			pdifferences = tableDiffChecker.tableCheck(
+        				oldTextComp, newTextComp, pdifferences);
+        		}
+        	}
+        }
+        
+        // TO DO: modify the code that handles the difference script
+        //end of table difference insertion
 
         int currentIndexLeft = 0;
         int currentIndexRight = 0;
@@ -125,4 +149,4 @@ public class HTMLDiffer {
         }
         return d / (1.5 * numbers.length);
     }
-}
+    }

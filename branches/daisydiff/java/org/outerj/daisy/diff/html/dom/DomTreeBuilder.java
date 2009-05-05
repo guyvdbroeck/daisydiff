@@ -16,6 +16,7 @@
 package org.outerj.daisy.diff.html.dom;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
@@ -25,6 +26,10 @@ public class DomTreeBuilder extends DefaultHandler implements DomTree {
 
     private List<TextNode> textNodes = new ArrayList<TextNode>(50);
 
+    //for table comparison - list that would keep locations of the tables
+    private HashMap<TagNode, Range> tablesBoundaries = 
+    											new HashMap<TagNode, Range>();
+    
     private BodyNode bodyNode = new BodyNode();
 
     private TagNode currentParent = bodyNode;
@@ -51,6 +56,10 @@ public class DomTreeBuilder extends DefaultHandler implements DomTree {
         return textNodes;
     }
 
+    public HashMap<TagNode, Range> getTablesBoundaries(){
+    	return tablesBoundaries;
+    }
+    
     @Override
     public void startDocument() throws SAXException {
         if (documentStarted)
@@ -86,7 +95,11 @@ public class DomTreeBuilder extends DefaultHandler implements DomTree {
                 newTagNode.setWhiteBefore(true);
             }
             whiteSpaceBeforeThis = false;
-
+            //try to check for tables
+            if (localName.equalsIgnoreCase("table")){
+            	tablesBoundaries.put(
+            			newTagNode, new Range(textNodes.size()));
+            }//end of table check
         } else if (bodyStarted) {
             // Ignoring element after body tag closed
         } else if (localName.equalsIgnoreCase("body")) {
@@ -116,6 +129,10 @@ public class DomTreeBuilder extends DefaultHandler implements DomTree {
             if (currentParent.isInline()) {
                 lastSibling = currentParent;
             } else {
+            	//try to check for tables
+            	if (localName.equalsIgnoreCase("table")){
+            		tablesBoundaries.get(currentParent).setEnd(textNodes.size() - 1);
+            	}//end of table check
                 lastSibling = null;
             }
             currentParent = currentParent.getParent();
@@ -200,5 +217,4 @@ public class DomTreeBuilder extends DefaultHandler implements DomTree {
             return false;
         }
     }
-
 }
