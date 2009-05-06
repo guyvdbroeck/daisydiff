@@ -8,6 +8,7 @@ import org.eclipse.compare.rangedifferencer.RangeDifference;
 import org.outerj.daisy.diff.html.TextNodeComparator;
 import org.outerj.daisy.diff.html.dom.Range;
 import org.outerj.daisy.diff.html.dom.TagNode;
+import org.outerj.daisy.diff.html.dom.TextNode;
 
 public class TableDiffChecker {
 	
@@ -104,7 +105,7 @@ public class TableDiffChecker {
     	//repeat the process of finding appropriate cases
     	//for the table difference while we won't run out of 
     	//either of the lists.
-    	while (diffIdx < diffCount && 
+    	while (diffIdx < (diffCount - 1) && 
     		   leftIdx < leftTCount && 
     		   rightIdx < rightTCount){
     		inTableDiffs = new LinkedList<RangeDifference>();
@@ -164,9 +165,17 @@ public class TableDiffChecker {
 	    				inTableDiffs.remove(0);
 	    				inTableDiffs.add(0, piece);
 	    			}
+	    			
 	    			//b). separate diff behind the tables
 	    			piece = null;
 	    			edgeTDiff = inTableDiffs.get(inTableDiffs.size() - 1);
+	    			//see if the last in-table diff is the current.
+	    			//if not - we have to move diffIdx back to not skip 
+	    			//the current
+	    			if (edgeTDiff != currentDiff){
+	    				diffIdx--;
+	    			}
+	    			//now figure if the last in-table diff goes past the tables
 	    			leftOuterDiffLength = 0;
 	    			leftPosition = leftTable.getRelativePosition(
 	    					edgeTDiff, Range.LEFT);
@@ -212,19 +221,27 @@ public class TableDiffChecker {
 	    						TableDifference.TABLE_DIFF,
 	    						rightStart, rightEnd - rightStart,
 	    						leftStart, leftEnd - leftStart,
+	    						rightTable, leftTable,
 	    						rightTableNode, leftTableNode,
 	    						inTableDiffs
 	    						);
 	    			//add the table diff to the result
-	    			result.add(tableDiff);
+	    			List<RangeDifference> temp = tableDiff.execute();
+	    			if (temp != null){
+	    				result.addAll(temp);
+	    			}
 	    			//add the "outer" piece if it exists
 	    			if (piece != null){
 	    				result.add(piece);
 	    			}
+	    			//move the "currentlyProcessingDiffIdx" 
+	    			//to the current diff to skip all the normal diff
+	    			//that we have replaced with table diff
+	    			currentlyProcessingDiffIdx = 
+	    				firstInTableDiffIdx + inTableDiffs.size();
 	    			//resume processing
-	    		}
-	    		
-	    		
+	    			
+	    		} 
 	    	}
     	}
     	//release not needed resources
@@ -431,8 +448,12 @@ public class TableDiffChecker {
 			//which table has started earlier?
 			int leftBeginningCount = 
 				firstTableDiff.leftStart() - leftTable.getStart();
+			TextNode check = leftComp.getTextNode(leftTable.getStart());
+			check = leftComp.getTextNode(firstTableDiff.leftStart());
 			int rightBeginningCount = 
 				firstTableDiff.rightStart() - rightTable.getStart();
+			check = rightComp.getTextNode(rightTable.getStart());
+			check = rightComp.getTextNode(firstTableDiff.rightStart());
 			if (leftBeginningCount < rightBeginningCount){
 				//right table has started earlier
 				rightTableEarlier = true;
@@ -455,6 +476,9 @@ public class TableDiffChecker {
 			if (leftIdx == 0){
 				return true;
 			}
+			TextNode firstCommon = leftComp.getTextNode(
+					firstTableDiff.leftStart() - 
+					commonElementsBeforeFirstDiff);
 			return noOverlapInFrontCheck(
 					commonElementsBeforeFirstDiff,
 					firstTableDiff.leftStart(),
@@ -466,6 +490,9 @@ public class TableDiffChecker {
 			if (rightIdx == 0){
 				return true;
 			}
+			TextNode firstCommon = rightComp.getTextNode(
+					firstTableDiff.rightStart() - 
+					commonElementsBeforeFirstDiff);
 			return noOverlapInFrontCheck(
 					commonElementsBeforeFirstDiff,
 					firstTableDiff.rightStart(),
@@ -536,7 +563,8 @@ public class TableDiffChecker {
 						currentDiff, Range.LEFT);
 			}
 			boolean inLeftTable = !(leftPosition == Range.PRECEDES) &&
-    			                  !(leftPosition == Range.FOLLOWS);
+    			                  !(leftPosition == Range.FOLLOWS) &&
+    			                  !(leftPosition == Range.SUBSETS);
 			if (inLeftTable){
     			//we have the intersection -> add to the list
 				this.diffsInLeftTable.add(currentDiff);
@@ -546,7 +574,7 @@ public class TableDiffChecker {
 			int rightPosition = 
 				rightTable.getRelativePosition(currentDiff, Range.RIGHT);
 			while (rightPosition == Range.PRECEDES &&
-				   rightIdx < leftTCount - 1){
+				   rightIdx < rightTCount - 1){
 				//right tables are behind - catch up
 				this.diffsInRightTable.clear();
 				rightIdx++;
@@ -555,7 +583,8 @@ public class TableDiffChecker {
 						currentDiff, Range.RIGHT);
 			}
 			boolean inRightTable = !(rightPosition == Range.PRECEDES) &&
-				                   !(rightPosition == Range.FOLLOWS);
+				                   !(rightPosition == Range.FOLLOWS) &&
+				                   !(rightPosition == Range.SUBSETS);
 			if (inRightTable){
 				//add to the rightTable list
 				this.diffsInRightTable.add(currentDiff);

@@ -104,6 +104,15 @@ public class Range implements Comparable<Range>{
 		}
 	}
 	
+	public int getLength(){
+		if (this.end == Range.NOT_DEFINED &&
+			this.start == Range.NOT_DEFINED){
+			return Range.NOT_DEFINED;
+		} else {
+			return getEnd() + 1 - getStart();
+		}
+	}
+	
 	public boolean equals(Object o){
 		if (o == null || !(o instanceof Range)){
 			return false;

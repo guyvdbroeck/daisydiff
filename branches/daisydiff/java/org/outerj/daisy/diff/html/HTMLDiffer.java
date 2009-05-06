@@ -74,18 +74,20 @@ public class HTMLDiffer {
         int currentIndexLeft = 0;
         int currentIndexRight = 0;
         for (RangeDifference d : pdifferences) {
-
             if (d.leftStart() > currentIndexLeft) {
                 rightComparator.handlePossibleChangedPart(currentIndexLeft, d
                         .leftStart(), currentIndexRight, d.rightStart(),
                         leftComparator);
             }
-            if (d.leftLength() > 0) {
-                rightComparator.markAsDeleted(d.leftStart(), d.leftEnd(),
-                        leftComparator, d.rightStart());
+            if (d instanceof TableDifference){
+            	//process here
+            } else {
+	            if (d.leftLength() > 0) {
+	                rightComparator.markAsDeleted(d.leftStart(), d.leftEnd(),
+	                        leftComparator, d.rightStart());
+	            }
+	            rightComparator.markAsNew(d.rightStart(), d.rightEnd());
             }
-            rightComparator.markAsNew(d.rightStart(), d.rightEnd());
-
             currentIndexLeft = d.leftEnd();
             currentIndexRight = d.rightEnd();
         }

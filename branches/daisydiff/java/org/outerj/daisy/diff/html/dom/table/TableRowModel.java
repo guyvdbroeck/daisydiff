@@ -11,7 +11,7 @@ import org.outerj.daisy.diff.html.dom.TagNode;
 import static org.outerj.daisy.diff.html.dom.table.TableStatics.*;
 
 public class TableRowModel 
-	   implements Iterable<TableCellModel>{
+	   implements CellSet{
 
 	//*-----------------------------------------------------------------------*
 	//*                          Row Model itself                             *
@@ -265,8 +265,50 @@ public class TableRowModel
 	}
 
 	//*-----------------------------------------------------------------------*
-	//*                           Iterable                             *
+	//*                  CellSet interface implementation                     *
 	//*-----------------------------------------------------------------------*
+	@Override
+	public TreeSet<String> getContent(){
+		return content;
+	}
+
+	@Override
+	public boolean hasCommonContent(CellSet another){
+		try{
+			//remember - both contents are sorted and do not contain duplicates
+			Iterator<String> anotherContent = another.getContent().iterator();
+			Iterator<String> myContent = getContent().iterator();
+			String otherContentItem = anotherContent.next();
+			String myContentItem = myContent.next();
+			boolean moreContent = true;
+			do{
+				int comparisonResult = 
+					myContentItem.compareTo(otherContentItem);
+				if (comparisonResult < 0){
+					//means myContentItem precedes the other
+					if (myContent.hasNext()){
+						myContentItem = myContent.next();
+					} else {
+						moreContent = false;
+					}
+				} else if (comparisonResult > 0){
+					//means myContentItem follows the other
+					if (anotherContent.hasNext()){
+						otherContentItem = anotherContent.next();
+					} else {
+						moreContent = false;
+					}
+				} else {//found common content
+					return true;
+				}
+			} while (moreContent);
+		} catch (RuntimeException ex){
+			return false;
+		}
+		return false;
+		
+	}
+	
 	@Override
 	public Iterator<TableCellModel> iterator(){
 		return cells.iterator();
@@ -282,10 +324,6 @@ public class TableRowModel
 	
 	public List<TableCellModel> getSpannedDown(){
 		return spannedDownCells;
-	}
-	
-	public TreeSet<String> getContent(){
-		return content;
 	}
 	
 	public int getIndex(){

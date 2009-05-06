@@ -1,6 +1,8 @@
 package org.outerj.daisy.diff.html.dom.table;
 
 import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 import java.util.TreeSet;
 
 import org.outerj.daisy.diff.html.dom.Node;
@@ -73,8 +75,8 @@ public class TableModel{
 	//*-----------------------------------------------------------------------*
 	
 	private TagNode tableTagNode = null;
-	private ArrayList<TableRowModel> rows = null;
-	private ArrayList<TableColumnModel> columns = null;
+	private ArrayList<CellSet> rows = null;
+	private ArrayList<CellSet> columns = null;
 	private TreeSet<String> content = null;
 	
 	/**************************************************************************
@@ -92,7 +94,7 @@ public class TableModel{
 		tableTagNode = tableTag;
 		//processing the content of the table tag.
 		if (tableTagNode.getNbChildren() > 0){
-			rows = new ArrayList<TableRowModel>();
+			rows = new ArrayList<CellSet>();
 			content = new TreeSet<String>();
 			int idx = 0;
 			//figure out rows
@@ -100,17 +102,17 @@ public class TableModel{
 			//figure out columns
 			if (rows.size() > 0){
 				//how many columns?
-				int colCount = rows.get(0).getLengthInCols();
+				int colCount = ((TableRowModel)rows.get(0)).getLengthInCols();
 				//create them
-				columns = new ArrayList<TableColumnModel>(colCount);
+				columns = new ArrayList<CellSet>(colCount);
 				for (int i = 0; i < colCount; i++){
 					columns.add(new TableColumnModel(i));
 				}
 				//populate them
-				for (TableRowModel row : rows){
+				for (CellSet row : rows){
 					int i = 0;
 					for (TableCellModel cell : row){
-						columns.get(i).appendCell(cell);
+						((TableColumnModel)columns.get(i)).appendCell(cell);
 						i++;
 					}
 				}
@@ -118,6 +120,44 @@ public class TableModel{
 		}
 	}
 
+	public boolean hasCommonContentWith(TableModel another){
+		if (another == null){
+			throw new IllegalArgumentException(
+					"No null arguments allowed");
+		}
+		if (!another.hasContent() || !this.hasContent()){
+			return false;
+		}
+		//remember - both contents are sorted and do not contain duplicates
+		Iterator<String> anotherContent = another.getContent().iterator();
+		Iterator<String> myContent = getContent().iterator();
+		//there's at least 1 content item or we would returned false
+		String otherContentItem = anotherContent.next();
+		String myContentItem = myContent.next();
+		boolean moreContent = true;
+		do{
+			int comparisonResult = myContentItem.compareTo(otherContentItem);
+			if (comparisonResult < 0){
+				//means myContentItem precedes the other
+				if (myContent.hasNext()){
+					myContentItem = myContent.next();
+				} else {
+					moreContent = false;
+				}
+			} else if (comparisonResult > 0){
+				//means myContentItem follows the other
+				if (anotherContent.hasNext()){
+					otherContentItem = anotherContent.next();
+				} else {
+					moreContent = false;
+				}
+			} else {//found common content
+				return true;
+			}
+		} while (moreContent);
+		return false;
+	}
+	
 	//*-----------------------------------------------------------------------*
 	//*                           getters/setters                             *
 	//*-----------------------------------------------------------------------*
@@ -127,6 +167,46 @@ public class TableModel{
 	 */
 	public TreeSet<String> getContent(){
 		return content;
+	}
+	
+	public boolean hasContent(){
+		if (content != null && content.size() > 0){
+			return true;
+		} else {
+			return false;
+		}
+	}
+	
+	public int getColumnCount(){
+		if (this.columns == null){
+			return 0;
+		} else {
+			return columns.size();
+		}
+	}
+	
+	public int getRowCount(){
+		if (this.rows == null){
+			return 0;
+		} else {
+			return rows.size();
+		}
+	}
+	
+	public List<CellSet> getRows(){
+		return rows;
+	}
+	
+	public CellSet getRow(int idx){
+		if (idx < 0 || getRowCount() <= idx){
+			return null;
+		} else {
+			return rows.get(idx);
+		}
+	}
+	
+	public List<CellSet> getColumns(){
+		return columns;
 	}
 	
 	//*-----------------------------------------------------------------------*
