@@ -23,7 +23,7 @@ public class TableDiffChecker {
 		new LinkedList<RangeDifference>();
 	private List<RangeDifference> diffsInRightTable = 
 		new LinkedList<RangeDifference>();
-	private List<RangeDifference> inTableDiffs;
+	private LinkedList<RangeDifference> inTableDiffs;
 	
 	private RangeDifference currentDiff;
 	private Range leftTable;
@@ -33,6 +33,10 @@ public class TableDiffChecker {
 	private int diffCount = 0, leftTCount = 0, rightTCount = 0;
 	private int currentlyProcessingDiffIdx = 0;
 	private int firstInTableDiffIdx = -1;
+	private int leftCommonStart = -1;
+	private int rightCommonStart = -1;
+	private int leftCommonEnd = -1;
+	private int rightCommonEnd = -1;
 	
 	private boolean completeDeletion = false;
 	private boolean completeInsertion = false;
@@ -221,6 +225,8 @@ public class TableDiffChecker {
 	    						TableDifference.TABLE_DIFF,
 	    						rightStart, rightEnd - rightStart,
 	    						leftStart, leftEnd - leftStart,
+	    						rightCommonStart, rightCommonEnd,
+	    						leftCommonStart, leftCommonEnd,
 	    						rightTable, leftTable,
 	    						rightTableNode, leftTableNode,
 	    						inTableDiffs
@@ -310,6 +316,7 @@ public class TableDiffChecker {
 				//means the right table is longer and only it contains 
 				//the last difference. 
 				if (!(leftIdx < (leftTCount - 1))){
+					figureCommonEnds(false, true);
 					//no more tables on the left side = no overlap behind
 					return true;
 				}
@@ -339,6 +346,7 @@ public class TableDiffChecker {
 			case Range.PRECEDES:
 				//means right table doesn't include the last diff
 				if (!(rightIdx < (rightTCount - 1))){
+					figureCommonEnds(true, false);
 					//no more tables on the right side = no overlap behind
 					return true;
 				}
@@ -372,6 +380,7 @@ public class TableDiffChecker {
 			(idxOfLastRightTableSurvivor != Range.NOT_DEFINED) &&
 			(rightSurvivorsTailLength == leftSurvivorsTailLength)){
 			//means the tables end with the same TextNode = no overlap
+			figureCommonEnds(false, false);
 			return true;
 		} else if (rightSurvivorsTailLength < leftSurvivorsTailLength){
 			//means right table ends first and 
@@ -398,12 +407,14 @@ public class TableDiffChecker {
 		}
 		//d).now we only need the next table on the check side if it exists.
 		if (checkSide == Range.LEFT){
+			figureCommonEnds(false, true);
 			if (leftIdx < (leftTCount - 1)){
 				overlapCandidate = leftTables.get(leftIdx + 1);
 			} else {
 				return true;//no more tables - no overlap behind
 			}
 		} else {
+			figureCommonEnds(true, false);
 			if (rightIdx < (rightTCount - 1)){
 				overlapCandidate = rightTables.get(rightIdx + 1);
 			} else {
@@ -414,6 +425,49 @@ public class TableDiffChecker {
 		int nextPosition = 
 			overlapCandidate.getRelativePosition(idxOfLastSurvivor);
 		return nextPosition == Range.FOLLOWS;
+	}
+	
+	protected void figureCommonEnds(
+			boolean leftTableLonger, boolean rightTableLonger){
+		if (leftTableLonger){
+			RangeDifference lastEarlyDiff = 
+				diffsInRightTable.get(diffsInRightTable.size() - 1);
+			int rightEnd = lastEarlyDiff.rightEnd();
+			if (rightTable.getEnd() < rightEnd){
+				//means diff ends past the table - 
+				//last common elem is before it
+				rightCommonEnd = lastEarlyDiff.rightStart() - 1;
+				leftCommonEnd = lastEarlyDiff.leftStart() - 1;
+			} else {
+				//means the shorter table ends with common elem
+				rightCommonEnd = rightTable.getEnd();
+				leftCommonEnd = 
+					lastEarlyDiff.leftEnd() +
+					   (rightCommonEnd - rightEnd);
+			}
+			return;
+		}
+		if (rightTableLonger){
+			RangeDifference lastEarlyDiff = 
+				diffsInLeftTable.get(diffsInLeftTable.size() - 1);
+			int leftEnd = lastEarlyDiff.leftEnd();
+			if (leftTable.getEnd() < leftEnd){
+				//means diff ends past the table - 
+				//last common elem is before it
+				leftCommonEnd = lastEarlyDiff.leftStart() - 1;
+				rightCommonEnd = lastEarlyDiff.rightStart() - 1;
+			} else {
+				//means the shorter table ends with common elem
+				leftCommonEnd = leftTable.getEnd();
+				rightCommonEnd = 
+					lastEarlyDiff.rightEnd() +
+					   (leftCommonEnd - leftEnd);
+			}
+			return;
+		}
+		//tables end on the same element
+		leftCommonEnd = leftTable.getEnd();
+		rightCommonEnd = rightTable.getEnd();
 	}
 	
 	protected boolean noOverlappingTablesInFront(){
@@ -470,6 +524,7 @@ public class TableDiffChecker {
 			//before the difference.
 			commonElementsBeforeFirstDiff = 0;
 		}
+		figureCommonStarts(leftTableEarlier, rightTableEarlier);
 		if (rightTableEarlier){
 			this.inTableDiffs.addAll(this.diffsInRightTable);
 			firstInTableDiffIdx = diffIdx + 1 - rightTableDiffsCount;
@@ -531,6 +586,49 @@ public class TableDiffChecker {
 		int position = prevTableOnLateSide.getRelativePosition(
 				lateSideFirstElem, lateSideTable.getStart());
 		return position == Range.PRECEDES;
+	}
+	
+	protected void figureCommonStarts(
+			boolean leftTableEarlier, boolean rightTableEarlier){
+		if (rightTableEarlier){
+			RangeDifference firstLateDiff = 
+				diffsInLeftTable.get(0);
+			int leftStart = firstLateDiff.leftStart();
+			if (leftStart <= leftTable.getStart()){
+				//the diff started before table - need following element
+				leftCommonStart = firstLateDiff.leftEnd();
+				rightCommonStart = firstLateDiff.rightEnd();
+			} else {
+				//means diff is inside the table - 
+				//first element of the left table is common
+				leftCommonStart = leftTable.getStart();
+				rightCommonStart = 
+					firstLateDiff.rightStart() - 
+					  (leftStart - leftCommonStart);
+			}
+			return;
+		}
+		if(leftTableEarlier){
+			RangeDifference firstLateDiff = 
+				diffsInRightTable.get(0);
+			int rightStart = firstLateDiff.rightStart();
+			if (rightStart <= rightTable.getStart()){
+				//the diff started before table - need following element
+				rightCommonStart = firstLateDiff.rightEnd();
+				leftCommonStart = firstLateDiff.leftEnd();
+			} else {
+				//means diff is inside the table - 
+				//first element of the left table is common
+				rightCommonStart = rightTable.getStart();
+				leftCommonStart = 
+					firstLateDiff.leftStart() - 
+					  (rightStart - rightCommonStart);
+			}
+			return;
+		}
+		//if we are here then the tables has same common start
+		leftCommonStart = leftTable.getStart();
+		rightCommonStart = rightTable.getStart();
 	}
 	
 	protected boolean tableHasNestedTable(

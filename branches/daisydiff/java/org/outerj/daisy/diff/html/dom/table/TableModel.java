@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.TreeSet;
 
 import org.outerj.daisy.diff.html.dom.Node;
+import org.outerj.daisy.diff.html.dom.Range;
 import org.outerj.daisy.diff.html.dom.TagNode;
 import org.outerj.daisy.diff.html.dom.TextNode;
 import static org.outerj.daisy.diff.html.dom.table.TableStatics.*;
@@ -75,8 +76,9 @@ public class TableModel{
 	//*-----------------------------------------------------------------------*
 	
 	private TagNode tableTagNode = null;
-	private ArrayList<CellSet> rows = null;
-	private ArrayList<CellSet> columns = null;
+	private Range tableRange = null;
+	private ArrayList<ICellSet> rows = null;
+	private ArrayList<ICellSet> columns = null;
 	private TreeSet<String> content = null;
 	
 	/**************************************************************************
@@ -85,31 +87,36 @@ public class TableModel{
 	 * @throws @see java.lang.IllegalArgumentException - if the 
 	 * parameter is <code>null</code> or is not a table tag
 	 */
-	public TableModel(TagNode tableTag){
+	public TableModel(TagNode tableTag, Range tableRange){
 		if (tableTag == null || !TABLE_TAG_NAME.equals(tableTag.getQName())) {
 			throw new IllegalArgumentException(
 					"Can only build a table from not-null TABLE TagNode");
 		}
 		//remember where we came from
 		tableTagNode = tableTag;
+		this.tableRange = tableRange;
 		//processing the content of the table tag.
 		if (tableTagNode.getNbChildren() > 0){
-			rows = new ArrayList<CellSet>();
+			int rangeIdx = Range.NOT_DEFINED;
+			if (tableRange != null){
+				rangeIdx = tableRange.getStart();
+			}
+			rows = new ArrayList<ICellSet>();
 			content = new TreeSet<String>();
 			int idx = 0;
 			//figure out rows
-			appendChildRows(tableTagNode, idx, null);
+			appendChildRows(tableTagNode, idx, null, rangeIdx);
 			//figure out columns
 			if (rows.size() > 0){
 				//how many columns?
 				int colCount = ((TableRowModel)rows.get(0)).getLengthInCols();
 				//create them
-				columns = new ArrayList<CellSet>(colCount);
+				columns = new ArrayList<ICellSet>(colCount);
 				for (int i = 0; i < colCount; i++){
 					columns.add(new TableColumnModel(i));
 				}
 				//populate them
-				for (CellSet row : rows){
+				for (ICellSet row : rows){
 					int i = 0;
 					for (TableCellModel cell : row){
 						((TableColumnModel)columns.get(i)).appendCell(cell);
@@ -193,11 +200,11 @@ public class TableModel{
 		}
 	}
 	
-	public List<CellSet> getRows(){
+	public List<ICellSet> getRows(){
 		return rows;
 	}
 	
-	public CellSet getRow(int idx){
+	public ICellSet getRow(int idx){
 		if (idx < 0 || getRowCount() <= idx){
 			return null;
 		} else {
@@ -205,7 +212,7 @@ public class TableModel{
 		}
 	}
 	
-	public List<CellSet> getColumns(){
+	public List<ICellSet> getColumns(){
 		return columns;
 	}
 	
@@ -218,7 +225,8 @@ public class TableModel{
 	 * immediate child (like "tbody")
 	 */
 	protected TableRowModel appendChildRows(
-			TagNode parent, int startIndex, TableRowModel previousRow){
+			TagNode parent, int startIndex, 
+			TableRowModel previousRow, int rangeStart){
 		//make sure we actually have the children tags to process
 		if (parent == null || parent.getNbChildren() == 0){
 			return previousRow;
@@ -238,18 +246,22 @@ public class TableModel{
 					if (previousRow != null && 
 						previousRow.getMaxSpanDown() >= NO_SPAN){
 						previousRow = new TableRowModel(
-							tagChild, idx, previousRow.getSpannedDown());
+							tagChild, idx, 
+							previousRow.getSpannedDown(), rangeStart);
 					} else {
-						previousRow = new TableRowModel(tagChild, idx);
+						previousRow = new TableRowModel(
+								tagChild, idx, rangeStart);
 					}
 					rows.add(previousRow);
 					content.addAll(previousRow.getContent());
 					idx++;
+					rangeStart = previousRow.getEndOfRange() + 1;
 				} else if (TABLE_SECTION_NAMES.contains(childName)){
 					//we are inside "thead", "tbody" or "tfoot" tag
 					previousRow = 
-						appendChildRows(tagChild, idx, previousRow);
+						appendChildRows(tagChild, idx, previousRow, rangeStart);
 					idx = previousRow.getIndex();
+					rangeStart = previousRow.getRange().getEnd() + 1;
 				} else {
 					//TO DO: process col, colgroup and caption tags
 				}

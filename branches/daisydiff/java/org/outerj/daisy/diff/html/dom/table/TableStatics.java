@@ -25,6 +25,8 @@ public class TableStatics {
 	public static final String COLSPAN_ATTRIBUTE = "colspan";
 	public static final int NO_SPAN = 1;
 	public static final int OUTSIDE = -1;
+	public static final String NBSP = "\240";
+	public static final String SPACE = " ";
 
 	public static final SortedSet<String> TOO_COMMON;
 	static{
@@ -37,7 +39,7 @@ public class TableStatics {
 						  "of", "for", "from", "by", "at",
 						  "$", ",", ".", ":", ";", "!", "?", 
 						  "-", "(", ")",
-						  "\240"
+						  NBSP
 						})));
 	}
 	
@@ -65,6 +67,20 @@ public class TableStatics {
 			return false;
 		}
 		if (TOO_COMMON.contains(text)){
+			return false;
+		} else {
+			return true;
+		}
+	}
+	
+	public static boolean isNotWhiteSpace(String text){
+		if (text == null || text.length() == 0){
+			throw new IllegalArgumentException(
+					"No null or empty parameters allowed"); 
+		}
+		text = text.replaceAll("\\s|" + NBSP, SPACE);
+		text = text.trim();
+		if (text.length() == 0){
 			return false;
 		} else {
 			return true;

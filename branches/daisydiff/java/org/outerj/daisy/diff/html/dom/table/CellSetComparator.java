@@ -5,9 +5,9 @@ import java.util.List;
 import org.eclipse.compare.rangedifferencer.IRangeComparator;
 
 public class CellSetComparator implements IRangeComparator {
-	List<CellSet> source;
+	List<ICellSet> source;
 	
-	public CellSetComparator(List<CellSet> source){
+	public CellSetComparator(List<ICellSet> source){
 		if (source == null){
 			throw new IllegalArgumentException(
 					"No null parameters allowed");
@@ -15,7 +15,7 @@ public class CellSetComparator implements IRangeComparator {
 		this.source = source;
 	}
 	
-	public CellSet getCellSet(int index){
+	public ICellSet getCellSet(int index){
 		return source.get(index);
 	}
 	
@@ -37,8 +37,40 @@ public class CellSetComparator implements IRangeComparator {
 		} catch (RuntimeException ex){
 			return false;
 		}
-		return this.getCellSet(thisIndex).hasCommonContent(
-				another.getCellSet(otherIndex));
+		//get the comparing elements
+		ICellSet thisElem = this.getCellSet(thisIndex);
+		ICellSet otherElem = another.getCellSet(otherIndex);
+		//do they have the content?
+		if (thisElem.hasContent()){ 
+			if (otherElem.hasContent()){
+				return thisElem.hasCommonContent(otherElem);
+			} else {
+				return false;
+			}
+		} else {
+			if (otherElem.hasContent()){
+				return false;
+			} else {
+				//both sets don't have valuable content - 
+				//are they empty?
+				if (thisElem.isEmpty()){
+					if (otherElem.isEmpty()){
+						return true;//both empty
+					} else {
+						return false;
+					}
+				} else {
+					if (otherElem.isEmpty()){
+						return false;
+					} else {
+						//both are not empty and have no valuable content
+						//they might be literally equal
+						return thisElem.hasSameText(otherElem);
+					}
+				}
+			}
+		}
+		
 	}
 
 	@Override

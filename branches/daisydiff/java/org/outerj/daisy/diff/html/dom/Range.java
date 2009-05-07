@@ -168,20 +168,27 @@ public class Range implements Comparable<Range>{
 		}
 		//on which side are we?
 		if (left){
-			if (diff.leftEnd() <= this.start || 
-				this.end < diff.leftStart()){
-				return true;
-			} else {
-				return false;
-			}
+			return doesNotContain(diff.leftStart(),diff.leftEnd() - 1);
 		} else {
-			if (diff.rightEnd() <= this.start || 
-				this.end < diff.rightStart()){
+			return doesNotContain(diff.rightStart(),diff.rightEnd() - 1);
+		}
+	}
+
+	public boolean doesNotContain(Range other){
+		if (other == null){
+			return true;
+		} else {
+			return doesNotContain(other.getStart(), other.getEnd());
+		}
+	}
+	
+	public boolean doesNotContain(int start, int end){
+		if (end < this.start || 
+				this.end < start){
 				return true;
 			} else {
 				return false;
 			}
-		}
 	}
 	
 	public boolean doesNotContain(int point){

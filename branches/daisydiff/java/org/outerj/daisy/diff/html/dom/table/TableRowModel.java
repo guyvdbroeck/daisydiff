@@ -6,23 +6,23 @@ import java.util.ArrayList;
 import java.util.TreeSet;
 
 import org.outerj.daisy.diff.html.dom.Node;
+import org.outerj.daisy.diff.html.dom.Range;
 import org.outerj.daisy.diff.html.dom.TagNode;
 
 import static org.outerj.daisy.diff.html.dom.table.TableStatics.*;
 
-public class TableRowModel 
-	   implements CellSet{
+public class TableRowModel extends CellSetStub {
 
 	//*-----------------------------------------------------------------------*
 	//*                          Row Model itself                             *
 	//*-----------------------------------------------------------------------*
 
 	private TagNode rowTagNode = null;
+	private Range rowRange = null;
 	private int index = OUTSIDE;
-	private ArrayList<TableCellModel> cells = null;
 	private ArrayList<TableCellModel> spannedDownCells = null;
 	private int maxSpanDown = 0;
-	private TreeSet<String> content = null;
+	private boolean empty = true;
 	
 	/**************************************************************************
 	 * Creates a model from the row out of the <code>TagNode</code> tree.
@@ -30,13 +30,14 @@ public class TableRowModel
 	 * @throws @see java.lang.IllegalArgumentException - if the 
 	 * parameter is <code>null</code> or is not a row tag
 	 */
-	public TableRowModel(TagNode rowTag, int rowIndex){
+	public TableRowModel(TagNode rowTag, int rowIndex, int rangeStart){
 		if (rowTag == null || !ROW_TAG_NAME.equals(rowTag.getQName())){
 			throw new IllegalArgumentException(
 					"Can only build a row from not-null ROW TagNode");
 		}
 		//remember where we came from 
 		rowTagNode = rowTag;
+		rowRange = new Range(rangeStart);
 		
 		//remember our place in the table
 		index = (rowIndex < 0)? OUTSIDE : rowIndex;
@@ -53,9 +54,10 @@ public class TableRowModel
 					if (CELL_TAG_NAME.equals(childName) || 
 						HEADER_CELL_TAG_NAME.equals(childName)){
 						//it's a cell tag!
-						TableCellModel cell = 
-							new TableCellModel(tagChild, index, idx);
-						
+						TableCellModel cell = new TableCellModel(
+								tagChild, index, idx, rangeStart);
+						rangeStart = cell.getEndOfRange();
+						rowRange.setEnd(rangeStart++);
 						//if the cell spans several rows, then 
 						//it will be omitted in the following
 						//rows, so we must take a note.
@@ -88,6 +90,9 @@ public class TableRowModel
 						if (cellContent != null){
 							content.addAll(cell.getContent());
 						}
+						if (empty && !cell.isEmpty()){
+							empty = false;
+						}
 					} else {
 						//child of a table row isn't a cell? some kind of mistake
 						System.out.println("ERROR in HTML table code: " +
@@ -113,7 +118,8 @@ public class TableRowModel
 	 * parameter is <code>null</code> or is not a row tag
 	 */
 	public TableRowModel(
-			TagNode rowTag, int rowIndex, List<TableCellModel> spannedCells){
+			TagNode rowTag, int rowIndex, 
+			List<TableCellModel> spannedCells, int rangeStart){
 		if (rowTag == null || !ROW_TAG_NAME.equals(rowTag.getQName())){
 			throw new IllegalArgumentException(
 					"Can only build a row from not-null ROW TagNode");
@@ -126,6 +132,7 @@ public class TableRowModel
 
 		//remember where we came from 
 		rowTagNode = rowTag;
+		rowRange = new Range(rangeStart);
 
 		//remember our place in the table
 		index = (rowIndex < 0)? OUTSIDE : rowIndex;
@@ -209,9 +216,11 @@ public class TableRowModel
 					if (CELL_TAG_NAME.equals(childName) || 
 						HEADER_CELL_TAG_NAME.equals(childName)){
 						//it's a cell tag!
-						TableCellModel cell = 
-							new TableCellModel(tagChild, index, idx);
-							
+						TableCellModel cell = new TableCellModel(
+								tagChild, index, idx, rangeStart);
+						rangeStart = cell.getEndOfRange();
+						rowRange.setEnd(rangeStart++);
+						
 						//if the cell spans several rows, then 
 						//it will be omitted in the following
 						//rows, so we must take a note.
@@ -268,45 +277,8 @@ public class TableRowModel
 	//*                  CellSet interface implementation                     *
 	//*-----------------------------------------------------------------------*
 	@Override
-	public TreeSet<String> getContent(){
-		return content;
-	}
-
-	@Override
-	public boolean hasCommonContent(CellSet another){
-		try{
-			//remember - both contents are sorted and do not contain duplicates
-			Iterator<String> anotherContent = another.getContent().iterator();
-			Iterator<String> myContent = getContent().iterator();
-			String otherContentItem = anotherContent.next();
-			String myContentItem = myContent.next();
-			boolean moreContent = true;
-			do{
-				int comparisonResult = 
-					myContentItem.compareTo(otherContentItem);
-				if (comparisonResult < 0){
-					//means myContentItem precedes the other
-					if (myContent.hasNext()){
-						myContentItem = myContent.next();
-					} else {
-						moreContent = false;
-					}
-				} else if (comparisonResult > 0){
-					//means myContentItem follows the other
-					if (anotherContent.hasNext()){
-						otherContentItem = anotherContent.next();
-					} else {
-						moreContent = false;
-					}
-				} else {//found common content
-					return true;
-				}
-			} while (moreContent);
-		} catch (RuntimeException ex){
-			return false;
-		}
-		return false;
-		
+	public boolean isEmpty(){
+		return empty;
 	}
 	
 	@Override
@@ -332,5 +304,17 @@ public class TableRowModel
 	
 	public int getLengthInCols(){
 		return cells.size();
+	}
+	
+	public Range getRange(){
+		return rowRange;
+	}
+	
+	public int getEndOfRange(){
+		if (rowRange == null){
+			return Range.NOT_DEFINED;
+		} else {
+			return rowRange.getEnd();
+		}
 	}
 }
