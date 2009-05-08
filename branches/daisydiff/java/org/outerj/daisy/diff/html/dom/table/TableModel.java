@@ -165,6 +165,10 @@ public class TableModel{
 		return false;
 	}
 	
+	public void addRowToTheTree(TableRowModel deletedRow, int desiredIdx){
+		
+	}
+	
 	//*-----------------------------------------------------------------------*
 	//*                           getters/setters                             *
 	//*-----------------------------------------------------------------------*
@@ -209,6 +213,14 @@ public class TableModel{
 			return null;
 		} else {
 			return rows.get(idx);
+		}
+	}
+	
+	public TableRowModel getRowCopy(int idx){
+		if (idx < 0 || getRowCount() <= idx){
+			return null;
+		} else {
+			return ((TableRowModel)rows.get(idx)).copy();
 		}
 	}
 	

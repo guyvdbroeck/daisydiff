@@ -104,6 +104,54 @@ public class TableCellModel{
 		}
 	}
 	
+	protected TableCellModel(){
+		
+	}
+	
+	public boolean tagParentEquals(TagNode rowTag){
+		TagNode cellTagParent = cellTagNode.getParent();
+		if (rowTag == cellTagParent){
+			return true;
+		}
+		if (cellTagParent == null){
+			return false;
+		} else {
+			return cellTagParent.equals(rowTag);
+		}
+	}
+	
+	public void setTagParent(TagNode rowTag){
+		if (rowTag == null || ROW_TAG_NAME.equals(rowTag.getQName())){
+			cellTagNode.setParent(rowTag);
+		} else {
+			throw new IllegalArgumentException(
+					"Only ROW tag can be a cell tag parent!");
+		}
+	}
+	
+	public TableCellModel copy(){
+		TableCellModel cellCopy = new TableCellModel();
+		cellCopy.setCellTagNode((TagNode)getCellTagNode().copyTree());
+		cellCopy.setRange(cellRange.copy());
+		cellCopy.setContent(new TreeSet<String>(content));
+		cellCopy.setTextNodes(new ArrayList<TextNode>(textNodes));
+		cellCopy.setRowSpan(rowSpan);
+		cellCopy.setColSpan(colSpan);
+		cellCopy.setEmpty(empty);
+		return cellCopy;
+	}
+	
+	public TableCellModel lightCopy(){
+		TableCellModel cellCopy = new TableCellModel();
+		cellCopy.setCellTagNode((TagNode)getCellTagNode().copyTree());
+		cellCopy.setRange(cellRange.copy());
+		cellCopy.setTextNodes(new ArrayList<TextNode>(textNodes));
+		cellCopy.setRowSpan(rowSpan);
+		cellCopy.setColSpan(colSpan);
+		cellCopy.setEmpty(empty);
+		return cellCopy;
+	}
+	
 	//*-----------------------------------------------------------------------*
 	//*                           getters/setters                             *
 	//*-----------------------------------------------------------------------*
@@ -146,6 +194,62 @@ public class TableCellModel{
 		} else {
 			return cellRange.getEnd();
 		}
+	}
+	
+	public TagNode getCellTagNode(){
+		return cellTagNode;
+	}
+	
+	protected void setCellTagNode(TagNode cellTag){
+		if (cellTag == null){
+			throw new IllegalArgumentException(
+					"No null parameters allowed!");
+		}
+		String name = cellTag.getQName();
+		
+		//figure whether it's a cell tag and of what kind
+		if (HEADER_CELL_TAG_NAME.equals(name)){
+			headerCell = true;
+		} else if (!CELL_TAG_NAME.equals(name)){
+			throw new IllegalArgumentException(
+					"the passed tag is not a cell tag!");
+		}
+		
+		//remember the origin
+		cellTagNode = cellTag;
+		
+	}
+	
+	protected void setRange(Range cellRange){
+		this.cellRange = cellRange;
+	}
+	
+	protected void setContent(TreeSet<String> newContent){
+		this.content = newContent;
+	}
+	
+	protected void setTextNodes(ArrayList<TextNode> textNodes){
+		this.textNodes = textNodes;
+	}
+	
+	protected void setRowSpan(int value){
+		this.rowSpan = (value < 0)? 0 : value;
+	}
+	
+	protected void setColSpan(int value){
+		this.colSpan = (value < 0)? 0 : value;
+	}
+	
+	protected void setRowIndex(int value){
+		this.rowIndex = (value < 0)? OUTSIDE : value;
+	}
+	
+	protected void setColIndex(int value){
+		this.colIndex = (value < 0)? OUTSIDE : value;
+	}
+	
+	protected void setEmpty(boolean value){
+		this.empty = value;
 	}
 	
 	//*-----------------------------------------------------------------------*

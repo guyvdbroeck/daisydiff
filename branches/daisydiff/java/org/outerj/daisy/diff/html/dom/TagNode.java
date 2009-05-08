@@ -498,6 +498,14 @@ public class TagNode extends Node implements Iterable<Node> {
     	newThis.setWhiteAfter(isWhiteAfter());
     	return newThis;
     }
+    
+    public TagNode shallowCopy(){
+    	TagNode newThis = new TagNode(
+    			null, getQName(), getAttributes());
+    	newThis.setWhiteAfter(isWhiteAfter());
+    	newThis.setWhiteBefore(isWhiteBefore());
+    	return newThis;
+    }
 
     public double getMatchRatio(TagNode other) {
         TextOnlyComparator txtComp = new TextOnlyComparator(other);

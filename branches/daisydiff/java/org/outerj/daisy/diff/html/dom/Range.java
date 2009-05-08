@@ -325,4 +325,8 @@ public class Range implements Comparable<Range>{
 	public int getRelativePosition(int point){
 		return getRelativePosition(point, point);
 	}
+	
+	public Range copy(){
+		return new Range(getStart(), getEnd());
+	}
 }

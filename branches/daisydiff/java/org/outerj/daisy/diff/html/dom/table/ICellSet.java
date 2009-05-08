@@ -14,4 +14,5 @@ public interface ICellSet extends Iterable<TableCellModel>{
 	public boolean hasCommonContent(ICellSet another);
 	public boolean hasSameText(ICellSet another);
 	public TreeSet<String> getContent();
+	public DistinctCellIterator getDistinctIterator();
 }

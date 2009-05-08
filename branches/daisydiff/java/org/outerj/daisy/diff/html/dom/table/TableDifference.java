@@ -22,14 +22,7 @@ public class TableDifference extends RangeDifference {
 	public static final int COLUMN_REMOVED = 15;
 	public static final int COLUMN_ADDED = 16;
 	public static final int COLUMN_SUBSTITUTION = 17;
-/*
-	public static final int COMPL_TABLE = 9;
-	public static final int OUTSIDE = 10;
-	public static final int D_BEFORE_T = 11;
-	public static final int D_IN_T = 12;
-	public static final int I_IN_T = 13;
-	public static final int CH_IN_T = 14;
-*/	
+
 	private Range leftRange;
 	private Range rightRange;
 	private Range leftCommonRange;
@@ -92,9 +85,6 @@ public class TableDifference extends RangeDifference {
 			} else {
 				sameDimension = false;
 			}
-			//1). figure heading diffs - where the text is outside of the table
-			//but only in one of the docs
-			figureHeadingTailingDiff();
 			
 			//2).go by row first
 			//2a). find the difference the regular way
@@ -116,15 +106,14 @@ public class TableDifference extends RangeDifference {
 	        	RangeDifferencer.findDifferences(oldColumnComp, newColumnComp);
 	        //3b). refine it
 	        colDiffs = refineColDiff(rawColDiffs, sameDimension);
-			//4).go by cells
-			//we need to process only no-diff rows and merged/split rows
+			//4).go by rows again, finding cell diffs and marking nodes
 	        if (sameDimension){
 	        	getCoordCellDiff();
 	        } else {
 	        	getCellDiff();
 	        }
-	    	//do the marking
-	        return null;
+	    	//do the marking?
+	        return new LinkedList<RangeDifference>();
 		} else {
 			//if no common content -
 			LinkedList<RangeDifference> result = 
@@ -152,18 +141,52 @@ public class TableDifference extends RangeDifference {
 	}
 	
 	protected void getCoordCellDiff(){
+		//what we need to do is:
+		//1. if new table starts later than the old - 
+		//      then the "uncommon beginning" is listed ahead of the row diff
+		//      else we need to separate deletions to place them
+		//           before the table and the rest is "intermixed" with the row
+		//           diffs
+		//2. from the common piece remove textual diff in the rows
+		//   that were "added" and "deleted" completely and "substituted"
+		//3. from the common piece in all other rows 
+		//   (merged, split, "common content") we need to remove
+		//    textual diff in the columns that were "added" or "deleted"
+		//4. from the "uncommon tail" if the old table ends earlier
+		//   we need to separate deletions to place the after the table.
+		
+		LinkedList<RangeDifference> result = new LinkedList<RangeDifference>();
+		
+		LinkedList<RangeDifference> uBeginning = 
+			new LinkedList<RangeDifference>();
+		
+		
 		Iterator<?> rightRows = rightTable.getRows().iterator();
-		int rightCommonRowIdx = 0;
-		TableRowModel rightCurrentRow = (TableRowModel)rightRows.next();
+		TableRowModel rightTRow = (TableRowModel)rightRows.next();
+		Range rightTRowRange = rightTRow.getRange(); 
+		Iterator<RangeDifference> plainDiffs = textDiff.iterator();
+		int plainDiffIdx = 0;
+		RangeDifference plainDiff = plainDiffs.next();
+		//1a. Does the new table start later?
+		boolean newTableEarly = 
+			(rightRange.getStart() < rightCommonRange.getStart());
+		boolean oldTableEarly = 
+			(leftRange.getStart() < leftCommonRange.getStart());
+		if (newTableEarly || oldTableEarly){
+			
+		}
+		
+/*		
 		while (rightCommonRange.doesNotContain(rightCurrentRow.getRange()) &&
 			   rightRows.hasNext()){
 			rightCurrentRow = (TableRowModel)rightRows.next();
 		}
-		Range currentRightRowRange = rightCurrentRow.getRange(); 
 		rightCommonRowIdx = rightCurrentRow.getIndex();
-		Iterator<RangeDifference> plainDiffs = textDiff.iterator();
-		//TO DO: make sure there is no in-table insertions 
-		//before common content! Or handle them
+		
+		
+		
+		
+		
 		int plainDiffIdx = 0;
 		RangeDifference currentPlainDiff = plainDiffs.next();
 		while (plainDiffIdx < this.headingDiffsIdx && plainDiffs.hasNext()){
@@ -187,6 +210,7 @@ public class TableDifference extends RangeDifference {
 			}
 			
 		}
+*/
 	}
 	
 	
@@ -436,29 +460,11 @@ public class TableDifference extends RangeDifference {
 		return result;
 	}
 	
-	protected void figureHeadingTailingDiff(){
-		this.headingDiffsIdx = -1;
-		this.tailingDiffsIdx = this.textDiff.size();
-		Iterator<RangeDifference> fromTail = textDiff.descendingIterator();
-		Iterator<RangeDifference> fromHead = textDiff.iterator();
-		boolean seekingTailIdx = true;
-		boolean seekingHeadIdx = true;
-		while ((seekingTailIdx || seekingHeadIdx) &&
-			   fromTail.hasNext() && fromHead.hasNext()){
-			RangeDifference diff = fromTail.next();
-			if (seekingTailIdx && 
-				leftCommonRange.doesNotContain(diff, Range.LEFT)){
-					tailingDiffsIdx--;
-			} else {//found
-				seekingTailIdx = false;
-			}
-			diff = fromHead.next();
-			if (seekingHeadIdx &&
-				leftCommonRange.doesNotContain(diff, Range.LEFT)){
-					headingDiffsIdx++;
-			} else {//found
-				seekingHeadIdx = false;
-			}
-		}
+	public int getCommonLeftEnd(){
+		return this.leftCommonRange.getEnd() + 1;
+	}
+	
+	public int getCommonRightEnd(){
+		return this.rightCommonRange.getEnd() + 1;
 	}
 }

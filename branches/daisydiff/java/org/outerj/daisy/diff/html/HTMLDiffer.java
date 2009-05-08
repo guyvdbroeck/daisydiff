@@ -81,15 +81,18 @@ public class HTMLDiffer {
             }
             if (d instanceof TableDifference){
             	//process here
+            	TableDifference td = (TableDifference)d;
+                currentIndexLeft = td.getCommonLeftEnd();
+                currentIndexRight = td.getCommonRightEnd();
             } else {
 	            if (d.leftLength() > 0) {
 	                rightComparator.markAsDeleted(d.leftStart(), d.leftEnd(),
 	                        leftComparator, d.rightStart());
 	            }
 	            rightComparator.markAsNew(d.rightStart(), d.rightEnd());
+	            currentIndexLeft = d.leftEnd();
+	            currentIndexRight = d.rightEnd();
             }
-            currentIndexLeft = d.leftEnd();
-            currentIndexRight = d.rightEnd();
         }
         if (currentIndexLeft < leftComparator.getRangeCount()) {
             rightComparator.handlePossibleChangedPart(currentIndexLeft,

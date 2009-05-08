@@ -128,103 +128,22 @@ public class TableDiffChecker {
 	    				result.add(processingDiffs.next());
 	    				currentlyProcessingDiffIdx++;
 	    			}
-	    			int rightStart, rightEnd, leftStart, leftEnd;
-	    			//separate "out of tables" parts of the firstInTable diff
-	    			//a). in front
-	    			RangeDifference edgeTDiff = inTableDiffs.get(0);
-	    			int leftOuterDiffLength = 0;
-	    			int leftPosition = leftTable.getRelativePosition(
-	    					edgeTDiff, Range.LEFT);
-	    			if (leftPosition == Range.INTERSECTS_FOLLOWS){
-	    				leftOuterDiffLength = 
-	    					leftTable.getStart() - edgeTDiff.leftStart();
-	    			}
-	    			int rightOuterDiffLength = 0;
-	    			int rightPosition = rightTable.getRelativePosition(
-	    					edgeTDiff, Range.RIGHT);
-	    			if (rightPosition == Range.INTERSECTS_FOLLOWS){
-	    				rightOuterDiffLength = 
-	    					rightTable.getStart() - edgeTDiff.rightStart();
-	    			}
-	    			rightStart = edgeTDiff.rightStart() + rightOuterDiffLength;
-	    			leftStart = edgeTDiff.leftStart() + leftOuterDiffLength;
-	    			RangeDifference piece = null;
-	    			if (leftOuterDiffLength > 0 ||rightOuterDiffLength > 0){
-	    				//add the diff outside of the tables to the result
-	    				piece = new RangeDifference(
-	    					edgeTDiff.kind(),
-	    					edgeTDiff.rightStart(),
-	    					rightOuterDiffLength,
-	    					edgeTDiff.leftStart(),
-	    					leftOuterDiffLength);
-	    				result.add(piece);
-	    				//substitute first in-tables diff with the one that
-	    				//will be completely inside one of the tables
-	    				piece =  new RangeDifference(
-	    					edgeTDiff.kind(),
-	    					rightStart,
-	    					edgeTDiff.rightLength() - rightOuterDiffLength,
-	    					leftStart,
-	    					edgeTDiff.leftLength() - leftOuterDiffLength);
-	    				inTableDiffs.remove(0);
-	    				inTableDiffs.add(0, piece);
-	    			}
 	    			
-	    			//b). separate diff behind the tables
-	    			piece = null;
-	    			edgeTDiff = inTableDiffs.get(inTableDiffs.size() - 1);
-	    			//see if the last in-table diff is the current.
-	    			//if not - we have to move diffIdx back to not skip 
-	    			//the current
-	    			if (edgeTDiff != currentDiff){
-	    				diffIdx--;
-	    			}
-	    			//now figure if the last in-table diff goes past the tables
-	    			leftOuterDiffLength = 0;
-	    			leftPosition = leftTable.getRelativePosition(
-	    					edgeTDiff, Range.LEFT);
-	    			if (leftPosition == Range.PRECEDES_INTERSECTS){
-	    				leftOuterDiffLength = 
-	    					edgeTDiff.leftEnd() - leftTable.getEnd() - 1;
-	    			}
-	    			rightOuterDiffLength = 0;
-	    			rightPosition = rightTable.getRelativePosition(
-	    					edgeTDiff, Range.RIGHT);
-	    			if (rightPosition == Range.PRECEDES_INTERSECTS){
-	    				rightOuterDiffLength = 
-	    					edgeTDiff.rightEnd() - rightTable.getEnd() - 1;
-	    			}
-	    			rightEnd = edgeTDiff.rightEnd() - rightOuterDiffLength;
-	    			leftEnd = edgeTDiff.leftEnd() - leftOuterDiffLength;
-	    			if (leftOuterDiffLength > 0 || rightOuterDiffLength > 0){
-	    				//substitute the last in-table diff with the one
-	    				//that will be completely inside one of the tables.
-	    				piece = new RangeDifference(
-	    					edgeTDiff.kind(),
-	    					edgeTDiff.rightStart(),
-	    					edgeTDiff.rightLength() - rightOuterDiffLength,
-	    					edgeTDiff.leftStart(),
-	    					edgeTDiff.leftLength() - leftOuterDiffLength);
-	    				inTableDiffs.remove(inTableDiffs.size() - 1);
-	    				inTableDiffs.add(piece);
-	    				//prepare the piece to insert after the table diff
-	    				piece = new RangeDifference(
-	    					edgeTDiff.kind(),
-	    					rightEnd,
-	    					rightOuterDiffLength,
-	    					leftEnd,
-	    					leftOuterDiffLength);
-	    			}
+	    			LinkedList<RangeDifference> tail = 
+	    				sortOutInTableDiffs();
+	    			
 	    			//create table difference 
+	    			int leftStart = leftTable.getStart();
+	    			int rightStart = rightTable.getStart();
 	    			TagNode leftTableNode = TableModel.getTableAncestor(
-	    					leftComp.getTextNode(leftTable.getStart()));
+	    					leftComp.getTextNode(leftStart));
 	    			TagNode rightTableNode = TableModel.getTableAncestor(
-	    					rightComp.getTextNode(rightTable.getStart()));
+	    					rightComp.getTextNode(rightStart));
 	    			TableDifference tableDiff = 
 	    				new TableDifference(
 	    						TableDifference.TABLE_DIFF,
-	    						rightStart, rightEnd - rightStart,
-	    						leftStart, leftEnd - leftStart,
+	    						rightStart, rightTable.getEnd() - rightStart,
+	    						leftStart, leftTable.getEnd() - leftStart,
 	    						rightCommonStart, rightCommonEnd,
 	    						leftCommonStart, leftCommonEnd,
 	    						rightTable, leftTable,
@@ -232,26 +151,181 @@ public class TableDiffChecker {
 	    						inTableDiffs
 	    						);
 	    			//add the table diff to the result
-	    			List<RangeDifference> temp = tableDiff.execute();
-	    			if (temp != null){
-	    				result.addAll(temp);
-	    			}
+    				result.add(tableDiff);
 	    			//add the "outer" piece if it exists
-	    			if (piece != null){
-	    				result.add(piece);
-	    			}
+    				result.addAll(tail);
 	    			//move the "currentlyProcessingDiffIdx" 
 	    			//to the current diff to skip all the normal diff
 	    			//that we have replaced with table diff
 	    			currentlyProcessingDiffIdx = 
 	    				firstInTableDiffIdx + inTableDiffs.size();
 	    			//resume processing
-	    			
 	    		} 
 	    	}
     	}
     	//release not needed resources
     	return result;
+	}
+	
+	protected LinkedList<RangeDifference> sortOutInTableDiffs(){
+		//release all the differences that are 
+		//in the left table, but not in the right table 
+		//to be handled in the regular way in addition 
+		//to table diff. 
+		int tDiffCount = inTableDiffs.size();
+		int count = 0;
+		int cursor = 0;
+		RangeDifference piece = null;
+		RangeDifference diff = inTableDiffs.get(cursor);
+		boolean goOn = true;
+		while (count < tDiffCount && goOn){
+			//move it to the result if it's only in left table
+			diff = inTableDiffs.get(cursor);
+			if (rightTable.doesNotContain(diff, Range.RIGHT)){
+				result.add(diff);
+				inTableDiffs.removeFirst();
+				count++;
+			} else {
+				goOn = false;
+   				//check if we need to "cut out" the piece
+   				//outside of the right table
+				int drStart = diff.rightStart();
+				int rtStart = rightTable.getStart();
+				if (drStart < rtStart){
+					//means we have outside piece
+					int dlStart =  diff.leftStart();
+					int dlEnd = diff.leftEnd();
+					int lSplitPoint = Math.min(
+							leftTable.getStart(), dlEnd);
+					piece = new RangeDifference(
+								diff.kind(),
+								drStart, rtStart - drStart,
+								dlStart, lSplitPoint - dlStart);
+					result.add(piece);
+					//now substitute the diff in the list
+					//with the remaining piece
+					piece = new RangeDifference(
+							diff.kind(),
+							rtStart, diff.rightEnd() - rtStart,
+							lSplitPoint, dlEnd - lSplitPoint);
+					inTableDiffs.removeFirst();
+					inTableDiffs.addFirst(piece);
+				}
+			}
+		}
+		//now get to the common diffs
+		//if left table started late
+		goOn = true;
+		while (count < tDiffCount && goOn){
+			//keep it if it's only in right table
+				diff = inTableDiffs.get(cursor);
+				if (leftTable.doesNotContain(diff, Range.LEFT)){
+   				cursor++;
+   				count++;
+				} else {
+					goOn = false;
+   				//check the first diff if we need to cut out
+   				//the outsideof left table diff. We only need this
+   				//if the left table started late
+					if (cursor > 0){
+   					int dlStart = diff.leftStart();
+   					int ltStart = leftTable.getStart();
+   					if (dlStart < ltStart){
+   						//means we have outside piece
+   						int drStart =  diff.rightStart();
+   						int drEnd = diff.rightEnd();
+   						piece = new RangeDifference(
+   									diff.kind(),
+   									drStart, drEnd,
+   									dlStart, ltStart - dlStart);
+   						//now substitute the diff in the list
+   						//with the piece. 
+   						//We don't need the common part
+   						inTableDiffs.remove(cursor);
+   						inTableDiffs.add(cursor, piece);
+   					}
+					}
+				}
+		} 
+		//now remove all common diffs, 
+		goOn = true;
+		RangeDifference lastCommonDiff = diff;
+		while (count < tDiffCount && goOn){
+			diff = inTableDiffs.get(cursor);
+			
+			if (rightTable.doesNotContain(diff, Range.RIGHT)||
+				leftTable.doesNotContain(diff, Range.LEFT)){
+				goOn = false;
+			} else { //in both tables
+				lastCommonDiff = diff;
+				inTableDiffs.remove(cursor);
+				count++;
+			}
+		}
+		//in the last common diff split the common from uncommon
+		//part if there's something
+		int dlEnd = lastCommonDiff.leftEnd();
+		int drEnd = lastCommonDiff.rightEnd();
+		int ltEnd = leftTable.getEnd()+1;
+		int rtEnd = rightTable.getEnd()+1;
+		
+		LinkedList<RangeDifference> tail = 
+			new LinkedList<RangeDifference>();
+		if (ltEnd < dlEnd || rtEnd < drEnd){
+			int lSplitPoint = Math.min(ltEnd, dlEnd);
+			int rSplitPoint = Math.min(rtEnd, drEnd);
+			//we don't need common piece
+			//so create only uncommon:
+			piece = new RangeDifference(
+					lastCommonDiff.kind(),
+					rSplitPoint, drEnd - rSplitPoint,
+					lSplitPoint, dlEnd - lSplitPoint);
+			//add it to the tail if right table is ended
+			//or to the inTableDiffs if not
+			if (drEnd <= rtEnd){
+				inTableDiffs.add(cursor, piece);
+				cursor++;
+			} else {
+				tail.add(piece);
+			}
+		}
+		//keep the "only in right table" tail diffs in TableDiff 
+		//separate "only in left table" tail diffs in the tail list
+		//to add "only in left" to the result after table diff
+		while (count < tDiffCount){
+			diff = inTableDiffs.get(cursor);
+			if (rightTable.doesNotContain(diff, Range.RIGHT)){
+				tail.add(diff);
+				inTableDiffs.remove(cursor);
+				count++;
+			} else {
+				cursor++;
+				count++;
+			}
+		}
+		//check if we need to cut off the last diff in right table
+		//here we get only if the left table has ended earlier
+		if (inTableDiffs.size() > 0){
+			RangeDifference lastTDiff = inTableDiffs.getLast();
+			drEnd = lastTDiff.rightEnd();
+			if (rtEnd < drEnd){
+				dlEnd = lastTDiff.leftEnd();
+				int drStart = lastTDiff.rightStart();
+				int dlStart = lastTDiff.leftStart();
+				piece = new RangeDifference(
+						lastTDiff.kind(),
+						drStart, rtEnd - drStart,
+						dlStart, 
+						dlEnd - dlStart);
+				inTableDiffs.removeLast();
+				inTableDiffs.addLast(piece);
+				piece = new RangeDifference(
+						lastTDiff.kind(),
+						rtEnd, drEnd - rtEnd,
+						dlEnd, 0);
+			}
+		}
+		return tail;
 	}
 
 	protected boolean noOverlappingTablesBehind(){
@@ -445,6 +519,11 @@ public class TableDiffChecker {
 					lastEarlyDiff.leftEnd() +
 					   (rightCommonEnd - rightEnd);
 			}
+			TextNode checkLeft = leftComp.getTextNode(leftCommonEnd);
+			TextNode checkRight = rightComp.getTextNode(rightCommonEnd);
+			System.out.println("Common start: " + 
+					checkLeft.getText() + " " +
+					checkRight.getText());
 			return;
 		}
 		if (rightTableLonger){
@@ -463,11 +542,21 @@ public class TableDiffChecker {
 					lastEarlyDiff.rightEnd() +
 					   (leftCommonEnd - leftEnd);
 			}
+			TextNode checkLeft = leftComp.getTextNode(leftCommonEnd);
+			TextNode checkRight = rightComp.getTextNode(rightCommonEnd);
+			System.out.println("Common start: " + 
+					checkLeft.getText() + " " +
+					checkRight.getText());
 			return;
 		}
 		//tables end on the same element
 		leftCommonEnd = leftTable.getEnd();
 		rightCommonEnd = rightTable.getEnd();
+		TextNode checkLeft = leftComp.getTextNode(leftCommonEnd);
+		TextNode checkRight = rightComp.getTextNode(rightCommonEnd);
+		System.out.println("Common start: " + 
+				checkLeft.getText() + " " +
+				checkRight.getText());
 	}
 	
 	protected boolean noOverlappingTablesInFront(){
@@ -606,6 +695,11 @@ public class TableDiffChecker {
 					firstLateDiff.rightStart() - 
 					  (leftStart - leftCommonStart);
 			}
+			TextNode checkLeft = leftComp.getTextNode(leftCommonStart);
+			TextNode checkRight = rightComp.getTextNode(rightCommonStart);
+			System.out.println("Common start: " + 
+					checkLeft.getText() + " " +
+					checkRight.getText());
 			return;
 		}
 		if(leftTableEarlier){
@@ -624,11 +718,21 @@ public class TableDiffChecker {
 					firstLateDiff.leftStart() - 
 					  (rightStart - rightCommonStart);
 			}
+			TextNode checkLeft = leftComp.getTextNode(leftCommonStart);
+			TextNode checkRight = rightComp.getTextNode(rightCommonStart);
+			System.out.println("Common start: " + 
+					checkLeft.getText() + " " +
+					checkRight.getText());
 			return;
 		}
 		//if we are here then the tables has same common start
 		leftCommonStart = leftTable.getStart();
 		rightCommonStart = rightTable.getStart();
+		TextNode checkLeft = leftComp.getTextNode(leftCommonStart);
+		TextNode checkRight = rightComp.getTextNode(rightCommonStart);
+		System.out.println("Common start: " + 
+				checkLeft.getText() + " " +
+				checkRight.getText());
 	}
 	
 	protected boolean tableHasNestedTable(
@@ -694,7 +798,7 @@ public class TableDiffChecker {
     				foundDeletionInTables = true;
     		}
     	} while (!foundDeletionInTables && 
-    			 diffIdx < diffCount &&
+    			 diffIdx < (diffCount - 1) &&
     			 leftIdx < leftTCount &&
     			 rightIdx < rightTCount);
 		return foundDeletionInTables;

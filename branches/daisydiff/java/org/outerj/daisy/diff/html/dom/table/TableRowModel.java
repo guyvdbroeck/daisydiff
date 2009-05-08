@@ -272,6 +272,64 @@ public class TableRowModel extends CellSetStub {
 			//or need to repeat alteration between spanned cells and own kids
 		}
 	}
+	
+	protected TableRowModel(){
+		//doing nothing
+	}
+	
+	public TableRowModel copy(){
+		TableRowModel rowCopy = new TableRowModel();
+		TagNode rowTagCopy = (TagNode)rowTagNode.shallowCopy();
+		ArrayList<TableCellModel> cellsCopy = new ArrayList<TableCellModel>();
+		DistinctCellIterator distinctCells = getDistinctIterator();
+		while (distinctCells.hasNext()){
+			TableCellModel myCell = distinctCells.next();
+			//can't avoid tag copies, as some cells for a row are 
+			//from other rows (spanned down)
+			TableCellModel copy = myCell.copy();
+			if (myCell.tagParentEquals(rowTagNode)){
+				copy.setTagParent(rowTagCopy);
+				rowTagCopy.addChild(myCell.getCellTagNode());
+			}
+			for (int i = 0; i < distinctCells.currentOccurence(); i++){
+				cellsCopy.add(copy);
+			}
+		}
+		rowCopy.setRowTagNode(rowTagCopy);
+		rowCopy.setCells(cellsCopy);
+		rowCopy.setContent(new TreeSet<String>(content));
+		rowCopy.setRowRange(rowRange.copy());
+		rowCopy.setIndex(OUTSIDE);
+		rowCopy.setSpannedDownCells(
+				new ArrayList<TableCellModel>(spannedDownCells));
+		rowCopy.setMaxSpanDown(maxSpanDown);
+		rowCopy.setEmpty(empty);
+		return rowCopy;
+	}
+	
+	public TableRowModel lightCopy(){
+		TableRowModel rowCopy = new TableRowModel();
+		TagNode rowTagCopy = (TagNode)rowTagNode.shallowCopy();
+		ArrayList<TableCellModel> cellsCopy = new ArrayList<TableCellModel>();
+		DistinctCellIterator distinctCells = getDistinctIterator();
+		while (distinctCells.hasNext()){
+			TableCellModel myCell = distinctCells.next();
+			//can't avoid tag copies, as some cells for a row are 
+			//from other rows (spanned down)
+			TableCellModel copy = myCell.lightCopy();
+			if (myCell.tagParentEquals(rowTagNode)){
+				copy.setTagParent(rowTagCopy);
+				rowTagCopy.addChild(myCell.getCellTagNode());
+			}
+			for (int i = 0; i < distinctCells.currentOccurence(); i++){
+				cellsCopy.add(copy);
+			}
+		}
+		rowCopy.setRowTagNode(rowTagCopy);
+		rowCopy.setCells(cellsCopy);
+		rowCopy.setEmpty(empty);
+		return rowCopy;
+	}
 
 	//*-----------------------------------------------------------------------*
 	//*                  CellSet interface implementation                     *
@@ -284,6 +342,10 @@ public class TableRowModel extends CellSetStub {
 	@Override
 	public Iterator<TableCellModel> iterator(){
 		return cells.iterator();
+	}
+	
+	public DistinctCellIterator getDistinctIterator(){
+		return new DistinctCellIterator(getCells());
 	}
 	
 	//*-----------------------------------------------------------------------*
@@ -316,5 +378,43 @@ public class TableRowModel extends CellSetStub {
 		} else {
 			return rowRange.getEnd();
 		}
+	}
+	
+	protected void setCells(ArrayList<TableCellModel> cells){
+		this.cells = cells;
+	}
+	
+	protected void setContent(TreeSet<String> content){
+		this.content = content;
+	}
+	
+	protected void setRowTagNode(TagNode rowTagNode){
+		if (rowTagNode == null || 
+			!ROW_TAG_NAME.equals(rowTagNode.getQName())){
+			throw new IllegalArgumentException(
+			"Not-null ROW TagNode only");
+		}
+		this.rowTagNode = rowTagNode;
+	}
+	
+	protected void setRowRange(Range rowRange){
+		this.rowRange = rowRange;
+	}
+	
+	protected void setIndex(int value){
+		this.index = (value < 0)? OUTSIDE: value;
+	}
+	
+	protected void setSpannedDownCells(
+			ArrayList<TableCellModel> spannedDownCells){
+		this.spannedDownCells = spannedDownCells;
+	}
+	
+	protected void setMaxSpanDown(int maxSpanDown){
+		this.maxSpanDown = (maxSpanDown < 0)? 0 : maxSpanDown;
+	}
+	
+	protected void setEmpty(boolean empty){
+		this.empty = empty;
 	}
 }

@@ -137,4 +137,8 @@ public class TableColumnModel extends CellSetStub{
 	public Iterator<TableCellModel> iterator(){
 		return cells.iterator();
 	}
+	
+	public DistinctCellIterator getDistinctIterator(){
+		return new DistinctCellIterator(getCells());
+	}
 }
