@@ -10,6 +10,7 @@ import java.util.TreeSet;
 
 import org.outerj.daisy.diff.html.dom.Node;
 import org.outerj.daisy.diff.html.dom.TagNode;
+import org.outerj.daisy.diff.html.dom.TextNode;
 
 public class TableStatics {
 
@@ -114,4 +115,10 @@ public class TableStatics {
 		} while (true);
 	}
 	
+	public static TagNode getEmptyCell(){
+		TagNode cellTag = new TagNode(CELL_TAG_NAME);
+		TextNode nbsp = new TextNode(cellTag, NBSP);
+		cellTag.addChild(nbsp);
+		return cellTag;
+	}
 }

@@ -37,6 +37,12 @@ public class TagNode extends Node implements Iterable<Node> {
 
     private Attributes attributes;
 
+    public TagNode(String qName){
+    	super(null);
+    	this.qName = qName;
+    	attributes = new AttributesImpl();
+    }
+    
     public TagNode(TagNode parent, String qName, Attributes attributesarg) {
         super(parent);
         this.qName = qName;

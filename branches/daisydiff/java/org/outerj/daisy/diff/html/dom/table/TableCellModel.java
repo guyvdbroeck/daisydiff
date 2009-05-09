@@ -10,6 +10,7 @@ import org.outerj.daisy.diff.html.dom.Range;
 import org.outerj.daisy.diff.html.dom.TextNode;
 import org.outerj.daisy.diff.html.dom.TagNode;
 import org.xml.sax.Attributes;
+import org.xml.sax.helpers.AttributesImpl;
 
 import static org.outerj.daisy.diff.html.dom.table.TableStatics.*;
 
@@ -121,11 +122,16 @@ public class TableCellModel{
 	}
 	
 	public void setTagParent(TagNode rowTag){
-		if (rowTag == null || ROW_TAG_NAME.equals(rowTag.getQName())){
-			cellTagNode.setParent(rowTag);
-		} else {
+		if (rowTag != null && !ROW_TAG_NAME.equals(rowTag.getQName())){
 			throw new IllegalArgumentException(
-					"Only ROW tag can be a cell tag parent!");
+			"Only ROW tag can be a cell tag parent!");
+		} else {
+			TagNode myTag = this.getCellTagNode();
+			if (myTag == null){
+				myTag = new TagNode(CELL_TAG_NAME);
+				this.setCellTagNode(myTag);
+			}
+			myTag.setParent(rowTag);
 		}
 	}
 	
@@ -137,6 +143,8 @@ public class TableCellModel{
 		cellCopy.setTextNodes(new ArrayList<TextNode>(textNodes));
 		cellCopy.setRowSpan(rowSpan);
 		cellCopy.setColSpan(colSpan);
+		cellCopy.setRowIndex(OUTSIDE);
+		cellCopy.setColIndex(OUTSIDE);
 		cellCopy.setEmpty(empty);
 		return cellCopy;
 	}
@@ -148,6 +156,8 @@ public class TableCellModel{
 		cellCopy.setTextNodes(new ArrayList<TextNode>(textNodes));
 		cellCopy.setRowSpan(rowSpan);
 		cellCopy.setColSpan(colSpan);
+		cellCopy.setRowIndex(OUTSIDE);
+		cellCopy.setColIndex(OUTSIDE);
 		cellCopy.setEmpty(empty);
 		return cellCopy;
 	}
@@ -196,8 +206,152 @@ public class TableCellModel{
 		}
 	}
 	
+	public int getSpanDownLength(int fromRowIdx){
+		int firstRowIdx = this.getRowIndex();
+		int amountOfSpannedRows = this.getRowSpan();
+		int lastSpannedRow = firstRowIdx + amountOfSpannedRows - 1;
+		if (fromRowIdx < firstRowIdx || lastSpannedRow < fromRowIdx){
+			return OUTSIDE;
+		}
+		return lastSpannedRow - fromRowIdx;
+	}
+	
+	/**
+	 * this method requires all kind of updates afterwards
+	 * (row, columns, indices), so better not to call it separately, 
+	 * unless you're know what you're doing.<br>
+	 * The parameter is adjusted so the resulting rowspan value 
+	 * wouldn't be less than 1. The TagNode attributes are also updated.
+	 * @param change - a number to add to the rowspan value
+	 * @return the real number that was added <br>
+	 * (E.g. if you had rowspan set to 3 and passed "-4" change 
+	 * you will get "-2" back and the rowspan will be set to "1".)
+	 */
+	protected int changeRowSpan(int change){
+		int spanValue = getRowSpan() + change;
+		//adjust to be real
+		if (spanValue < NO_SPAN) {
+			spanValue = NO_SPAN;
+		}
+		//adjusted span change
+		change = spanValue - getRowSpan();
+		if (change == 0){
+			return change;
+		}
+		setRowSpan(spanValue);
+		if (spanValue == NO_SPAN){
+			removeTagAttr(ROWSPAN_ATTRIBUTE);
+		} else {
+			setTagAttr(ROWSPAN_ATTRIBUTE, "" + spanValue);
+		}
+		return change;
+	}
+	
+	/**
+	 * this method requires all kind of updates afterwards
+	 * (row, columns, indices), so better not to call it separately, 
+	 * unless you're know what you're doing.<br>
+	 * The parameter is adjusted so the resulting colspan value 
+	 * wouldn't be less than 1. The TagNode attributes are also updated.
+	 * @param change - a number to add to the colspan value
+	 * @return the real number that was added <br>
+	 * (E.g. if you had colspan set to 3 and passed "-4" change 
+	 * you will get "-2" back and the colspan will be set to "1".)
+	 */
+	protected int changeColSpan(int change){
+		int spanValue = getColSpan() + change;
+		//adjust to be real
+		if (spanValue < NO_SPAN) {
+			spanValue = NO_SPAN;
+		}
+		//adjusted span change
+		change = spanValue - getColSpan();
+		if (change == 0){
+			return change;
+		}
+		setColSpan(spanValue);
+		if (spanValue == NO_SPAN){
+			removeTagAttr(COLSPAN_ATTRIBUTE);
+		} else {
+			setTagAttr(COLSPAN_ATTRIBUTE, "" + spanValue);
+		}
+		return change;
+	}
+	
 	public TagNode getCellTagNode(){
 		return cellTagNode;
+	}
+	
+	protected Attributes getTagAttributes(){
+		TagNode cellTag = getCellTagNode();
+		if (cellTag == null){
+			return null;
+		}
+		return cellTag.getAttributes();
+	}
+	
+	protected String getTagAttrValue(String attrName){
+		Attributes attr = getTagAttributes();
+		if (attr == null){
+			return null;
+		}
+		return attr.getValue(attrName);
+	}
+	
+	protected int getTagAttrIdx(String attrName){
+		Attributes attr = getTagAttributes();
+		if (attr == null){
+			throw new IllegalStateException(
+					"Attributes are null");
+		}
+		return attr.getIndex(attrName);
+	}
+	
+	protected void removeTagAttr(String attrName){
+		AttributesImpl attr = (AttributesImpl)getTagAttributes();
+		if (attr == null){
+			return;
+		}
+		int attrIdx = attr.getIndex(attrName);
+		if (attrIdx == -1){
+			return;
+		} else {
+			attr.removeAttribute(attrIdx);
+		}
+	}
+	
+	protected void setTagAttr(String attrName, String value){
+		AttributesImpl attr = (AttributesImpl)getTagAttributes();
+		if (attr == null){
+			addTagAttr(attrName, value);
+		}
+		int attrIdx = attr.getIndex(attrName);
+		if (attrIdx == -1){
+			addTagAttr(attrName, value);
+		} else {
+			attr.setAttribute(attrIdx, "", attrName, attrName, "CDATA", value);
+		}
+		
+	}
+	
+	protected void addTagAttr(String attrName, String value){
+		TagNode cellTag = getCellTagNode();
+		if (cellTag == null){
+			cellTag = getEmptyCell();
+			setCellTagNode(cellTag);
+		}
+		AttributesImpl attr = (AttributesImpl)cellTag.getAttributes();
+		if (attr == null){
+			//shouldn't happen
+			throw new IllegalStateException("strange: attributes are null");
+		}
+		//what if already exists?
+		int idx = attr.getIndex(attrName);
+		if (idx != -1){//already exists
+			setTagAttr(attrName, value);
+			return;
+		}
+		attr.addAttribute("", attrName, attrName, "CDATA", value);
 	}
 	
 	protected void setCellTagNode(TagNode cellTag){
