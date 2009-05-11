@@ -98,7 +98,7 @@ public class TagNode extends Node implements Iterable<Node> {
     public Node getChild(int i) {
         return children.get(i);
     }
-
+    
     /**************************************************************************
      * @return <code>Iterator&lt;Node></code> over children collection
      * @throws java.lang.NullPointerException - if children collection is null
@@ -362,7 +362,7 @@ public class TagNode extends Node implements Iterable<Node> {
 
     }
 
-    private void removeChild(Node node) {
+    public void removeChild(Node node) {
         children.remove(node);
     }
 

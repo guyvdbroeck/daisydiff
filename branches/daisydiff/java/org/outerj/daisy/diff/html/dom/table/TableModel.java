@@ -9,6 +9,8 @@ import org.outerj.daisy.diff.html.dom.Node;
 import org.outerj.daisy.diff.html.dom.Range;
 import org.outerj.daisy.diff.html.dom.TagNode;
 import org.outerj.daisy.diff.html.dom.TextNode;
+import org.outerj.daisy.diff.html.modification.ModificationType;
+
 import static org.outerj.daisy.diff.html.dom.table.TableStatics.*;
 
 public class TableModel{
@@ -92,9 +94,21 @@ public class TableModel{
 	 * parameter is <code>null</code> or is not a table tag
 	 */
 	public TableModel(TagNode tableTag, Range tableRange){
-		if (tableTag == null || !TABLE_TAG_NAME.equals(tableTag.getQName())) {
+		this(tableTag, tableRange, true);
+	}
+	
+	public TableModel(TagNode tableTag){
+		this(tableTag, new Range(0), false);
+		this.getRange().setEnd(
+				((TableRowModel)this.getLastRow()).getEndOfRange());
+	}
+	
+	public TableModel(TagNode tableTag, Range tableRange, boolean needContent){
+		this.nullCheck(tableTag);
+		this.nullCheck(tableRange);
+		if (!TABLE_TAG_NAME.equals(tableTag.getQName())) {
 			throw new IllegalArgumentException(
-					"Can only build a table from not-null TABLE TagNode");
+					"Can only build a table from a TABLE TagNode");
 		}
 		//remember where we came from
 		tableTagNode = tableTag;
@@ -106,19 +120,18 @@ public class TableModel{
 				rangeIdx = tableRange.getStart();
 			}
 			rows = new ArrayList<ICellSet>();
-			content = new TreeSet<String>();
+			if (needContent){
+				content = new TreeSet<String>();
+			}
 			int idx = 0;
 			//figure out rows
-			appendChildRows(tableTagNode, idx, null, rangeIdx);
-			populateColumns();
+			appendChildRows(tableTagNode, idx, null, rangeIdx, needContent);
+			populateColumns(needContent);
 		}
 	}
 
 	public boolean hasCommonContentWith(TableModel another){
-		if (another == null){
-			throw new IllegalArgumentException(
-					"No null arguments allowed");
-		}
+		this.nullCheck(another);
 		if (!another.hasContent() || !this.hasContent()){
 			return false;
 		}
@@ -152,7 +165,42 @@ public class TableModel{
 		return false;
 	}
 	
+	public void markColumn(int colIdx, ModificationType kind){
+		this.checkColIdxBounds(colIdx);
+		((TableColumnModel)getColumn(colIdx)).mark(kind);
+	}
+	
+	public void markColumns(
+			int startWith, int amount, ModificationType kind){
+		this.checkColIdxBounds(startWith);
+		int notIncludedEnd = startWith + amount;
+		this.checkColIdxBounds(notIncludedEnd - 1);
+		for (int i = startWith; i < notIncludedEnd; i++){
+			((TableColumnModel)getColumn(i)).mark(kind);
+		}
+	}
+	
+	public void markRow(int rowIdx, ModificationType kind){
+		this.checkRowIdxBounds(rowIdx);
+		((TableRowModel)getRow(rowIdx)).mark(kind);
+	}
+	
+	public void markRows(
+			int startWith, int amount, ModificationType kind){
+		this.checkRowIdxBounds(startWith);
+		int notIncludedEnd = startWith + amount;
+		this.checkRowIdxBounds(notIncludedEnd - 1);
+		for (int i = startWith; i < notIncludedEnd; i++){
+			((TableRowModel)getRow(i)).mark(kind);
+		}
+	}
+	
 	public TableModel lightCopy(){
+		TagNode copyTag = (TagNode)getTableTagNode().copyTree();
+		return new TableModel(copyTag);
+	}
+	
+	public TableModel copyModelNoStructureNoContent(){
 		TableModel tableCopy = new TableModel();
 		Range myRange = getRange();
 		if (myRange != null){
@@ -162,52 +210,54 @@ public class TableModel{
 		if (myTag != null){
 			tableCopy.setTableTagNode(myTag);
 		}
-		if (0 < getRowCount()){
+		int rowCount = getRowCount();
+		if (0 < rowCount){
 			Iterator<ICellSet> myRows = getRows().iterator();
 			TableRowModel rowCopy = null; 
 			while (myRows.hasNext()){
 				TableRowModel myRow = (TableRowModel)myRows.next();
-				rowCopy = myRow.lightCopy(rowCopy);
+				rowCopy = myRow.lightCopy(rowCopy, rowCount - myRow.getIndex() - 1);
 				tableCopy.appendRow(rowCopy);
 			}
 		}
-		tableCopy.populateColumns();
+		tableCopy.populateColumns(false);
 		return tableCopy;
 	}
 	
+	/**
+	 * No content kept - "lightCopy"
+	 * The span of the cells is adjusted to not span beyond first and last row
+	 * of the copy. 
+	 * @param startIdx
+	 * @param amount
+	 * @return
+	 */
 	public TableModel copyRangeOfRows(int startIdx, int amount){
 		int notIncludedEnd = startIdx + amount;
-		if (startIdx < 0 || amount <= 0 ||
-			this.getRowCount() < notIncludedEnd){
-			throw new IndexOutOfBoundsException(
-					"The table has " + this.getRowCount() + " rows, " +
-					"but rows " + startIdx + " - " + (notIncludedEnd - 1) +
-					" were requested.");
-		}
+		this.checkRowIdxBounds(startIdx);
+		this.checkRowIdxBounds(notIncludedEnd - 1);
 		TableModel rowExtract = new TableModel();
 		TableRowModel rowCopy = null;
 		for (int i = startIdx; i < notIncludedEnd; i++){
-			rowCopy = ((TableRowModel)getRow(i)).lightCopy(rowCopy);
+			rowCopy = ((TableRowModel)getRow(i)).lightCopy(
+					rowCopy, notIncludedEnd - i - 1);
 			rowExtract.appendRow(rowCopy);
 		}
 		Range extractRange = new Range(
 				((TableRowModel)rowExtract.getRow(0)).getRange().getStart(),
 				((TableRowModel)rowExtract.getLastRow()).getRange().getEnd());
 		rowExtract.setRange(extractRange);
-		rowExtract.populateColumns();
+		rowExtract.updateRowIndices(0);
+		rowExtract.populateColumns(false);
 		return rowExtract;
 	}
 	
 	public TableRowModel getLightCopyOfRow(int idx){
-		if (idx < 0 || this.getRowCount() <= idx){
-				throw new IndexOutOfBoundsException(
-						"The table has " + this.getRowCount() + " rows, " +
-						"but row" + idx + " was requested.");
-		}
-		return this.getRowCopy(idx).lightCopy();
+		this.checkRowIdxBounds(idx);
+		return this.getRowCopy(idx).lightCopy(0);
 	}
 	
-	/**
+	/**************************************************************************
 	 * During insertion of the empty columns the cells that 
 	 * were spanned over the border where we insert will be 
 	 * spanned over the empty columns at the end. This means,
@@ -222,7 +272,9 @@ public class TableModel{
 	 * @param startIdx the index of first empty column after it was inserted
 	 * @param amount - amount of empty columns to insert.
 	 */
-	public void insertEmptyColumns(int startIdx, int amount){
+	public void insertEmptyColumns(
+			int startIdx, int amount, boolean needContent){
+		//can't use standard check, because can insert after last col
 		if (startIdx < 0 || getColumnCount() < startIdx){
 			throw new IndexOutOfBoundsException(
 					"Currently index could be from 0 to " +
@@ -232,7 +284,8 @@ public class TableModel{
 		//Create column models for the inserted columns
 		List<TableColumnModel> newCols = new ArrayList<TableColumnModel>();
 		for (int i = 0; i < amount; i++){
-			TableColumnModel newCol = new TableColumnModel(startIdx + i);
+			TableColumnModel newCol = new TableColumnModel(
+					startIdx + i, needContent);
 			newCols.add(newCol);
 		}
 		//insert the cells, filling the new cols as we go
@@ -245,11 +298,12 @@ public class TableModel{
 							startIdx - 1, amount).getRowSpan() - 1;
 				}
 			} else {
-				rowModel.updateCellColIdx();
+				rowModel.updateWithSpannedCell(startIdx, amount);
 				spanned--;
 			}
 			for (int i = 0; i < amount; i++){
-				newCols.get(i).appendCell(rowModel.getCell(startIdx + i));
+				newCols.get(i).appendCell(
+						rowModel.getCell(startIdx + i), needContent);
 			}
 		}
 		
@@ -261,7 +315,7 @@ public class TableModel{
 		this.updateColumnIndices(startIdx + amount);
 	}
 	
-	/**
+	/**************************************************************************
 	 * During insertion the cells that span over the insertion point
 	 * will be split in 2. The top part will retain the content 
 	 * (with the reduced span) while the bottom part will 
@@ -281,13 +335,35 @@ public class TableModel{
 		//check for the cells that are spanned over the insertion point
 		splitToInsertRow(desiredIdx);
 		//insert
+		getRows().add(desiredIdx, newRow);
+		if (this.hasContent() && newRow.hasContent()){
+			this.getContent().addAll(newRow.getContent());
+		}
 		//update indices and columns
-		
-		//TO DO: finish
+		updateRowIndices(desiredIdx);
+		this.updateColumns(
+				0, getColumnCount(), desiredIdx, getRowCount() - desiredIdx);
 	}
 	
 	public void insertRowRange(TableModel rowRange, int startIdx){
-		//TO DO: finish
+		//splitToInsertRow does the index check to throw exception if needed
+		//check for the cells that are spanned over the insertion point
+		splitToInsertRow(startIdx);
+		//insert
+		ArrayList<ICellSet> rowsToInsert = rowRange.getRows();
+		getRows().addAll(startIdx, rowsToInsert);
+		if (this.hasContent() && rowRange.hasContent()){
+			TreeSet<String> myContent = getContent();
+			for (ICellSet row : rowsToInsert){
+				if (row.hasContent()){
+					myContent.addAll(row.getContent());
+				}
+			}
+		}
+		//update indices and columns
+		updateRowIndices(startIdx);
+		this.updateColumns(
+				0, getColumnCount(), startIdx, getRowCount() - startIdx);
 	}
 	
 	//*-----------------------------------------------------------------------*
@@ -330,11 +406,8 @@ public class TableModel{
 	}
 	
 	public ICellSet getRow(int idx){
-		if (idx < 0 || getRowCount() <= idx){
-			return null;
-		} else {
-			return rows.get(idx);
-		}
+		this.checkRowIdxBounds(idx);
+		return rows.get(idx);
 	}
 	
 	public ICellSet getLastRow(){
@@ -347,11 +420,8 @@ public class TableModel{
 	}
 	
 	public TableRowModel getRowCopy(int idx){
-		if (idx < 0 || getRowCount() <= idx){
-			return null;
-		} else {
-			return ((TableRowModel)rows.get(idx)).copy();
-		}
+		this.checkRowIdxBounds(idx);
+		return ((TableRowModel)rows.get(idx)).copy();
 	}
 	
 	public List<ICellSet> getColumns(){
@@ -359,11 +429,8 @@ public class TableModel{
 	}
 	
 	public ICellSet getColumn(int idx){
-		if (idx < 0 || getColumnCount() <= idx){
-			return null;
-		} else {
-			return columns.get(idx);
-		}
+		this.checkColIdxBounds(idx);
+		return columns.get(idx);
 	}
 	
 	public Range getRange(){
@@ -383,8 +450,8 @@ public class TableModel{
 	}
 	
 	public void setTableTagNode(TagNode tableTag){
-		if (tableTag != null && 
-			!TABLE_TAG_NAME.equals(tableTag.getQName().toLowerCase())){
+		this.nullCheck(tableTag);
+		if (!TABLE_TAG_NAME.equals(tableTag.getQName().toLowerCase())){
 			throw new IllegalArgumentException(
 					"Only table tag is allowed as the parameter");
 		}
@@ -403,7 +470,8 @@ public class TableModel{
 	 */
 	protected TableRowModel appendChildRows(
 			TagNode parent, int startIndex, 
-			TableRowModel previousRow, int rangeStart){
+			TableRowModel previousRow, int rangeStart,
+			boolean needContent){
 		//make sure we actually have the children tags to process
 		if (parent == null || parent.getNbChildren() == 0){
 			return previousRow;
@@ -424,21 +492,28 @@ public class TableModel{
 						previousRow.getMaxSpanDown() >= NO_SPAN){
 						previousRow = new TableRowModel(
 							tagChild, idx, 
-							previousRow.getSpannedDown(), rangeStart);
+							previousRow.getSpannedDown(), rangeStart,
+							needContent);
 					} else {
 						previousRow = new TableRowModel(
-								tagChild, idx, rangeStart);
+								tagChild, idx, rangeStart, needContent);
 					}
 					rows.add(previousRow);
-					content.addAll(previousRow.getContent());
+					if (needContent){
+						content.addAll(previousRow.getContent());
+					}
 					idx++;
 					rangeStart = previousRow.getEndOfRange() + 1;
 				} else if (TABLE_SECTION_NAMES.contains(childName)){
 					//we are inside "thead", "tbody" or "tfoot" tag
-					previousRow = 
-						appendChildRows(tagChild, idx, previousRow, rangeStart);
+					previousRow = appendChildRows(
+							tagChild, idx, previousRow, 
+							rangeStart, needContent);
 					idx = previousRow.getIndex();
-					rangeStart = previousRow.getRange().getEnd() + 1;
+					int prevRowRangeEnd = previousRow.getRange().getEnd();
+					if (prevRowRangeEnd != Range.NOT_DEFINED){
+						rangeStart = prevRowRangeEnd + 1;
+					}
 				} else {
 					//TO DO: process col, colgroup and caption tags
 				}
@@ -447,7 +522,7 @@ public class TableModel{
 		return previousRow;
 	}
 
-	protected void populateColumns(){
+	protected void populateColumns(boolean needContent){
 		//figure out columns
 		if (rows.size() > 0){
 			//how many columns?
@@ -456,7 +531,7 @@ public class TableModel{
 			if (columns == null){
 				columns = new ArrayList<ICellSet>(colCount);
 				for (int i = 0; i < colCount; i++){
-					columns.add(new TableColumnModel(i));
+					columns.add(new TableColumnModel(i, needContent));
 				}
 			} else {
 				//match number of columns
@@ -466,7 +541,8 @@ public class TableModel{
 						columns.remove(columns.size() - 1);
 						change++;
 					} else {
-						columns.add(new TableColumnModel(columns.size()));
+						columns.add(new TableColumnModel(
+								columns.size(), needContent));
 						change--;
 					}
 				}
@@ -478,7 +554,8 @@ public class TableModel{
 			for (ICellSet row : rows){
 				int i = 0;
 				for (TableCellModel cell : row){
-					((TableColumnModel)columns.get(i)).appendCell(cell);
+					((TableColumnModel)columns.get(i)).appendCell(
+							cell, needContent);
 					i++;
 				}
 			}
@@ -487,22 +564,14 @@ public class TableModel{
 	
 	protected void updateColumnIndices(int startingWith){
 		int columnCount = getColumnCount();
-		if (startingWith < 0 || columnCount < startingWith){
-			throw new IndexOutOfBoundsException(
-					"Currently index could be from 0 to " +
-					columnCount + ", but " + startingWith + 
-					" was provided.");
-		}
+		this.checkColIdxBounds(startingWith);
 		for (int i = startingWith; i < columnCount; i++){
 			((TableColumnModel)getColumn(i)).setIndex(i);
 		}
 	}
 	
 	protected void appendRow(TableRowModel newRow){
-		if (newRow == null){
-			throw new IllegalArgumentException(
-					"No null parameters allowed");
-		}
+		this.nullCheck(newRow);
 		ArrayList<ICellSet> myRows = getRows();
 		if (myRows == null){
 			myRows = new ArrayList<ICellSet>();
@@ -518,12 +587,7 @@ public class TableModel{
 	}
 	
 	public void splitToInsertRow(int splitIdx){
-		if (splitIdx < 0 || getRowCount() < splitIdx){
-			throw new IndexOutOfBoundsException(
-					"Currently index could be from 0 to " +
-					getRowCount() + ", but " + splitIdx + 
-					" was provided.");
-		}
+		this.checkRowIdxBounds(splitIdx);
 		//only need if not the first or last
 		if (0 < splitIdx && splitIdx < getRowCount()){
 			int prevIdx = splitIdx - 1;
@@ -542,20 +606,80 @@ public class TableModel{
 					minRowIdx = Math.min(minRowIdx, splitVictim.getRowIndex());
 					int spanDownLength = 
 						splitVictim.getSpanDownLength(prevIdx);
-					splitVictim.changeRowSpan(-spanDownLength);
-					TableCellModel emptyCell = new TableCellModel(
-							getEmptyCell(), 
-							splitIdx, splitVictim.getColIndex(), 
-							Range.NOT_DEFINED);
-					emptyCell.changeRowSpan(spanDownLength);
-					for (int i = 0; i < spanDownLength; i++){
+					TableCellModel emptySub = nextRow.substituteWithEmptyCell(
+							splitVictim.getColIndex());
+					for (int i = 1; i < spanDownLength; i++){
 						((TableRowModel)getRow(splitIdx + i))
-						   .substituteCell(emptyCell);
+						   .substituteWith(emptySub);
 					}
-					//update columns
+					splitVictim.changeRowSpan(-spanDownLength);
+					//update columns?
+					updateColumns(
+							splitVictim.getColIndex(), 
+							splitVictim.getColSpan(), 
+							splitIdx, spanDownLength);
+				}
+				//update maxSpanDown for the rows above the split
+				for (int i = minRowIdx; i < splitIdx; i++){
+					((TableRowModel)getRow(i)).updateSpanDownInfo();
 				}
 			}
 		}
-		
+	}
+	
+	protected void updateRowIndices(int startingWith){
+		this.checkRowIdxBounds(startingWith);
+		for (int i = startingWith; i < getRowCount(); i++){
+			((TableRowModel)getRow(i)).setIndex(i);
+		}
+	}
+	
+	/**
+	 * this sets content of the columns to null. Call updateContent() on them if you
+	 * with to keep that in-sync
+	 * @param startWith
+	 * @param amount
+	 * @param fromRow
+	 */
+	protected void updateColumns(int startWith, int amount, int fromRow, int length){
+		this.checkColIdxBounds(startWith);
+		int notIncluding = startWith + amount;
+		this.checkColIdxBounds(notIncluding - 1);
+		this.checkRowIdxBounds(fromRow);
+		int toRow = fromRow + length;
+		this.checkRowIdxBounds(toRow - 1);
+		for (int i = startWith; i < notIncluding; i++){
+			TableColumnModel col = (TableColumnModel)getColumn(i);
+			col.removeCells(fromRow, length);
+			for(int j = fromRow; j < toRow; j++){
+				ICellSet row = getRow(j);
+				col.addCell(j, row.getCell(i));
+			}
+		}
+	}
+	
+	protected void checkColIdxBounds(int colIdx){
+		int colCount = getColumnCount();
+		if (colIdx < 0 || colCount <= colIdx){
+			throw new IndexOutOfBoundsException(
+					"Provided column index " + colIdx + " is out of bounds: " +
+					"0 - " + (colCount - 1));
+		}
+	}
+	
+	protected void checkRowIdxBounds(int rowIdx){
+		int rowCount = getRowCount();
+		if (rowIdx < 0 || rowCount <= rowIdx){
+			throw new IndexOutOfBoundsException(
+					"Provided row index " + rowIdx + " is out of bounds: " +
+					"0 - " + (rowCount - 1));
+		}
+	}
+	
+	protected void nullCheck(Object parameter){
+		if (parameter == null){
+			throw new IllegalArgumentException(
+					"No null arguments are allowed");
+		}
 	}
 }

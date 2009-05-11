@@ -2,8 +2,11 @@ package org.outerj.daisy.diff.html.dom.table;
 
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.TreeSet;
+
+import org.outerj.daisy.diff.html.modification.ModificationType;
 
 import static org.outerj.daisy.diff.html.dom.table.TableStatics.*;
 
@@ -20,13 +23,15 @@ public class TableColumnModel extends CellSetStub{
 	/**************************************************************************
 	 * 
 	 */
-	public TableColumnModel(int columnIndex){
+	public TableColumnModel(int columnIndex, boolean needContent){
 		cells = new ArrayList<TableCellModel>();
-		content = new TreeSet<String>();
+		if (needContent){
+			content = new TreeSet<String>();
+		}
 		index = (columnIndex < 0)? OUTSIDE : columnIndex;
 	}
 	
-	public boolean appendCell(TableCellModel cell){
+	public boolean appendCell(TableCellModel cell, boolean needContent){
 		//find out the cell's desired place
 		int rowIdx = cell.getRowIndex();
 		int rowSpan = cell.getRowSpan();
@@ -37,7 +42,10 @@ public class TableColumnModel extends CellSetStub{
 			colIdx <= index &&
 			index < colIdx + colSpan){
 			cells.add(cell);
-			if (cell.getColSpan() == NO_SPAN){
+			if (needContent && cell.getColSpan() == NO_SPAN){
+				if (content == null){
+					content = new TreeSet<String>();
+				}
 				TreeSet<String> cellContent = cell.getContent();
 				if (cellContent != null){
 					content.addAll(cellContent);
@@ -49,6 +57,53 @@ public class TableColumnModel extends CellSetStub{
 			return true;
 		} else {
 			return false;
+		}
+	}
+
+	public void mark(ModificationType kind){
+		this.setModification(kind);
+		for (TableCellModel cell : this){
+			if (NO_SPAN == cell.getColSpan()){
+				cell.setModification(kind);
+			}
+		}
+	}
+	
+	
+	protected void removeCells(int startWithIdx, int amount){
+		this.checkIdx(startWithIdx);
+		this.checkIdx(startWithIdx + amount - 1);
+		List<TableCellModel> myCells = getCells();
+		LinkedList<TableCellModel> toRemove = new LinkedList<TableCellModel>();
+		for (int i = startWithIdx; i < myCells.size(); i++){
+			toRemove.add(myCells.get(i));
+		}
+		myCells.removeAll(toRemove);
+		releaseContent();
+	}
+	
+	/**
+	 * this only should be used to update columns after the row were changed.
+	 * @param idx
+	 * @param cellToAdd
+	 */
+	protected void addCell(int idx, TableCellModel cellToAdd){
+		this.checkIdx(idx);
+		nullCheck(cellToAdd);
+		this.getCells().add(idx, cellToAdd);
+		if (this.hasContent() && cellToAdd.getColSpan() == NO_SPAN){
+			this.getContent().addAll(cellToAdd.getContent());
+		}
+	}
+	
+	protected void updateContent(){
+		if (content == null){
+			content = new TreeSet<String>();
+		}
+		for (TableCellModel cell : getCells()){
+			if (cell.getColSpan() == NO_SPAN){
+				content.addAll(cell.getContent());
+			}
 		}
 	}
 	
@@ -83,6 +138,10 @@ public class TableColumnModel extends CellSetStub{
 	protected void setIndex(int idx){
 		index = (idx < 0)? OUTSIDE : idx;
 	}
+
+	protected void releaseContent(){
+		this.content = null;
+	}
 	
 	//*-----------------------------------------------------------------------*
 	//*                  CellSet interface implementation                     *
@@ -101,8 +160,23 @@ public class TableColumnModel extends CellSetStub{
 	public DistinctCellIterator getDistinctIterator(){
 		return new DistinctCellIterator(getCells());
 	}
+
+	//*-----------------------------------------------------------------------*
+	//*                            helper methods                             *
+	//*-----------------------------------------------------------------------*
+
+	protected void checkIdx(int cellIdx){
+		int rowCount = this.getSizeInRows();
+		if (cellIdx < 0 || rowCount <= cellIdx){
+			throw new IndexOutOfBoundsException(
+					"Provided cell index " + cellIdx + " is out of bounds: " +
+					"0 - " + (rowCount - 1));
+		}
+	}
+
 }
 /////////////////For future enhancements//////////////////////
+
 /*
 public int includesSubColumns(
 		List<TableColumnModel> subCols, boolean front, int[]commonRowIdx){

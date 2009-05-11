@@ -6,15 +6,32 @@ import java.util.List;
 import java.util.TreeSet;
 
 import org.outerj.daisy.diff.html.dom.TextNode;
+import org.outerj.daisy.diff.html.modification.ModificationType;
 
 public abstract class CellSetStub implements ICellSet {
 
 	protected ArrayList<TableCellModel> cells;
 	protected TreeSet<String> content;
+	protected ModificationType modification = ModificationType.NONE;
 	
 	@Override
 	public List<TableCellModel> getCells() {
 		return cells;
+	}
+	
+	@Override
+	public TableCellModel getCell(int idx){
+		this.checkIdx(idx);
+		return cells.get(idx);
+	}
+	
+	@Override 
+	public TableCellModel getLastCell(){
+		if (cells == null || cells.size() == 0){
+			return null;
+		} else {
+			return getCell(cells.size() - 1);
+		}
 	}
 
 	@Override
@@ -92,6 +109,23 @@ public abstract class CellSetStub implements ICellSet {
 		return ((thisText.size() == otherText.size()) &&
                  thisText.containsAll(otherText));
 	}
+	
+	@Override
+	public ModificationType getModification(){
+		return modification;
+	}
+	
+	@Override
+	public void setModification(ModificationType mod){
+		modification = mod;
+	}
+	
+	protected void nullCheck(Object parameter){
+		if (parameter == null){
+			throw new IllegalArgumentException(
+					"No null arguments are allowed");
+		}
+	}
 
 	@Override
 	public abstract boolean isEmpty();
@@ -99,4 +133,5 @@ public abstract class CellSetStub implements ICellSet {
 	@Override
 	public abstract Iterator<TableCellModel> iterator();
 
+	protected abstract void checkIdx(int idx) throws IndexOutOfBoundsException;
 }

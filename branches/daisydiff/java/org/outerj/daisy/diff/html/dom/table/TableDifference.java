@@ -8,6 +8,7 @@ import org.eclipse.compare.rangedifferencer.RangeDifference;
 import org.eclipse.compare.rangedifferencer.RangeDifferencer;
 import org.outerj.daisy.diff.html.dom.Range;
 import org.outerj.daisy.diff.html.dom.TagNode;
+import org.outerj.daisy.diff.html.modification.ModificationType;
 
 public class TableDifference extends RangeDifference {
 
@@ -106,6 +107,13 @@ public class TableDifference extends RangeDifference {
 	        	RangeDifferencer.findDifferences(oldColumnComp, newColumnComp);
 	        //3b). refine it
 	        colDiffs = refineColDiff(rawColDiffs, sameDimension);
+	        
+	        //now that we have rowDiffs and colDiffs
+	        //do following:
+	        //loop through colDiffs
+	        
+	        
+	        
 			//4).go by rows again, finding cell diffs and marking nodes
 	        if (sameDimension){
 	        	getCoordCellDiff();
@@ -114,6 +122,10 @@ public class TableDifference extends RangeDifference {
 	        }
 	    	//do the marking?
 	        return new LinkedList<RangeDifference>();
+		
+		
+		
+		
 		} else {
 			//if no common content -
 			LinkedList<RangeDifference> result = 
@@ -141,78 +153,7 @@ public class TableDifference extends RangeDifference {
 	}
 	
 	protected void getCoordCellDiff(){
-		//what we need to do is:
-		//1. if new table starts later than the old - 
-		//      then the "uncommon beginning" is listed ahead of the row diff
-		//      else we need to separate deletions to place them
-		//           before the table and the rest is "intermixed" with the row
-		//           diffs
-		//2. from the common piece remove textual diff in the rows
-		//   that were "added" and "deleted" completely and "substituted"
-		//3. from the common piece in all other rows 
-		//   (merged, split, "common content") we need to remove
-		//    textual diff in the columns that were "added" or "deleted"
-		//4. from the "uncommon tail" if the old table ends earlier
-		//   we need to separate deletions to place the after the table.
-		
-		LinkedList<RangeDifference> result = new LinkedList<RangeDifference>();
-		
-		LinkedList<RangeDifference> uBeginning = 
-			new LinkedList<RangeDifference>();
-		
-		
-		Iterator<?> rightRows = rightTable.getRows().iterator();
-		TableRowModel rightTRow = (TableRowModel)rightRows.next();
-		Range rightTRowRange = rightTRow.getRange(); 
-		Iterator<RangeDifference> plainDiffs = textDiff.iterator();
-		int plainDiffIdx = 0;
-		RangeDifference plainDiff = plainDiffs.next();
-		//1a. Does the new table start later?
-		boolean newTableEarly = 
-			(rightRange.getStart() < rightCommonRange.getStart());
-		boolean oldTableEarly = 
-			(leftRange.getStart() < leftCommonRange.getStart());
-		if (newTableEarly || oldTableEarly){
-			
-		}
-		
-/*		
-		while (rightCommonRange.doesNotContain(rightCurrentRow.getRange()) &&
-			   rightRows.hasNext()){
-			rightCurrentRow = (TableRowModel)rightRows.next();
-		}
-		rightCommonRowIdx = rightCurrentRow.getIndex();
-		
-		
-		
-		
-		
-		int plainDiffIdx = 0;
-		RangeDifference currentPlainDiff = plainDiffs.next();
-		while (plainDiffIdx < this.headingDiffsIdx && plainDiffs.hasNext()){
-			currentPlainDiff = plainDiffs.next();
-			plainDiffIdx++;
-		}
-		for(RangeDifference rowDiff : rowDiffs){
-			int rightRowDiffStart = rowDiff.rightStart();
-			//only in the common table part
-			if (rightCommonRowIdx <= rightRowDiffStart){
-				//gather common content rows before the diff
-				//a). Is plainDiff is up-to-row?
-				while(currentRightRowRange.doesNotContain(
-						currentPlainDiff, Range.RIGHT) &&
-					  plainDiffIdx < this.tailingDiffsIdx &&
-					  plainDiffs.hasNext()){
-					currentPlainDiff = plainDiffs.next();
-					plainDiffIdx++;
-				}
-				//b).
-			}
-			
-		}
-*/
 	}
-	
 	
 	protected List<RangeDifference> refineColDiff(
 			RangeDifference[] colDiffs, boolean sameDimension){
@@ -228,8 +169,18 @@ public class TableDifference extends RangeDifference {
 			int leftStart = colDiff.leftStart();
 			int leftLength = colDiff.leftLength();
 			if (sameDimension){
-        		int minLength = (leftLength < rightLength)? leftLength : rightLength;
-        		for (int rowSubsCount = 0; rowSubsCount < minLength; rowSubsCount++){
+        		int minLength = 
+        			(leftLength < rightLength)? leftLength : rightLength;
+        		for (int rowSubsCount = 0; 
+        		     rowSubsCount < minLength; 
+        		     rowSubsCount++){
+        			//mark columns separately in each table
+        			rightTable.markColumn(
+        					rightStart, 
+        					ModificationType.COLUMN_SUBSTITUTION_ADDED);
+        			leftTable.markColumn(
+        					leftStart,
+        					ModificationType.COLUMN_SUBSTITUTION_REMOVED);
         			temp = new RangeDifference(
         					TableDifference.COLUMN_SUBSTITUTION,
         					rightStart++, 1,
@@ -243,9 +194,15 @@ public class TableDifference extends RangeDifference {
         		if (rightStart < colDiff.rightEnd()){
         			//means insertions left
         			kind = TableDifference.COLUMN_ADDED;
+        			rightTable.markColumns(
+        					rightStart, rightLength, 
+        					ModificationType.COLUMN_ADDED);
         		} else {
         			//means deletions left
         			kind = TableDifference.COLUMN_REMOVED;
+        			leftTable.markColumns(
+        					leftStart, leftLength,
+        					ModificationType.COLUMN_REMOVED);
         		}
     			temp = new RangeDifference(
     					kind,
@@ -254,6 +211,10 @@ public class TableDifference extends RangeDifference {
     			result.add(temp);
 			} else {
 				if (leftLength > 0){
+        			leftTable.markColumns(
+        					leftStart, leftLength,
+        					ModificationType.COLUMN_REMOVED);
+        			//insert empty columns to match tables structure?
 					temp = new RangeDifference(
 							TableDifference.COLUMN_REMOVED,
 							rightStart, 0,
@@ -261,6 +222,10 @@ public class TableDifference extends RangeDifference {
 					result.add(temp);
 				}
 				if (rightLength > 0){
+        			rightTable.markColumns(
+        					rightStart, rightLength, 
+        					ModificationType.COLUMN_ADDED);
+        			//insert empty columns to match tables structure?
 					temp = new RangeDifference(
 							TableDifference.COLUMN_ADDED,
 							rightStart, rightLength,
@@ -308,10 +273,19 @@ public class TableDifference extends RangeDifference {
         				}
         				if (mergeLength > 0){
         					//means we found merge
+        					//add first merged row
+        					mergeLength++;
+        					int mergeStart = rowDiff.leftStart() - 1;
+        					rightTable.markRow(
+        							rightStart - 1, 
+        							ModificationType.ROW_MERGED);
+        				    leftTable.markRows(
+        				    		mergeStart, mergeLength,
+        				    		ModificationType.ROW_MERGED);
         					temp = new RangeDifference(
         							TableDifference.ROW_MERGED,
         							rightStart - 1, 1,
-        							rowDiff.leftStart() - 1, mergeLength + 1);
+        							mergeStart, mergeLength);
         					result.add(temp);
         				}
         			}
@@ -335,6 +309,9 @@ public class TableDifference extends RangeDifference {
 					//the merge diff follows the middle part if it exists
 					if (leftLength > 0){
 						//means some rows were not merged, just deleted
+						leftTable.markRows(
+								leftStart, leftLength, 
+								ModificationType.ROW_REMOVED);
 						temp = new RangeDifference(
 								TableDifference.ROW_REMOVED,
 								rightStart, 0,
@@ -343,10 +320,16 @@ public class TableDifference extends RangeDifference {
 					}
 					if (mergeLength > 0){
 						//means we found merge with the next
+						mergeLength++;
+						rightTable.markRow(
+								rightStart, ModificationType.ROW_MERGED);
+						leftTable.markRows(
+								leftEnd, mergeLength, 
+								ModificationType.ROW_MERGED);
 						temp = new RangeDifference(
 								TableDifference.ROW_MERGED,
 								rightStart, 1,
-								leftEnd, mergeLength + 1);
+								leftEnd, mergeLength);
 						result.add(temp);
 					}
 				}
@@ -371,9 +354,16 @@ public class TableDifference extends RangeDifference {
         				}
         				if (splitLength > 0){
         					//means we found split
+        					splitLength++;
+        					int splitStart = rowDiff.rightStart() - 1;
+        					rightTable.markRows(
+        							splitStart, splitLength, 
+        							ModificationType.ROW_SPLIT);
+        					leftTable.markRow(
+        							leftStart - 1, ModificationType.ROW_SPLIT);
         					temp = new RangeDifference(
         							TableDifference.ROW_SPLIT,
-        							rowDiff.rightStart() - 1, splitLength + 1,
+        							splitStart, splitLength,
         							leftStart - 1, 1);
         					result.add(temp);
         				}
@@ -398,6 +388,8 @@ public class TableDifference extends RangeDifference {
 					//the split diff follows the middle part if it exists
 					if (rightLength > 0){
 						//means some rows were not split, just inserted
+						rightTable.markRow(
+								rightStart, ModificationType.ROW_ADDED);
 						temp = new RangeDifference(
 								TableDifference.ROW_ADDED,
 								rightStart, rightLength,
@@ -406,9 +398,15 @@ public class TableDifference extends RangeDifference {
 					}
 					if (splitLength > 0){
 						//means we found merge with the next
+						splitLength++;
+						rightTable.markRows(
+								rightEnd, splitLength, 
+								ModificationType.ROW_SPLIT);
+						leftTable.markRow(
+								leftStart, ModificationType.ROW_SPLIT);
 						temp = new RangeDifference(
 								TableDifference.ROW_SPLIT,
-								rightEnd, splitLength + 1,
+								rightEnd, splitLength,
 								leftStart, 1);
 						result.add(temp);
 					}
@@ -416,7 +414,15 @@ public class TableDifference extends RangeDifference {
         	} else {//both deletion and insertion
         		int minLength = (leftLength < rightLength)? leftLength : rightLength;
         		if (sameDimension){
-	        		for (int rowSubsCount = 0; rowSubsCount < minLength; rowSubsCount++){
+	        		for (int rowSubsCount = 0; 
+	        		     rowSubsCount < minLength; 
+	        		     rowSubsCount++){
+	        			leftTable.markRow(
+	        					leftStart, 
+	        					ModificationType.ROW_SUBSTITUTION_REMOVED);
+	        			rightTable.markRow(
+	        					rightStart, 
+	        					ModificationType.ROW_SUBSTITUTION_ADDED);
 	        			temp = new RangeDifference(
 	        					TableDifference.ROW_SUBSTITUTION,
 	        					rightStart++, 1,
@@ -430,9 +436,15 @@ public class TableDifference extends RangeDifference {
 	        		if (rightStart < rowDiff.rightEnd()){
 	        			//means insertions left
 	        			kind = TableDifference.ROW_ADDED;
+	        			rightTable.markRows(
+	        					rightStart, rightLength, 
+	        					ModificationType.ROW_ADDED);
 	        		} else {
 	        			//means deletions left
 	        			kind = TableDifference.ROW_REMOVED;
+	        			leftTable.markRows(
+	        					leftStart, leftLength, 
+	        					ModificationType.ROW_REMOVED);
 	        		}
 	    			temp = new RangeDifference(
 	    					kind,
@@ -441,6 +453,9 @@ public class TableDifference extends RangeDifference {
 	    			result.add(temp);
         		} else {
         			if (leftLength > 0){
+	        			leftTable.markRows(
+	        					leftStart, leftLength, 
+	        					ModificationType.ROW_REMOVED);
         				temp = new RangeDifference(
         						TableDifference.ROW_REMOVED,
         						rightStart, 0, 
@@ -448,7 +463,10 @@ public class TableDifference extends RangeDifference {
         				result.add(temp);
         			}
         			if (rightLength > 0){
-        				temp = new RangeDifference(
+	        			rightTable.markRows(
+	        					rightStart, rightLength, 
+	        					ModificationType.ROW_ADDED);
+	        			temp = new RangeDifference(
         						TableDifference.ROW_ADDED,
         						rightStart, rightLength,
         						rowDiff.leftEnd(), 0);

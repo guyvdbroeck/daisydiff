@@ -38,6 +38,84 @@ public enum ModificationType {
         }
     },
 
+    /**
+     * for <code>TextNode</code>s that were removed as
+     * part of the substituted column
+     */
+    COLUMN_SUBSTITUTION_REMOVED {
+    	@Override
+    	public String toString(){
+    		return "substituted as part of a column";
+    	}
+    },
+    
+    /**
+     * for <code>TextNode</code>s that replaced removed ones
+     * during the column substitution
+     */
+    COLUMN_SUBSTITUTION_ADDED {
+    	@Override
+    	public String toString(){
+    		return "added as part of a column substitution";
+    	}
+    },
+    
+    COLUMN_REMOVED {
+    	@Override
+    	public String toString(){
+    		return "removed as a part of a column";
+    	}
+    },
+    
+    COLUMN_ADDED {
+    	@Override
+    	public String toString(){
+    		return "added as a part of a column";
+    	}
+    },
+    
+    ROW_SUBSTITUTION_REMOVED {
+    	@Override
+    	public String toString(){
+    		return "substituted as part of a row";
+    	}
+    }, 
+    
+    ROW_SUBSTITUTION_ADDED {
+    	@Override
+    	public String toString(){
+    		return "added as part of a row substitution";
+    	}
+    },
+    
+    ROW_MERGED {
+    	@Override
+    	public String toString(){
+    		return "merged row";
+    	}
+    },
+    
+    ROW_SPLIT {
+    	@Override
+    	public String toString(){
+    		return "split row";
+    	}
+    },
+    
+    ROW_REMOVED {
+    	@Override
+    	public String toString(){
+    		return "removed as a part of a row";
+    	}
+    },
+    
+    ROW_ADDED {
+    	@Override
+    	public String toString(){
+    		return "added as a part of a row";
+    	}
+    },
+    
     NONE {
         @Override
         public String toString() {

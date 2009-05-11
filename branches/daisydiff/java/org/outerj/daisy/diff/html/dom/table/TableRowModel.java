@@ -1,6 +1,7 @@
 package org.outerj.daisy.diff.html.dom.table;
 
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.ArrayList;
 import java.util.TreeSet;
@@ -8,7 +9,7 @@ import java.util.TreeSet;
 import org.outerj.daisy.diff.html.dom.Node;
 import org.outerj.daisy.diff.html.dom.Range;
 import org.outerj.daisy.diff.html.dom.TagNode;
-import org.xml.sax.Attributes;
+import org.outerj.daisy.diff.html.modification.ModificationType;
 
 import static org.outerj.daisy.diff.html.dom.table.TableStatics.*;
 
@@ -34,10 +35,12 @@ public class TableRowModel extends CellSetStub {
 	 * @throws @see java.lang.IllegalArgumentException - if the 
 	 * parameter is <code>null</code> or is not a row tag
 	 */
-	public TableRowModel(TagNode rowTag, int rowIndex, int rangeStart){
-		if (rowTag == null || !ROW_TAG_NAME.equals(rowTag.getQName())){
+	public TableRowModel(
+			TagNode rowTag, int rowIndex, int rangeStart, boolean needContent){
+		this.nullCheck(rowTag);
+		if (!ROW_TAG_NAME.equals(rowTag.getQName())){
 			throw new IllegalArgumentException(
-					"Can only build a row from not-null ROW TagNode");
+					"Can only build a row from a ROW TagNode");
 		}
 		//remember where we came from 
 		rowTagNode = rowTag;
@@ -59,7 +62,7 @@ public class TableRowModel extends CellSetStub {
 						HEADER_CELL_TAG_NAME.equals(childName)){
 						//it's a cell tag!
 						TableCellModel cell = new TableCellModel(
-								tagChild, index, idx, rangeStart);
+								tagChild, index, idx, rangeStart, needContent);
 						rangeStart = cell.getEndOfRange();
 						rowRange.setEnd(rangeStart++);
 						//if the cell spans several rows, then 
@@ -91,7 +94,7 @@ public class TableRowModel extends CellSetStub {
 						//will be no duplicates. Because it's a sorted set,
 						//the insertion and the look up are sped up a bit.
 						TreeSet<String> cellContent = cell.getContent();
-						if (cellContent != null){
+						if (needContent && cellContent != null){
 							content.addAll(cell.getContent());
 						}
 						if (empty && !cell.isEmpty()){
@@ -123,13 +126,16 @@ public class TableRowModel extends CellSetStub {
 	 */
 	public TableRowModel(
 			TagNode rowTag, int rowIndex, 
-			List<TableCellModel> spannedCells, int rangeStart){
-		if (rowTag == null || !ROW_TAG_NAME.equals(rowTag.getQName())){
+			List<TableCellModel> spannedCells, int rangeStart, 
+			boolean needContent){
+		this.nullCheck(rowTag);
+		this.nullCheck(spannedCells);
+		if (!ROW_TAG_NAME.equals(rowTag.getQName())){
 			throw new IllegalArgumentException(
-					"Can only build a row from not-null ROW TagNode");
+					"Can only build a row from a ROW TagNode");
 		}
 		
-		if (spannedCells == null || spannedCells.size() == 0){
+		if (spannedCells.size() == 0){
 			throw new IllegalArgumentException(
 					"Invalid list of spanned cells");
 		}
@@ -143,7 +149,9 @@ public class TableRowModel extends CellSetStub {
 		
 		//try to build row from current children and spanned cells
 		cells = new ArrayList<TableCellModel>();
-		content = new TreeSet<String>();
+		if (needContent){
+			content = new TreeSet<String>();
+		}
 		Iterator<TableCellModel> talls = spannedCells.iterator();
 		boolean ownChildren = rowTagNode.getNbChildren() > 0;
 		Iterator<Node> children = null;
@@ -175,13 +183,14 @@ public class TableRowModel extends CellSetStub {
 					idx++;
 				}
 				
-				//add its content to the row content once
-				TreeSet<String> spannedContent = 
-					spannedCell.getContent();
-				if (spannedContent != null){
-					content.addAll(spannedContent);
+				//if we need content - add its content to the row content once
+				if (needContent){
+					TreeSet<String> spannedContent = 
+						spannedCell.getContent();
+					if (spannedContent != null){
+						content.addAll(spannedContent);
+					}
 				}
-				
 				//will that cell span below this row?
 				int height = spannedCell.getRowSpan();
 				int topRowIdx = spannedCell.getRowIndex();
@@ -221,7 +230,7 @@ public class TableRowModel extends CellSetStub {
 						HEADER_CELL_TAG_NAME.equals(childName)){
 						//it's a cell tag!
 						TableCellModel cell = new TableCellModel(
-								tagChild, index, idx, rangeStart);
+								tagChild, index, idx, rangeStart, needContent);
 						rangeStart = cell.getEndOfRange();
 						rowRange.setEnd(rangeStart++);
 						
@@ -249,13 +258,15 @@ public class TableRowModel extends CellSetStub {
 							idx++;
 						}
 							
-						//add the cell's content to the row's content.
-						//note, that because the content is a set, there
-						//will be no duplicates. Because it's a sorted set,
-						//the insertion and the look up are sped up a bit.
-						TreeSet<String> cellContent = cell.getContent();
-						if (cellContent != null){
-							content.addAll(cellContent);
+						if (needContent){
+							//add the cell's content to the row's content.
+							//note, that because the content is a set, there
+							//will be no duplicates. Because it's a sorted set,
+							//the insertion and the look up are sped up a bit.
+							TreeSet<String> cellContent = cell.getContent();
+							if (cellContent != null){
+								content.addAll(cellContent);
+							}
 						}
 					} else {
 						//child of a table row isn't a cell? 
@@ -317,7 +328,9 @@ public class TableRowModel extends CellSetStub {
 		rowCopy.setRowTagNode(rowTagCopy);
 		rowCopy.setCells(cellsCopy);
 		rowCopy.setSpannedDownCells(spannedDownCopy);
-		rowCopy.setContent(new TreeSet<String>(content));
+		if (hasContent()){
+			rowCopy.setContent(new TreeSet<String>(content));
+		}
 		Range myRange = this.getRange();
 		if (myRange != null){
 			rowCopy.setRowRange(myRange.copy());
@@ -330,31 +343,47 @@ public class TableRowModel extends CellSetStub {
 		return rowCopy;
 	}
 	
-	public TableRowModel lightCopy(){
+	/**************************************************************************
+	 * This method adjust rowspans of the cells in the row to not span
+	 * in the previous row. It also makes all the cells to be children
+	 * of the row. Therefore, if you want to copy a series of rows without 
+	 * breaking rowspanned cells, you can't repeatedly use this method.
+	 * Instead use <code>lightCopy(TableRowModel previousRow)</code>method.
+	 * @return
+	 */
+	public TableRowModel lightCopy(int maxAllowedSpanDown){
 		TableRowModel rowCopy = new TableRowModel();
 		TagNode rowTagCopy = (TagNode)rowTagNode.shallowCopy();
 		ArrayList<TableCellModel> cellsCopy = new ArrayList<TableCellModel>();
 		ArrayList<TableCellModel> spannedDownCopy = 
 			new ArrayList<TableCellModel>();
+		int rowIdx = getIndex();
+		int maxCopySpanDown = 0;
 		DistinctCellIterator distinctCells = getDistinctIterator();
 		while (distinctCells.hasNext()){
 			TableCellModel myCell = distinctCells.next();
-			//can't avoid tag copies, as some cells for a row are 
+			//can't avoid separate tag copies, as some cells for a row are 
 			//from other rows (spanned down)
 			TableCellModel copy = myCell.lightCopy();
-			if (myCell.tagParentEquals(rowTagNode)){
-				copy.setTagParent(rowTagCopy);
-				rowTagCopy.addChild(copy.getCellTagNode());
-			} else {//means it's spanned from previous row
+			int originalRowSpan = myCell.getRowSpan();
+			int copyRowSpan = copy.getRowSpan();
+			if (!myCell.tagParentEquals(rowTagNode)){
+				//means it's spanned from previous row
 				//we need to adjust spans to not span into the previous rows
-				copy.setRowSpan(
-						myCell.getRowSpan() - 
-						(getIndex() - myCell.getRowIndex()));
+				copyRowSpan += myCell.getRowIndex() - rowIdx;
 			}
+			copy.setTagParent(rowTagCopy);
+			rowTagCopy.addChild(copy.getCellTagNode());
 			//spanned down list should contain cell from the row, 
 			//so we can't just make a copy - we need to extract our cells.
-			if (NO_SPAN < copy.getRowSpan()){
+			//we also need to adjust that to not extend past copying piece
+			if (maxAllowedSpanDown < (copyRowSpan - 1)){
+				copyRowSpan = maxAllowedSpanDown + 1;
+			}
+			copy.changeRowSpan(originalRowSpan - copyRowSpan);
+			if (NO_SPAN < copyRowSpan){
 				spannedDownCopy.add(copy);
+				maxCopySpanDown = Math.max(maxCopySpanDown, copyRowSpan - 1);
 			}
 			//adjust columnIdx
 			copy.setColIndex(myCell.getColIndex());
@@ -366,6 +395,7 @@ public class TableRowModel extends CellSetStub {
 		rowCopy.setRowTagNode(rowTagCopy);
 		rowCopy.setCells(cellsCopy);
 		rowCopy.setSpannedDownCells(spannedDownCopy);
+		rowCopy.setMaxSpanDown(maxCopySpanDown);
 		rowCopy.setEmpty(empty);
 		return rowCopy;
 	}
@@ -374,11 +404,14 @@ public class TableRowModel extends CellSetStub {
 	 * This method allows to share spanned cell if you want to make a copy of 
 	 * several rows with spanned cell and use them together.
 	 * @param previousRow - previous row (probably with spanned cells
-	 * @return
+	 * @param maxAllowedSpanDown - how far the cells of the copy row can 
+	 * span down
+	 * @return the copy
 	 */
-	public TableRowModel lightCopy(TableRowModel previousRow){
+	public TableRowModel lightCopy(
+			TableRowModel previousRow, int maxAllowedSpanDown){
 		if (previousRow == null){
-			return lightCopy();
+			return lightCopy(maxAllowedSpanDown);
 		}
 		int	copyIdx = previousRow.getIndex() + 1;
 		TableRowModel rowCopy = new TableRowModel();
@@ -387,6 +420,7 @@ public class TableRowModel extends CellSetStub {
 		ArrayList<TableCellModel> cellsCopy = new ArrayList<TableCellModel>();
 		ArrayList<TableCellModel> spannedDownCopy = 
 			new ArrayList<TableCellModel>();
+		int maxCopySpanDown = 0;
 		DistinctCellIterator distinctCells = getDistinctIterator();
 		while (distinctCells.hasNext()){
 			TableCellModel myCell = distinctCells.next();
@@ -397,19 +431,25 @@ public class TableRowModel extends CellSetStub {
 				copy = myCell.lightCopy();
 				copy.setTagParent(rowTagCopy);
 				rowTagCopy.addChild(copy.getCellTagNode());
+				//adjust columnIdx and rowIdx
+				copy.setColIndex(myCell.getColIndex());
+				copy.setRowIndex(copyIdx);
+				//adjust span down
+				int copyRowSpan = copy.getRowSpan();
+				if (maxAllowedSpanDown < (copyRowSpan - 1)){
+					copy.changeRowSpan(maxAllowedSpanDown - copyRowSpan + 1);
+				}
 			} else {//means it's spanned from previous row
 				//get it from the previous row
 				copy = previousRow.getCell(myCell.getColIndex());
 			}
 			//spanned down list should contain cell from the row, 
 			//so we can't just make a copy - we need to extract our cells.
-			if (NO_SPAN < 
-					(copy.getRowSpan() - (getIndex() - myCell.getRowIndex()))){
+			int copySpanDown = copy.getSpanDownLength(copyIdx);
+			if (0 < copySpanDown){
 				spannedDownCopy.add(copy);
+				maxCopySpanDown = Math.max(maxCopySpanDown, copySpanDown);
 			}
-			//adjust columnIdx and rowIdx
-			copy.setColIndex(myCell.getColIndex());
-			copy.setRowIndex(copyIdx);
 			//add this cell as many times as it spans columns
 			for (int i = 0; i < distinctCells.currentOccurence(); i++){
 				cellsCopy.add(copy);
@@ -418,8 +458,16 @@ public class TableRowModel extends CellSetStub {
 		rowCopy.setRowTagNode(rowTagCopy);
 		rowCopy.setCells(cellsCopy);
 		rowCopy.setSpannedDownCells(spannedDownCopy);
+		rowCopy.setMaxSpanDown(maxCopySpanDown);
 		rowCopy.setEmpty(empty);
 		return rowCopy;
+	}
+	
+	public void mark(ModificationType kind){
+		this.setModification(kind);
+		for (TableCellModel cell : this){
+			cell.setModification(kind);
+		}
 	}
 	
 	protected boolean insertedEmptyCells(int startIdx, int amount){
@@ -450,7 +498,7 @@ public class TableRowModel extends CellSetStub {
 		//all's good - insert empty cells
 		for (int i = startIdx; i < startIdx + amount; i++){
 			TableCellModel emptyCell = new TableCellModel(
-					getEmptyCell(), getIndex(), i, Range.NOT_DEFINED);
+					getEmptyCell(), getIndex(), i, Range.NOT_DEFINED, false);
 			emptyCell.setTagParent(myTag);
 			if (myTag != null){
 				myTag.addChild(prevIdx + 1, emptyCell.getCellTagNode());
@@ -505,7 +553,151 @@ public class TableRowModel extends CellSetStub {
 		updateCellColIdx();
 		return theCell;
 	}
+	
+	/**
+	 * this method should be used if a cell from a row above spans over this row,
+	 * and had its colspan increased by the row above. Now this row has to add the 
+	 * spanned cell to its cell collection to match the length increase.
+	 * @param idx - index of the spanned row
+	 * @param amount - additional columns that now spanned
+	 */
+	protected void updateWithSpannedCell(int idx, int amount){
+		this.checkIdx(idx);
+		if (amount <= 0){//don't handle negative changes 
+			return;
+		}
+		TableCellModel spannedCell = getCell(idx);
+		List<TableCellModel> myCells = getCells();
+		if (NO_SPAN < spannedCell.getColSpan()){
+			while (amount != 0){
+				myCells.add(idx, spannedCell);
+				amount--;
+			}
+			updateCellColIdx();
+		}
+	}
 
+	/**
+	 * This method substitutes the cell in the specified column with an empty cell
+	 * that doesn't span up, but spans down  and over the columns exactly same amount
+	 * or rows/columns as the original cell in that spot.
+	 * This method does not update the table's other affected rows and columns - it is 
+	 * the responsibility of the caller. Currently this method is used for 
+	 * splitting the cells that span over the insertion point.
+	 * @param colIdx - the index of the cell that needs to be substituted.
+	 * @throws <code>IndexOutOfBoundsException</code>
+	 */
+	protected TableCellModel substituteWithEmptyCell(int colIdx){
+		int colCount = getLengthInCols();
+		if (colIdx < 0 || colCount <= colIdx){
+			throw new IndexOutOfBoundsException(
+					"The provided substitution has to have valid colIndex." +
+					"Currently index could be from 0 to " + colCount +
+					", but " + colIdx + " was provided. ");
+		}
+		TableCellModel oldCell = getCell(colIdx);
+		int rowIdx = getIndex();
+		int colSpan = oldCell.getColSpan();
+		TableCellModel emptyCell = new TableCellModel(
+				getEmptyCell(), 
+				rowIdx, colIdx, 
+				Range.NOT_DEFINED, false);
+		emptyCell.changeRowSpan(oldCell.getSpanDownLength(rowIdx) + 1);
+		emptyCell.changeColSpan(colSpan - emptyCell.getColSpan());
+		//take care of the tag tree if needed
+		TagNode myTag = getRowTagNode();
+		if (myTag!= null){
+			emptyCell.setTagParent(myTag);
+			//the following is not going to happen during the split, 
+			//(as the old cell comes from the rows above.
+			//but to be on the safe side...
+			if (oldCell.getRowIndex() == rowIdx){
+				TagNode oldCellTag = oldCell.getCellTagNode();
+				myTag.removeChild(oldCellTag);
+				oldCellTag.setParent(null);
+			}
+			//insert it in the right spot
+			int prevColIdx = colIdx - 1;
+			while (0 <= prevColIdx && getCell(prevColIdx).getRowIndex() != rowIdx){
+				prevColIdx--;
+			}
+			if (prevColIdx == OUTSIDE){//means no own children before substitution 
+				//insert first
+				myTag.addChild(0, emptyCell.getCellTagNode());
+			} else { //we found previous own child - insert after it.
+				myTag.addChild(
+					myTag.getIndexOf(getCell(prevColIdx).getCellTagNode()) + 1,
+					emptyCell.getCellTagNode());
+			}
+		}
+		//now do the model replacement as many times as colspan says
+		LinkedList<TableCellModel> substitution = new LinkedList<TableCellModel>();
+		List<TableCellModel> myCells = getCells();
+		for(int i = 0; i < colSpan; i++){
+			myCells.remove(colIdx);
+			substitution.add(emptyCell);
+		}
+		myCells.addAll(colIdx, substitution);
+		return emptyCell;
+	}
+	
+	/**
+	 * Substitution should have same colIdx, colSpan and spanDown as the current cell.
+	 * Currently this method assumes that the substituted cell is not the own child
+	 * of this row, but is spanned down from the previous row.
+	 * @param substitution
+	 */
+	protected void substituteWith(TableCellModel substitution){
+		int colIdx = substitution.getColIndex();
+		int colCount = getLengthInCols();
+		int rowIdx = getIndex();
+		if (colIdx < 0 || colCount <= colIdx){
+			throw new IndexOutOfBoundsException(
+					"current row can't accomodate requested coordinates: " +
+					"requested colIdx: " + colIdx + 
+					" possible values: from 0 to " + colCount);
+		}
+		TableCellModel oldCell = getCell(colIdx);
+		int oldColSpan = oldCell.getColSpan();
+		int oldSpanDown = oldCell.getSpanDownLength(rowIdx);
+		int subColSpan = substitution.getColSpan();
+		int subSpanDown = substitution.getSpanDownLength(rowIdx);
+		if (subColSpan != oldColSpan || subSpanDown != oldSpanDown){
+			throw new IllegalStateException(
+				"provided substitution should have same " +
+				"colSpan and spanDown values as the old cell.\n" +
+				"Old values: " + oldColSpan + ", " + oldSpanDown + "\n" +
+				"New values: " + subColSpan + ", " + subSpanDown);
+		}
+		//substitute as many times as needed
+		LinkedList<TableCellModel> subPiece = new LinkedList<TableCellModel>();
+		List<TableCellModel> myCells = getCells();
+		for(int i = 0; i < oldColSpan; i++){
+			myCells.remove(colIdx);
+			subPiece.add(substitution);
+		}
+		myCells.addAll(colIdx, subPiece);
+	}
+	
+	protected void updateSpanDownInfo(){
+		int currentMaxSpanDown = 0;
+		int rowIdx = getIndex();
+		List<TableCellModel> rowSpannedCells = getSpannedDown();
+		//the list will be changing, so we can't use iterator, and have to move 
+		//from end to front
+		int originalCount = rowSpannedCells.size();
+		for (int i = originalCount - 1; i >= 0; i-- ){
+			TableCellModel cellToCheck = rowSpannedCells.get(i);
+			int spanDown = cellToCheck.getSpanDownLength(rowIdx);
+			if (spanDown == 0){
+				rowSpannedCells.remove(i);
+			} else {
+				currentMaxSpanDown = Math.max(currentMaxSpanDown, spanDown);
+			}
+		}
+		this.setMaxSpanDown(currentMaxSpanDown);
+	}
+	
 	//*-----------------------------------------------------------------------*
 	//*                  CellSet interface implementation                     *
 	//*-----------------------------------------------------------------------*
@@ -662,6 +854,15 @@ public class TableRowModel extends CellSetStub {
 			TableCellModel currentCell = distinctCells.next();
 			currentCell.setColIndex(currentColIdx);
 			currentColIdx += currentCell.getColSpan();
+		}
+	}
+
+	protected void checkIdx(int cellIdx){
+		int colCount = this.getLengthInCols();
+		if (cellIdx < 0 || colCount <= cellIdx){
+			throw new IndexOutOfBoundsException(
+					"Provided cell index " + cellIdx + " is out of bounds: " +
+					"0 - " + (colCount - 1));
 		}
 	}
 

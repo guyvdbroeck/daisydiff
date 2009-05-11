@@ -9,6 +9,7 @@ import org.outerj.daisy.diff.html.dom.Node;
 import org.outerj.daisy.diff.html.dom.Range;
 import org.outerj.daisy.diff.html.dom.TextNode;
 import org.outerj.daisy.diff.html.dom.TagNode;
+import org.outerj.daisy.diff.html.modification.ModificationType;
 import org.xml.sax.Attributes;
 import org.xml.sax.helpers.AttributesImpl;
 
@@ -22,6 +23,7 @@ public class TableCellModel{
 	
 	private TagNode cellTagNode = null;
 	private Range cellRange = null;
+	private ModificationType modification;
 	private boolean headerCell = false;
 	private TreeSet<String> content = null;
 	private ArrayList<TextNode> textNodes = null;
@@ -39,7 +41,8 @@ public class TableCellModel{
 	 * parameter is <code>null</code> or is not a cell tag
 	 */
 	public TableCellModel(
-			TagNode cellTag, int rowIdx, int colIdx, int rangeStart){
+			TagNode cellTag, int rowIdx, int colIdx, 
+			int rangeStart, boolean needContent){
 		if (cellTag == null){
 			throw new IllegalArgumentException(
 					"Can't construct the cell model: " +
@@ -97,7 +100,9 @@ public class TableCellModel{
 		
 		if (cellTagNode.getNbChildren() > 0){
 			textNodes = new ArrayList<TextNode>();
-			content = new TreeSet<String>();
+			if (needContent){
+				content = new TreeSet<String>();
+			}
 			int count = processTextNodes(cellTagNode, textNodes, content);
 			if (cellRange != null){
 				cellRange.setEnd(cellRange.getStart() + count - 1);
@@ -282,6 +287,14 @@ public class TableCellModel{
 		return cellTagNode;
 	}
 	
+	public ModificationType getModification(){
+		return modification;
+	}
+	
+	public void setModification(ModificationType mod){
+		modification = mod;
+	}
+	
 	protected Attributes getTagAttributes(){
 		TagNode cellTag = getCellTagNode();
 		if (cellTag == null){
@@ -425,7 +438,7 @@ public class TableCellModel{
 	 */
 	protected int processTextNodes(
 			Node node, List<TextNode> textList, Set<String> contentSet){
-		if (textList == null || contentSet == null){
+		if (textList == null){
 			throw new IllegalArgumentException(
 					"Provide collections for output!");
 		}
@@ -437,9 +450,10 @@ public class TableCellModel{
 		if (node instanceof TextNode){//the text node - that's what we need!
 			TextNode textNode = (TextNode)node;
 			String childContent = textNode.getText();
-			if (isValuableContent(childContent)){
-				contentSet.add(childContent);
+			if (contentSet != null && isValuableContent(childContent)){
+					contentSet.add(childContent);
 			}
+			
 			if (isNotWhiteSpace(childContent)){
 				textList.add(textNode);
 				empty = false;
