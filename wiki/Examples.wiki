@@ -16,7 +16,7 @@ This example uses the BBC news archive site to compare the news page at differen
 The page can load slowly due to the slow servers at archive.org.
 The page layout is somewhat shifted in the example because the page is not hosted on the BBC servers.
 ==Result==
-[http://users.pandora.be/guyvdb/daisydiff/example.htm example.htm]
+example.htm (link not available anymore)
 ==Input==
 [http://web.archive.org/web/20070107145418/http://news.bbc.co.uk/ old HTML] - [http://web.archive.org/web/20070107182640/http://news.bbc.co.uk/ new HTML]
 ==Command==
