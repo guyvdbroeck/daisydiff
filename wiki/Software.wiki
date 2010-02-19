@@ -1,4 +1,5 @@
 #summary Existing software solutions in Java.
+#labels Featured
 
 = Finding differences in Text =
 
@@ -28,7 +29,7 @@ Below is a table that lists other solutions apart from Daisy Diff
 || [http://www.wombat.ie/software/jbdiff/downloads/ JBDiff] || text || 0.1.1 || BSD || October 2007 ||
 || [http://www.vmsystems.net/vmtools/ VMTools] || xml || 0.5 || VMtools Source Licence || February 2002 ||
 || [http://diffxml.sourceforge.net/ diffXML] || xml || 0.95Beta || GPL || May 2009 ||
-|| [http://www.alphaworks.ibm.com/tech/xmldiffmerge XMLDiff] || xml || 2001 || AlphaWorks || March 2001 ||
+|| [http://www.alphaworks.ibm.com/tech/xmldiffmerge XMLDiff] || xml || 2001 || Alphaworks || March 2001 ||
 || [http://jlibdiff.sourceforge.net/ Jlibdiff] || text || 1.01 || GPL || February 2004 ||
 || [http://sourceforge.net/projects/jdirdiff/ JDirDiff] || text || 0.67 || GPL || June 2004 ||
 || [http://code.google.com/p/google-diff-match-patch/ Google Diff] || text || 20090804 || Apache Licence || August 2009 || 
@@ -43,7 +44,11 @@ Below is a table that lists other solutions apart from Daisy Diff
 || [http://www.living-pages.de/de/projects/xop/index.html XOP] || xml || 1.3|| Research || October 2009 ||
 || [http://www.topologi.com/diffx/ Diff X] || xml || 0.7.1 || Artistic/GPL|| October 2009 ||
 
+= What Daisy Diff offers =
 
+One of the most important features of Daisy Diff is the fact that it "understands" HTML tags and will actually look into the text to decide if a node is same for not. 
 
+For example assume that a user has changed a single word in a big paragraph. Most XML libraries would just mark the whole paragraph as different. Daisy Diff however will look into the inline text (the contents of the p tag node) and understand that only one word is different. Therefore it will present to the user _only_ this word as changed.
 
+DaisyDiff is also used in production (Daisy CMS) and also comes with a business friendly licence.
 
