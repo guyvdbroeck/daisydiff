@@ -1,4 +1,4 @@
-#summary One-sentence summary of this page.
+#summary Description of the two modes of Daisy Diff
 #labels Featured
 
 = Daisy Diff offers two modes of operation=
@@ -50,7 +50,11 @@ The tag mode is also perfect if you wish to develop your own diff library on top
 
 The main disadvantage of Tag mode is simplicity. There is no explicit support for formatting changes, changes in images and changes in HTML attributes. You have to implement them yourself if you want to post-process them in some way.
 
- 
+== Output formats ==
 
+Another command line option can be used to change the output format of each mode.
+The default format of both modes is HTML which is suitable for presentation to the user.
 
+If you want to post-process the results or use them as input in your own software module, 
+both modes offer XML output which can be parsed with any XML parser. 
 
