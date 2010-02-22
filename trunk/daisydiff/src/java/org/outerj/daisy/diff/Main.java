@@ -24,15 +24,10 @@ import org.xml.sax.SAXException;
 import org.xml.sax.helpers.AttributesImpl;
 
 public class Main {
-
+  static boolean quietMode = false;
+  
     public static void main(String[] args) throws URISyntaxException {
-        System.out.println("            ______________");
-        System.out.println("           /Daisy Diff 1.0\\");
-        System.out.println("          /________________\\");
-        System.out.println();
-        System.out.println(" -= http://code.google.com/p/daisydiff/ =-");
-        System.out.println("");
-        System.out.println();
+
         if (args.length < 2)
             help();
 
@@ -56,31 +51,45 @@ public class Main {
                     if (split[1].equalsIgnoreCase("xml")) {
                         htmlOut = false;
                     }
+                } else if (split[0].equals("--q")){
+                  quietMode = true;
                 } else{
                     help();
                 }
 
             }
-
-            System.out.println("Comparing documents:");
-            System.out.println("  " + args[0]);
-            System.out.println("and");
-            System.out.println("  " + args[1]);
-            System.out.println();
-
-            if (htmlDiff)
+            if (!quietMode){
+              System.out.println("            ______________");
+              System.out.println("           /Daisy Diff 1.0\\");
+              System.out.println("          /________________\\");
+              System.out.println();
+              System.out.println(" -= http://code.google.com/p/daisydiff/ =-");
+              System.out.println("");
+              System.out.println();
+              System.out.println("Comparing documents:");
+              System.out.println("  " + args[0]);
+              System.out.println("and");
+              System.out.println("  " + args[1]);
+              System.out.println();
+              if (htmlDiff)
                 System.out.println("Diff type: html");
-            else
+              else
                 System.out.println("Diff type: tag");
-            System.out.println("Writing "+(htmlOut?"html":"xml")+" output to " + outputFile);
+              System.out.println("Writing "+(htmlOut?"html":"xml")+" output to " + outputFile);
+            }
+
+
             if(css.length>0){
-                System.out.println("Adding external css files:");
+                if (!quietMode)
+                  System.out.println("Adding external css files:");
                 for(String cssLink:css){
                     System.out.println("  "+cssLink);
                 }
             }
-            System.out.println("");
-            System.out.print(".");
+            if (!quietMode){
+              System.out.println("");
+              System.out.print(".");
+            }
             SAXTransformerFactory tf = (SAXTransformerFactory) TransformerFactory
                     .newInstance();
 
@@ -165,6 +174,9 @@ public class Main {
             }
 
         } catch (Throwable e) {
+          if (quietMode){
+            System.out.println(e);
+          } else {
             e.printStackTrace();
             if (e.getCause() != null) {
                 e.getCause().printStackTrace();
@@ -173,8 +185,12 @@ public class Main {
                 ((SAXException) e).getException().printStackTrace();
             }
             help();
+          }
         }
-        System.out.println("done");
+        if (quietMode)
+          System.out.println();
+        else
+          System.out.println("done");
 
     }
 
@@ -205,6 +221,7 @@ public class Main {
                 .println("--type=[html/tag] - Use the html (default) diff algorithm or the tag diff.");
         System.out.println("--css=[cssfile1;cssfile2;cssfile3] - Add external CSS files.");
         System.out.println("--output=[html/xml] - Write html (default) or xml output.");
+        System.out.println("--q  - Generate less console output.");
         System.out.println("");
         System.out.println("EXAMPLES: ");
         System.out.println("(1)");

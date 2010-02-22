@@ -27,6 +27,8 @@ import org.outerj.daisy.diff.html.modification.HtmlLayoutChange;
 
 public class ChangeTextGenerator {
 
+	private List<HtmlLayoutChange> htmlLayoutChanges = null;
+	
     private AncestorComparator ancestorComparator;
 
     private AncestorComparator other;
@@ -35,7 +37,7 @@ public class ChangeTextGenerator {
 
     private Locale locale;
     
-    private List<HtmlLayoutChange> htmlLayoutChanges = null;
+    private static final int MAX_OUTPUT_LINE_LENGTH = 55;   //   Lines won't go longer than this unless a single word it longer than this.
 
     public ChangeTextGenerator(AncestorComparator ancestorComparator,
             AncestorComparator other, Locale locale) {
@@ -48,7 +50,7 @@ public class ChangeTextGenerator {
     }
 
     public ChangeText getChanged(RangeDifference... differences) {
-        ChangeText txt = new ChangeText(55);
+        ChangeText txt = new ChangeText(ChangeTextGenerator.MAX_OUTPUT_LINE_LENGTH);
 
         boolean rootlistopened = false;
 
