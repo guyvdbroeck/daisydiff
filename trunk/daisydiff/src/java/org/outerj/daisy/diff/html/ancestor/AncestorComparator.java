@@ -79,6 +79,7 @@ public class AncestorComparator implements IRangeComparator {
 
         result.setChanged(true);
         result.setChanges(changeTxt.getChanged(differences).toString());
+        result.setHtmlLayoutChanges(changeTxt.getHtmlLayoutChanges());
 
         return result;
 

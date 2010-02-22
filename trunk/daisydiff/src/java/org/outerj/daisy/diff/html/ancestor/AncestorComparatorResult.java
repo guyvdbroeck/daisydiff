@@ -15,11 +15,25 @@
  */
 package org.outerj.daisy.diff.html.ancestor;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import org.outerj.daisy.diff.html.modification.HtmlLayoutChange;
+
 public class AncestorComparatorResult {
+	
+	
 
     private boolean changed = false;
 
     private String changes = null;
+    
+    private List<HtmlLayoutChange> htmlLayoutChanges= null;
+    
+    public AncestorComparatorResult()
+	{
+    	htmlLayoutChanges = new ArrayList<HtmlLayoutChange>();
+	}
 
     public boolean isChanged() {
         return changed;
@@ -36,5 +50,23 @@ public class AncestorComparatorResult {
     public void setChanges(String changes) {
         this.changes = changes;
     }
+
+	/**
+	 * @return the htmlChanges
+	 */
+	public List<HtmlLayoutChange> getHtmlLayoutChanges() {
+		return htmlLayoutChanges;
+	}
+
+	/**
+	 * @param htmlLayoutChanges the htmlChanges to set
+	 */
+	public void setHtmlLayoutChanges(List<HtmlLayoutChange> htmlLayoutChanges) {
+		this.htmlLayoutChanges = htmlLayoutChanges;
+	}
+    
+    
+    
+    
 
 }

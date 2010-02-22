@@ -21,6 +21,7 @@ import org.outerj.daisy.diff.html.dom.TagNode;
 import org.outerj.daisy.diff.html.dom.TextNode;
 import org.outerj.daisy.diff.html.modification.Modification;
 import org.outerj.daisy.diff.html.modification.ModificationType;
+import org.outerj.daisy.diff.output.DiffOutput;
 import org.xml.sax.ContentHandler;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.AttributesImpl;
@@ -28,7 +29,7 @@ import org.xml.sax.helpers.AttributesImpl;
 /**
  * Takes a branch root and creates an HTML file for it.
  */
-public class HtmlSaxDiffOutput {
+public class HtmlSaxDiffOutput implements DiffOutput{
 
     private ContentHandler handler;
 
@@ -39,7 +40,10 @@ public class HtmlSaxDiffOutput {
         this.prefix = name;
     }
 
-    public void toHTML(TagNode node) throws SAXException {
+    /**
+     * {@inheritDoc}
+     */
+    public void generateOutput(TagNode node) throws SAXException {
 
         if (!node.getQName().equalsIgnoreCase("img")
                 && !node.getQName().equalsIgnoreCase("body")) {
@@ -64,7 +68,7 @@ public class HtmlSaxDiffOutput {
                     handler.endElement("", "span", "span");
                     remStarted = false;
                 }
-                toHTML(((TagNode) child));
+                generateOutput(((TagNode) child));
             } else if (child instanceof TextNode) {
                 TextNode textChild = (TextNode) child;
                 Modification mod = textChild.getModification();

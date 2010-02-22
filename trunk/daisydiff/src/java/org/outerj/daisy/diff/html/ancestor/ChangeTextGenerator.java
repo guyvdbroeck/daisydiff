@@ -15,11 +15,15 @@
  */
 package org.outerj.daisy.diff.html.ancestor;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Locale;
 
 import org.eclipse.compare.rangedifferencer.RangeDifference;
+import org.outerj.daisy.diff.html.ancestor.tagtostring.TagToString;
 import org.outerj.daisy.diff.html.ancestor.tagtostring.TagToStringFactory;
 import org.outerj.daisy.diff.html.dom.TagNode;
+import org.outerj.daisy.diff.html.modification.HtmlLayoutChange;
 
 public class ChangeTextGenerator {
 
@@ -30,6 +34,8 @@ public class ChangeTextGenerator {
     private TagToStringFactory factory;
 
     private Locale locale;
+    
+    private List<HtmlLayoutChange> htmlLayoutChanges = null;
 
     public ChangeTextGenerator(AncestorComparator ancestorComparator,
             AncestorComparator other, Locale locale) {
@@ -37,6 +43,8 @@ public class ChangeTextGenerator {
         this.other = other;
         this.factory = new TagToStringFactory();
         this.locale = locale;
+        
+        htmlLayoutChanges = new ArrayList<HtmlLayoutChange>();
     }
 
     public ChangeText getChanged(RangeDifference... differences) {
@@ -108,15 +116,28 @@ public class ChangeTextGenerator {
     }
 
     private void addTagOld(ChangeText txt, TagNode ancestor) {
-        factory.create(ancestor, locale).getRemovedDescription(txt);
+    	TagToString tagToString = factory.create(ancestor, locale);
+    	tagToString.getRemovedDescription(txt);
+    	htmlLayoutChanges.add(tagToString.getHtmlLayoutChange());
     }
 
     private void addTagNew(ChangeText txt, TagNode ancestor) {
-        factory.create(ancestor, locale).getAddedDescription(txt);
+    	TagToString tagToString = factory.create(ancestor, locale);
+    	tagToString.getAddedDescription(txt);
+    	htmlLayoutChanges.add(tagToString.getHtmlLayoutChange());
     }
 
     private TagNode getAncestor(int i) {
         return ancestorComparator.getAncestor(i);
     }
+
+	/**
+	 * @return the htmlChange
+	 */
+	public List<HtmlLayoutChange> getHtmlLayoutChanges() {
+		return htmlLayoutChanges;
+	}
+    
+    
 
 }

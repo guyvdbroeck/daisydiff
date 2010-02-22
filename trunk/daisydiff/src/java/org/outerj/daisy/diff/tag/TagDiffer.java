@@ -20,6 +20,8 @@ import java.util.List;
 
 import org.eclipse.compare.rangedifferencer.RangeDifference;
 import org.eclipse.compare.rangedifferencer.RangeDifferencer;
+import org.outerj.daisy.diff.output.TextDiffOutput;
+import org.outerj.daisy.diff.output.TextDiffer;
 
 /**
  * Takes 2 AtomSplitters and computes the difference between them. Output is
@@ -27,14 +29,17 @@ import org.eclipse.compare.rangedifferencer.RangeDifferencer;
  * internally on a second iteration. The results are processed as to combine
  * small subsequent changes in to larger changes.
  */
-public class TagDiffer {
+public class TagDiffer implements TextDiffer{
 
-    private TagSaxDiffOutput output;
+    private TextDiffOutput output;
 
-    public TagDiffer(TagSaxDiffOutput output) {
+    public TagDiffer(TextDiffOutput output) {
         this.output = output;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public void diff(IAtomSplitter leftComparator, IAtomSplitter rightComparator)
             throws Exception {
 

@@ -166,6 +166,7 @@ public class TextNodeComparator implements IRangeComparator, Iterable<TextNode> 
                 nextLastModified.add(mod);
 
                 mod.setChanges(result.getChanges());
+                mod.setHtmlLayoutChanges(result.getHtmlLayoutChanges());
                 mod.setID(changedID);
 
                 getTextNode(i).setModification(mod);

@@ -21,6 +21,8 @@ import java.util.ResourceBundle;
 import org.outerj.daisy.diff.html.ancestor.ChangeText;
 import org.outerj.daisy.diff.html.ancestor.TagChangeSematic;
 import org.outerj.daisy.diff.html.dom.TagNode;
+import org.outerj.daisy.diff.html.modification.HtmlLayoutChange;
+import org.outerj.daisy.diff.html.modification.HtmlLayoutChange.Type;
 import org.xml.sax.Attributes;
 
 public class TagToString {
@@ -30,20 +32,28 @@ public class TagToString {
     protected TagChangeSematic sem;
 
     private ResourceBundle bundle;
+    
+    private HtmlLayoutChange htmlLayoutChange = null;
 
     protected TagToString(TagNode node, TagChangeSematic sem,
             ResourceBundle bundle) {
         this.node = node;
         this.sem = sem;
         this.bundle = bundle;
+        
     }
 
     public String getDescription() {
+    	
         return getString("diff-" + node.getQName());
+        
     }
 
     public void getRemovedDescription(ChangeText txt) {
-
+    	htmlLayoutChange = new HtmlLayoutChange();
+    	htmlLayoutChange.setEndingTag(node.getEndTag());
+    	htmlLayoutChange.setOpeningTag(node.getOpeningTag());
+    	htmlLayoutChange.setType(Type.TAG_REMOVED);
         if (sem == TagChangeSematic.MOVED) {
             txt.addText(getMovedOutOf() + " " + getArticle().toLowerCase()
                     + " ");
@@ -66,7 +76,10 @@ public class TagToString {
     }
 
     public void getAddedDescription(ChangeText txt) {
-
+    	htmlLayoutChange = new HtmlLayoutChange();
+    	htmlLayoutChange.setEndingTag(node.getEndTag());
+    	htmlLayoutChange.setOpeningTag(node.getOpeningTag());
+    	htmlLayoutChange.setType(Type.TAG_ADDED);
         if (sem == TagChangeSematic.MOVED) {
             txt.addText(getMovedTo() + " " + getArticle().toLowerCase() + " ");
             txt.addHtml("<b>");
@@ -173,5 +186,14 @@ public class TagToString {
             return '!' + key + '!';
         }
     }
+
+	/**
+	 * @return the htmlChange
+	 */
+	public HtmlLayoutChange getHtmlLayoutChange() {
+		return htmlLayoutChange;
+	}
+    
+    
 
 }

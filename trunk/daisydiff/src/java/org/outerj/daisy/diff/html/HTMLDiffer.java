@@ -17,9 +17,12 @@ package org.outerj.daisy.diff.html;
 
 import java.util.LinkedList;
 import java.util.List;
+
 import org.eclipse.compare.internal.LCSSettings;
 import org.eclipse.compare.rangedifferencer.RangeDifference;
 import org.eclipse.compare.rangedifferencer.RangeDifferencer;
+import org.outerj.daisy.diff.output.DiffOutput;
+import org.outerj.daisy.diff.output.Differ;
 import org.xml.sax.SAXException;
 
 /**
@@ -27,14 +30,17 @@ import org.xml.sax.SAXException;
  * between them, marks the changes, and outputs a merged tree to a
  * {@link HtmlSaxDiffOutput} instance.
  */
-public class HTMLDiffer {
+public class HTMLDiffer implements Differ{
 
-    private HtmlSaxDiffOutput output;
+    private DiffOutput output;
 
-    public HTMLDiffer(HtmlSaxDiffOutput dm) {
+    public HTMLDiffer(DiffOutput dm) {
         output = dm;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public void diff(TextNodeComparator leftComparator,
             TextNodeComparator rightComparator) throws SAXException {
         LCSSettings settings = new LCSSettings();
@@ -72,7 +78,7 @@ public class HTMLDiffer {
         }
 
         rightComparator.expandWhiteSpace();
-        output.toHTML(rightComparator.getBodyNode());
+        output.generateOutput(rightComparator.getBodyNode());
     }
 
     private List<RangeDifference> preProcess(RangeDifference[] differences) {

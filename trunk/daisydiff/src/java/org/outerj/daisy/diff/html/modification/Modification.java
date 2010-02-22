@@ -15,6 +15,8 @@
  */
 package org.outerj.daisy.diff.html.modification;
 
+import java.util.List;
+
 public class Modification implements Cloneable {
 
     private ModificationType type;
@@ -26,6 +28,8 @@ public class Modification implements Cloneable {
     private Modification nextMod = null;
 
     private boolean firstOfID = false;
+    
+    private List<HtmlLayoutChange> htmlLayoutChanges = null;
 
     public Modification(ModificationType type) {
         this.type = type;
@@ -36,6 +40,7 @@ public class Modification implements Cloneable {
         Modification newM = new Modification(this.getType());
         newM.setID(getID());
         newM.setChanges(getChanges());
+        newM.setHtmlLayoutChanges(getHtmlLayoutChanges());
         newM.setFirstOfID(isFirstOfID());
         newM.setNext(getNext());
         newM.setPrevious(getPrevious());
@@ -87,5 +92,23 @@ public class Modification implements Cloneable {
     public void setFirstOfID(boolean firstOfID) {
         this.firstOfID = firstOfID;
     }
+
+	/**
+	 * @return the htmlLayoutChanges
+	 */
+	public List<HtmlLayoutChange> getHtmlLayoutChanges() {
+		return htmlLayoutChanges;
+	}
+
+	/**
+	 * @param htmlLayoutChanges the htmlLayoutChanges to set
+	 */
+	public void setHtmlLayoutChanges(List<HtmlLayoutChange> htmlLayoutChanges) {
+		this.htmlLayoutChanges = htmlLayoutChanges;
+	}
+
+	
+    
+    
 
 }
