@@ -5,6 +5,12 @@
 
 This page summarizes the Daisy Diff releases.
 
+== Daisy Diff Trunk ==
+
+Changes are:
+
+ # Html mode performance tuning (By don.jp.willis)
+
 == Daisy Diff 1.1 (February 2010)==
 
 This is mainly a Bug fix release. If you are happy with the way version 1.0 works
