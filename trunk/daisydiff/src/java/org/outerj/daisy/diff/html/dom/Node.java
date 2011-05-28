@@ -16,6 +16,7 @@
 package org.outerj.daisy.diff.html.dom;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import org.outerj.daisy.diff.html.dom.helper.LastCommonParentResult;
@@ -26,6 +27,7 @@ import org.outerj.daisy.diff.html.dom.helper.LastCommonParentResult;
 public abstract class Node {
 
     protected TagNode parent;
+    private TagNode root;
 
     /**
      * This constructor not only sets the parameter as the parent for the
@@ -35,8 +37,13 @@ public abstract class Node {
      */
     public Node(TagNode parent) {
         this.parent = parent;
-        if (parent != null)
+        if (parent != null) {
             parent.addChild(this);
+            this.root = parent.getRoot();
+        } else if (this instanceof TagNode) {
+            this.root = (TagNode) this;
+        }
+
     }
 
     /**
@@ -47,7 +54,7 @@ public abstract class Node {
     }
 
     /**
-     * this recursive method returns list of the ancestors 
+     * This method returns a list of the ancestors
      * that is ordered starting from the root by the depth.
      * Index of an element in that list corresponds its depth
      * (if depth of the root is 0)
@@ -55,14 +62,14 @@ public abstract class Node {
      * <code>List&lt;TagNode></code> if the parent is null.
      */
     public List<TagNode> getParentTree() {
-        List<TagNode> parentTree = new ArrayList<TagNode>(5);
-        if (getParent() != null) {
-            parentTree.addAll(getParent().getParentTree());
-            parentTree.add(getParent());
+        List<TagNode> ancestors = new ArrayList<TagNode>();
+        for (TagNode ancestor = getParent(); ancestor != null; ancestor = ancestor.getParent()) {
+            ancestors.add(ancestor);
         }
-        return parentTree;
+        Collections.reverse(ancestors);
+        return ancestors;
     }
-    
+
     //change for correct insertion of the deleted nodes
     
     /**
@@ -80,14 +87,7 @@ public abstract class Node {
      * null if there is no parents and this node isn't a <code>TagNode</code>
      */
     public TagNode getRoot(){
-    	TagNode ancestor = getParent();
-    	if (ancestor != null){
-    		return ancestor.getRoot();
-    	} else if (this instanceof TagNode){
-    		return (TagNode)this;
-    	} else {
-    		return null;
-    	}
+        return root;
     }
 
     public abstract List<Node> getMinimalDeletedSet(long id);
@@ -112,7 +112,7 @@ public abstract class Node {
 
         LastCommonParentResult result = new LastCommonParentResult();
 
-        //note that these lists are never null, 
+        //note that these lists are never null,
         //but sometimes are empty.
         List<TagNode> myParents = getParentTree();
         List<TagNode> otherParents = other.getParentTree();
@@ -161,6 +161,13 @@ public abstract class Node {
      */
     public void setParent(TagNode parent) {
         this.parent = parent;
+        if (parent != null)
+            setRoot(parent.getRoot());
+    }
+
+    protected void setRoot(TagNode root)
+    {
+        this.root = root;
     }
 
     public abstract Node copyTree();

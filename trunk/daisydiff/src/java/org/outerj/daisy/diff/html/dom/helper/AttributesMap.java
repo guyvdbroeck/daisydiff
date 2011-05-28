@@ -2,6 +2,7 @@ package org.outerj.daisy.diff.html.dom.helper;
 
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.Map;
 
 import org.xml.sax.Attributes;
 /**
@@ -57,7 +58,33 @@ public class AttributesMap extends HashMap<String, String> {
 			put(attributes.getQName(i).toLowerCase(), attributes.getValue(i));
 		}
 	}
-	
+    
+    /**
+     * This method returns true if the given {@link Attributes} contains the same
+     * attributes as this map, with the same qualifications for "style" and "class"
+     * as specified in {@link AttributesMap#equals(Object)}.
+     */
+    public boolean hasSameAttributes(Attributes attributes)
+    {
+        if (attributes.getLength() != size())
+            return false;
+        for (int i = 0; i < attributes.getLength(); i++) {
+            String qName = attributes.getQName(i).toLowerCase();
+            String value = attributes.getValue(i);
+            String localValue = get(qName);
+            if (localValue == null)
+                return false;
+            if (!localValue.equals(value)) {
+                if (qName.equals(STYLE_ATTR) && equivalentStyles(value, localValue))
+                    continue;
+                if (qName.equals(CLASS_ATTR) && sameClassSet(value, localValue))
+                    continue;
+                return false;
+            }
+        }
+        return true;
+    }
+
 	/**
 	 * this method returns true, 
 	 * if two maps have the same set of keys and values assigned to these keys.
@@ -76,9 +103,10 @@ public class AttributesMap extends HashMap<String, String> {
 			
 			if(size() == attributesMap.size()){
 				equals = true;
-				
-				for(String attrib:keySet()){
-					String localValue = get(attrib);
+                for (Map.Entry<String, String> entry : entrySet())
+                {
+                    String attrib = entry.getKey();
+                    String localValue = entry.getValue();
 					String externalValue = attributesMap.get(attrib);
 					
 					if(externalValue == null || !externalValue.equals(localValue)){

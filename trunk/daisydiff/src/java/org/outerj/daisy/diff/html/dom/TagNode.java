@@ -17,6 +17,7 @@ package org.outerj.daisy.diff.html.dom;
 
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.IdentityHashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
@@ -35,7 +36,13 @@ public class TagNode extends Node implements Iterable<Node> {
 
     private String qName;
 
-    private Attributes attributes;
+    private final Attributes attributes;
+
+    /**
+     * Attributes objects are unmodifiable and {@link #attributes} is final, so we can usefully cache the
+     * equality of ours to others.
+     */
+    private IdentityHashMap<Attributes, Boolean> attributesEqualityTests = new IdentityHashMap<Attributes, Boolean>();
 
     public TagNode(TagNode parent, String qName, Attributes attributesarg) {
         super(parent);
@@ -57,6 +64,16 @@ public class TagNode extends Node implements Iterable<Node> {
             throw new IllegalStateException(
                     "The new child must have this node as a parent.");
         children.add(node);
+    }
+
+    @Override
+    protected void setRoot(TagNode root)
+    {
+        super.setRoot(root);
+        for (Node child : children)
+        {
+            child.setRoot(root);
+        }
     }
 
     /**
@@ -143,44 +160,44 @@ public class TagNode extends Node implements Iterable<Node> {
      */
     @Override
     public boolean equals(Object obj) {
-    	if (obj == null){
+    	if (!(obj instanceof TagNode))
     		return false;
-    	}
-    	boolean result = false;
-    	
-    	if (obj instanceof TagNode) {
-			TagNode tagNode = (TagNode) obj;
-			
-			if (tagNode == this){
-				result = true;
-			} else {
-				boolean differentTrees = true;
-				//attempt to avoid recursive calls
-				//to get root. comparing parents,
-				//as most often equals method is used
-				//when operating with children collection
-				if (tagNode.getParent() != null && 
-					tagNode.getParent() == this.getParent()){
-					differentTrees = false;
-				} else {
-					TagNode myRoot = this.getRoot();
-					TagNode otherRoot = tagNode.getRoot();
-					differentTrees = !(myRoot == otherRoot);
-				}
-				if (differentTrees){ //still a chance for being equal
-					//if we are in the different tree
-					//we should use semantic equivalence instead
-					if(this.getQName().equalsIgnoreCase(tagNode.getQName())){
-						AttributesMap localAttributesMap = new AttributesMap(getAttributes());
-						AttributesMap externalAttributesMap = new AttributesMap(tagNode.getAttributes());
-						result = localAttributesMap.equals(externalAttributesMap);
-					}
-				} 
-			}
-		}
-    	return result;
+
+        return equals((TagNode) obj);
     }
-    
+
+    private boolean equals(TagNode tagNode) {
+        if (tagNode == this)
+            return true;
+
+        if (this.getRoot() == tagNode.getRoot())
+            return false; // Not the same and in the same tree so not equal
+
+        //still a chance for being equal
+        //if we are in the different tree
+        //we should use semantic equivalence instead
+        if(!this.getQName().equalsIgnoreCase(tagNode.getQName()))
+            return false;
+
+        return hasSameAttributes(tagNode.getAttributes());
+    }
+
+    private boolean hasSameAttributes(final Attributes otherAttributes)
+    {
+        if (otherAttributes == null)
+            return false;
+        if (attributesEqualityTests.get(otherAttributes) != null)
+           return attributesEqualityTests.get(otherAttributes);
+        boolean result = getAttributesMap().hasSameAttributes(otherAttributes);
+        attributesEqualityTests.put(otherAttributes, result);
+        return result;
+    }
+
+    private AttributesMap getAttributesMap()
+    {
+        return new AttributesMap(getAttributes());
+    }
+
     /**
      * Since we only consider so much information of the TagNode in
      * <code>equals</code> method, we need to re-write 
@@ -192,8 +209,8 @@ public class TagNode extends Node implements Iterable<Node> {
     public int hashCode(){
     	final int simple = 29;
     	int result = this.getQName().hashCode();
-    	AttributesMap attrs = new AttributesMap(getAttributes());
-    	result = result*simple + attrs.hashCode();
+        AttributesMap attrs = getAttributesMap();
+        result = result*simple + attrs.hashCode();
     	return result;
     }
     

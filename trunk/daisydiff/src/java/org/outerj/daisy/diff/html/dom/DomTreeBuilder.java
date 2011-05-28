@@ -41,6 +41,9 @@ public class DomTreeBuilder extends DefaultHandler implements DomTree {
 
     private boolean whiteSpaceBeforeThis = false;
 
+    /** When greater than 0, this indicates that the node being parsed is a descendant of a pre tag. */
+    private int numberOfActivePreTags = 0; // calculating this as required for every node is expensive.
+
     private Node lastSibling = null;
 
     public BodyNode getBodyNode() {
@@ -86,6 +89,8 @@ public class DomTreeBuilder extends DefaultHandler implements DomTree {
                 newTagNode.setWhiteBefore(true);
             }
             whiteSpaceBeforeThis = false;
+            if (newTagNode.isPre())
+                numberOfActivePreTags++;
 
         } else if (bodyStarted) {
             // Ignoring element after body tag closed
@@ -118,6 +123,8 @@ public class DomTreeBuilder extends DefaultHandler implements DomTree {
             } else {
                 lastSibling = null;
             }
+            if (localName.equalsIgnoreCase("pre"))
+                numberOfActivePreTags--;
             currentParent = currentParent.getParent();
             whiteSpaceBeforeThis = false;
         }
@@ -134,8 +141,7 @@ public class DomTreeBuilder extends DefaultHandler implements DomTree {
             char c = ch[i];
             if (isDelimiter(c)) {
                 endWord();
-                if (WhiteSpaceNode.isWhiteSpace(c) && !currentParent.isPre()
-                        && !currentParent.inPre()) {
+                if (WhiteSpaceNode.isWhiteSpace(c) && numberOfActivePreTags == 0) {
                     if (lastSibling != null)
                         lastSibling.setWhiteAfter(true);
                     whiteSpaceBeforeThis = true;
