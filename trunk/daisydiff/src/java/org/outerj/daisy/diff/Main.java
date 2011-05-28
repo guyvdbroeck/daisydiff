@@ -60,7 +60,7 @@ public class Main {
             }
             if (!quietMode){
               System.out.println("            ______________");
-              System.out.println("           /Daisy Diff 1.0\\");
+              System.out.println("           /Daisy Diff 1.2\\");
               System.out.println("          /________________\\");
               System.out.println();
               System.out.println(" -= http://code.google.com/p/daisydiff/ =-");
