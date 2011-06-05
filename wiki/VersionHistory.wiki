@@ -9,7 +9,7 @@ This page summarizes the Daisy Diff releases.
 
 Changes are:
 
- # Html mode performance tuning (By don.jp.willis)
+ # Html mode performance tuning (By don.jp.willis, patch from issue 33)
 
 == Daisy Diff 1.1 (February 2010)==
 
