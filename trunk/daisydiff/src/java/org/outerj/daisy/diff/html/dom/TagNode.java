@@ -15,12 +15,7 @@
  */
 package org.outerj.daisy.diff.html.dom;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.IdentityHashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 import org.outerj.daisy.diff.html.ancestor.TextOnlyComparator;
 import org.outerj.daisy.diff.html.dom.helper.AttributesMap;
@@ -29,6 +24,7 @@ import org.xml.sax.helpers.AttributesImpl;
 
 /**
  * Node that can contain other nodes. Represents an HTML tag.
+ * @version 18 Jun 2011
  */
 public class TagNode extends Node implements Iterable<Node> {
 
@@ -60,9 +56,10 @@ public class TagNode extends Node implements Iterable<Node> {
      * has different parent than <code>this</code> node.
      */
     public void addChild(Node node) {
-        if (node.getParent() != this)
-            throw new IllegalStateException(
+        if (node.getParent() != this) {
+			throw new IllegalStateException(
                     "The new child must have this node as a parent.");
+		}
         children.add(node);
     }
 
@@ -100,9 +97,10 @@ public class TagNode extends Node implements Iterable<Node> {
      * different parent from <code>this</code> node.
      */
     public void addChild(int index, Node node) {
-        if (node.getParent() != this)
-            throw new IllegalStateException(
+        if (node.getParent() != this) {
+			throw new IllegalStateException(
                     "The new child must have this node as a parent.");
+		}
         children.add(index, node);
     }
 
@@ -145,8 +143,9 @@ public class TagNode extends Node implements Iterable<Node> {
      * @param other - tag to compare to
      */
     public boolean isSameTag(TagNode other) {
-        if (other == null)
-            return false;
+        if (other == null) {
+			return false;
+		}
         return equals(other);
     }
 
@@ -160,18 +159,22 @@ public class TagNode extends Node implements Iterable<Node> {
      */
     @Override
     public boolean equals(Object obj) {
-    	if (!(obj instanceof TagNode))
-    		return false;
+    	if (!(obj instanceof TagNode)) {
+			return false;
+		}
 
         return equals((TagNode) obj);
     }
 
     private boolean equals(TagNode tagNode) {
-        if (tagNode == this)
-            return true;
+        if (tagNode == this) {
+			return true;
+		}
 
         if (this.getRoot() == tagNode.getRoot())
-            return false; // Not the same and in the same tree so not equal
+		 {
+			return false; // Not the same and in the same tree so not equal
+		}
 
         //still a chance for being equal
         //if we are in the different tree
@@ -198,10 +201,12 @@ public class TagNode extends Node implements Iterable<Node> {
 
     private boolean hasSameAttributes(final Attributes otherAttributes)
     {
-        if (otherAttributes == null)
-            return false;
-        if (attributesEqualityTests.get(otherAttributes) != null)
-           return attributesEqualityTests.get(otherAttributes);
+        if (otherAttributes == null) {
+			return false;
+		}
+        if (attributesEqualityTests.get(otherAttributes) != null) {
+			return attributesEqualityTests.get(otherAttributes);
+		}
         boolean result = getAttributesMap().hasSameAttributes(otherAttributes);
         attributesEqualityTests.put(otherAttributes, result);
         return result;
@@ -224,9 +229,7 @@ public class TagNode extends Node implements Iterable<Node> {
     	if (another instanceof TagNode) {
     		TagNode otherNode = (TagNode) another;
     		if (this.getQName().equalsIgnoreCase(otherNode.getQName())) {
-    			AttributesMap localAttributesMap = new AttributesMap(getAttributes());
-    			AttributesMap externalAttributesMap = new AttributesMap(otherNode.getAttributes());
-    			result = localAttributesMap.equals(externalAttributesMap);
+    			result = hasSameAttributes(otherNode.getAttributes());
     		}
     	}
 		return result;
@@ -293,8 +296,9 @@ public class TagNode extends Node implements Iterable<Node> {
         List<Node> nodes = new ArrayList<Node>();
 
         //no-content tags are never included in the set
-        if (children.size() == 0)
-            return nodes;
+        if (children.size() == 0) {
+			return nodes;
+		}
 
         //by default we think that all kids are in the deleted set
         //until we prove otherwise
@@ -377,11 +381,13 @@ public class TagNode extends Node implements Iterable<Node> {
                 part2.addChild(children.get(i));
                 i++;
             }
-            if (part1.getNbChildren() > 0)
-                getParent().addChild(getParent().getIndexOf(this), part1);
+            if (part1.getNbChildren() > 0) {
+				getParent().addChild(getParent().getIndexOf(this), part1);
+			}
 
-            if (part2.getNbChildren() > 0)
-                getParent().addChild(getParent().getIndexOf(this), part2);
+            if (part2.getNbChildren() > 0) {
+				getParent().addChild(getParent().getIndexOf(this), part2);
+			}
 
             if (part1.getNbChildren() > 0 && part2.getNbChildren() > 0) {
                 splitOccured = true;
@@ -392,10 +398,11 @@ public class TagNode extends Node implements Iterable<Node> {
             //substitute it with anything
             getParent().removeChild(this);
 
-            if (includeLeft)
-                getParent().splitUntill(parent, part1, includeLeft);
-            else
-                getParent().splitUntill(parent, part2, includeLeft);
+            if (includeLeft) {
+				getParent().splitUntill(parent, part1, includeLeft);
+			} else {
+				getParent().splitUntill(parent, part2, includeLeft);
+			}
         }
         return splitOccured;
 
@@ -518,8 +525,9 @@ public class TagNode extends Node implements Iterable<Node> {
 
     @Override
     public Node getLeftMostChild() {
-        if (getNbChildren() < 1)
-            return this;
+        if (getNbChildren() < 1) {
+			return this;
+		}
         Node child = getChild(0);
         return child.getLeftMostChild();
 
@@ -527,8 +535,9 @@ public class TagNode extends Node implements Iterable<Node> {
 
     @Override
     public Node getRightMostChild() {
-        if (getNbChildren() < 1)
-            return this;
+        if (getNbChildren() < 1) {
+			return this;
+		}
         Node child = getChild(getNbChildren() - 1);
         return child.getRightMostChild();
     }
