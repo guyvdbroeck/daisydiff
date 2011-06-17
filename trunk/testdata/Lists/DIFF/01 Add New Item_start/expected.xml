@@ -1,0 +1,14 @@
+ Enter the title of your HTML document here <ol>
+<li>
+<span class="diff-html-added" id="added-diff-0" previous="first-diff" changeId="added-diff-0" next="changed-diff-0">Tiger</span>
+</li>
+<li>
+<span class="diff-html-changed" id="changed-diff-0" changes="&lt;ul class='changelist'&gt;&lt;li&gt;Moved out of a &lt;b&gt;list item&lt;/b&gt;.&lt;/li&gt;&lt;li&gt;Moved to a &lt;b&gt;list item&lt;/b&gt;.&lt;/li&gt;&lt;/ul&gt;" previous="added-diff-0" changeId="changed-diff-0" next="last-diff">Dog</span>
+</li>
+<li>
+<span class="diff-html-changed" changes="&lt;ul class='changelist'&gt;&lt;li&gt;Moved out of a &lt;b&gt;list item&lt;/b&gt;.&lt;/li&gt;&lt;li&gt;Moved to a &lt;b&gt;list item&lt;/b&gt;.&lt;/li&gt;&lt;/ul&gt;" previous="added-diff-0" changeId="changed-diff-0" next="last-diff">Cat</span>
+</li>
+<li>
+<span class="diff-html-changed" changes="&lt;ul class='changelist'&gt;&lt;li&gt;Moved out of a &lt;b&gt;list item&lt;/b&gt;.&lt;/li&gt;&lt;li&gt;Moved to a &lt;b&gt;list item&lt;/b&gt;.&lt;/li&gt;&lt;/ul&gt;" previous="added-diff-0" changeId="changed-diff-0" next="last-diff">Lion</span>
+</li>
+</ol>

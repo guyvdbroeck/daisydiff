@@ -1,0 +1,4 @@
+<p>This is a sample <b>
+<span class="diff-html-changed" id="changed-diff-0" changes="&lt;b&gt;Italics&lt;/b&gt; style removed." previous="first-diff" changeId="changed-diff-0" next="last-diff">paragraph</span>
+</b>
+<span class="diff-html-changed" changes="&lt;b&gt;Italics&lt;/b&gt; style removed." previous="first-diff" changeId="changed-diff-0" next="last-diff"> </span>that will be used for tests.</p>

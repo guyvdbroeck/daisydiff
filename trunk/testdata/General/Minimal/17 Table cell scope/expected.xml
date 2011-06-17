@@ -1,0 +1,21 @@
+<p> The product <b>should always </b>
+<span class="diff-html-changed" id="changed-diff-0" changes="&lt;b&gt;Bold&lt;/b&gt; style removed." previous="first-diff" changeId="changed-diff-0" next="changed-diff-1">be </span>given twice a week. </p>
+<p>Second example</p>
+<table>
+<tr>
+<td>The product </td>
+<td width="50%">
+<span class="diff-html-changed" id="changed-diff-1" changes="&lt;ul class='changelist'&gt;&lt;li&gt;Moved out of a &lt;b&gt;cell&lt;/b&gt; with width 30%.&lt;/li&gt;&lt;li&gt;Moved to a &lt;b&gt;cell&lt;/b&gt; with width 50%.&lt;/li&gt;&lt;/ul&gt;" previous="changed-diff-0" changeId="changed-diff-1" next="added-diff-0">should always </span>
+<span class="diff-html-added" id="added-diff-0" previous="changed-diff-1" changeId="added-diff-0" next="changed-diff-2"/>
+</td>
+<td>
+<span class="diff-html-changed" changes="&lt;ul class='changelist'&gt;&lt;li&gt;Moved out of a &lt;b&gt;cell&lt;/b&gt; with width 30%.&lt;/li&gt;&lt;li&gt;Moved to a &lt;b&gt;cell&lt;/b&gt;.&lt;/li&gt;&lt;/ul&gt;" previous="added-diff-0" changeId="changed-diff-2" next="removed-diff-0"> </span>
+<span class="diff-html-changed" id="changed-diff-2" changes="&lt;ul class='changelist'&gt;&lt;li&gt;Moved out of a &lt;b&gt;cell&lt;/b&gt; with width 30%.&lt;/li&gt;&lt;li&gt;Moved to a &lt;b&gt;cell&lt;/b&gt;.&lt;/li&gt;&lt;/ul&gt;" previous="added-diff-0" changeId="changed-diff-2" next="removed-diff-0">be </span>
+</td>
+<span class="diff-html-removed" id="removed-diff-0" previous="changed-diff-2" changeId="removed-diff-0" next="changed-diff-3"/>
+<td>
+<span class="diff-html-changed" changes="&lt;ul class='changelist'&gt;&lt;li&gt;Moved out of a &lt;b&gt;cell&lt;/b&gt;.&lt;/li&gt;&lt;li&gt;Moved to a &lt;b&gt;cell&lt;/b&gt;.&lt;/li&gt;&lt;/ul&gt;" previous="removed-diff-0" changeId="changed-diff-3" next="last-diff"> </span>
+<span class="diff-html-changed" id="changed-diff-3" changes="&lt;ul class='changelist'&gt;&lt;li&gt;Moved out of a &lt;b&gt;cell&lt;/b&gt;.&lt;/li&gt;&lt;li&gt;Moved to a &lt;b&gt;cell&lt;/b&gt;.&lt;/li&gt;&lt;/ul&gt;" previous="removed-diff-0" changeId="changed-diff-3" next="last-diff">given twice a week.</span>
+</td>
+</tr>
+</table>

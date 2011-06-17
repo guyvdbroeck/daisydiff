@@ -1,0 +1,15 @@
+ Enter the title of your HTML document here <ul>
+<span class="diff-html-changed" id="changed-diff-0" changes="&lt;ul class='changelist'&gt;&lt;li&gt;Moved out of an &lt;b&gt;ordered list&lt;/b&gt;.&lt;/li&gt;&lt;li&gt;Moved to an &lt;b&gt;unordered list&lt;/b&gt;.&lt;/li&gt;&lt;/ul&gt;" previous="first-diff" changeId="changed-diff-0" next="last-diff"/>
+<li>
+<span class="diff-html-changed" changes="&lt;ul class='changelist'&gt;&lt;li&gt;Moved out of an &lt;b&gt;ordered list&lt;/b&gt;.&lt;/li&gt;&lt;li&gt;Moved to an &lt;b&gt;unordered list&lt;/b&gt;.&lt;/li&gt;&lt;/ul&gt;" previous="first-diff" changeId="changed-diff-0" next="last-diff">Dog</span>
+</li>
+<li>
+<span class="diff-html-changed" changes="&lt;ul class='changelist'&gt;&lt;li&gt;Moved out of an &lt;b&gt;ordered list&lt;/b&gt;.&lt;/li&gt;&lt;li&gt;Moved to an &lt;b&gt;unordered list&lt;/b&gt;.&lt;/li&gt;&lt;/ul&gt;" previous="first-diff" changeId="changed-diff-0" next="last-diff">Cat</span>
+</li>
+<li>
+<span class="diff-html-changed" changes="&lt;ul class='changelist'&gt;&lt;li&gt;Moved out of an &lt;b&gt;ordered list&lt;/b&gt;.&lt;/li&gt;&lt;li&gt;Moved to an &lt;b&gt;unordered list&lt;/b&gt;.&lt;/li&gt;&lt;/ul&gt;" previous="first-diff" changeId="changed-diff-0" next="last-diff">Lion</span>
+</li>
+<li>
+<span class="diff-html-changed" changes="&lt;ul class='changelist'&gt;&lt;li&gt;Moved out of an &lt;b&gt;ordered list&lt;/b&gt;.&lt;/li&gt;&lt;li&gt;Moved to an &lt;b&gt;unordered list&lt;/b&gt;.&lt;/li&gt;&lt;/ul&gt;" previous="first-diff" changeId="changed-diff-0" next="last-diff">Tiger</span>
+</li>
+</ul>

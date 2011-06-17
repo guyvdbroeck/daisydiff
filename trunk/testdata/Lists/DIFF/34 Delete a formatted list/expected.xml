@@ -1,0 +1,17 @@
+ Enter the title of your HTML document here <ol>
+<li>Dog</li>
+<li>Cat</li>
+<li>Lion</li>
+</ol>
+<li>
+<b>
+<span class="diff-html-removed" id="removed-diff-0" previous="first-diff" changeId="removed-diff-0" next="last-diff">Item 1</span>
+</b>
+<span class="diff-html-removed" previous="first-diff" changeId="removed-diff-0" next="last-diff"/>
+</li>
+<li>
+<span class="diff-html-removed" previous="first-diff" changeId="removed-diff-0" next="last-diff">Item 2</span>
+</li>
+<li>
+<span class="diff-html-removed" previous="first-diff" changeId="removed-diff-0" next="last-diff">Item 3</span>
+</li>

@@ -1,0 +1,5 @@
+<p>This is a simple small paragraph that will be used for some formatting texts. Specifically additions, deletions, replacements of <b>
+<span class="diff-html-changed" id="changed-diff-0" changes="&lt;b&gt;Bold&lt;/b&gt; style added." previous="first-diff" changeId="changed-diff-0" next="added-diff-0">tags and texts </span>
+<span class="diff-html-added" id="added-diff-0" previous="changed-diff-0" changeId="added-diff-0" next="last-diff">new</span>
+</b>
+<span class="diff-html-added" previous="changed-diff-0" changeId="added-diff-0" next="last-diff"> </span>will be tested in multiple combinations and variations.</p>

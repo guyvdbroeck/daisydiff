@@ -1,0 +1,16 @@
+<table border="1">
+<tr>
+<td>The product </td>
+<td>should always <span class="diff-html-added" id="added-diff-0" previous="first-diff" changeId="added-diff-0" next="changed-diff-0"/>
+</td>
+<td>
+<span class="diff-html-changed" changes="&lt;ul class='changelist'&gt;&lt;li&gt;Moved out of a &lt;b&gt;cell&lt;/b&gt;.&lt;/li&gt;&lt;li&gt;Moved to a &lt;b&gt;cell&lt;/b&gt;.&lt;/li&gt;&lt;/ul&gt;" previous="added-diff-0" changeId="changed-diff-0" next="removed-diff-0"> </span>
+<span class="diff-html-changed" id="changed-diff-0" changes="&lt;ul class='changelist'&gt;&lt;li&gt;Moved out of a &lt;b&gt;cell&lt;/b&gt;.&lt;/li&gt;&lt;li&gt;Moved to a &lt;b&gt;cell&lt;/b&gt;.&lt;/li&gt;&lt;/ul&gt;" previous="added-diff-0" changeId="changed-diff-0" next="removed-diff-0">be </span>
+</td>
+<span class="diff-html-removed" id="removed-diff-0" previous="changed-diff-0" changeId="removed-diff-0" next="changed-diff-1"/>
+<td>
+<span class="diff-html-changed" changes="&lt;ul class='changelist'&gt;&lt;li&gt;Moved out of a &lt;b&gt;cell&lt;/b&gt;.&lt;/li&gt;&lt;li&gt;Moved to a &lt;b&gt;cell&lt;/b&gt;.&lt;/li&gt;&lt;/ul&gt;" previous="removed-diff-0" changeId="changed-diff-1" next="last-diff"> </span>
+<span class="diff-html-changed" id="changed-diff-1" changes="&lt;ul class='changelist'&gt;&lt;li&gt;Moved out of a &lt;b&gt;cell&lt;/b&gt;.&lt;/li&gt;&lt;li&gt;Moved to a &lt;b&gt;cell&lt;/b&gt;.&lt;/li&gt;&lt;/ul&gt;" previous="removed-diff-0" changeId="changed-diff-1" next="last-diff">given twice a week.</span>
+</td>
+</tr>
+</table>

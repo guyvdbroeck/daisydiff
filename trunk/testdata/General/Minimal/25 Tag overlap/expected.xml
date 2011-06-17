@@ -1,0 +1,8 @@
+<p>The product <span class="diff-html-changed" id="changed-diff-0" changes="&lt;b&gt;Italics&lt;/b&gt; style removed with width 60%." previous="first-diff" changeId="changed-diff-0" next="changed-diff-1">should </span>
+<b>
+<u>
+<span class="diff-html-changed" id="changed-diff-1" changes="&lt;ul class='changelist'&gt;&lt;li&gt;&lt;b&gt;Italics&lt;/b&gt; style removed with width 60%.&lt;/li&gt;&lt;li&gt;&lt;b&gt;Bold&lt;/b&gt; style added.&lt;/li&gt;&lt;li&gt;&lt;b&gt;!diff-u!&lt;/b&gt; added.&lt;/li&gt;&lt;/ul&gt;" previous="changed-diff-0" changeId="changed-diff-1" next="changed-diff-2">always </span>
+<span class="diff-html-changed" id="changed-diff-2" changes="&lt;ul class='changelist'&gt;&lt;li&gt;&lt;b&gt;Bold&lt;/b&gt; style added.&lt;/li&gt;&lt;li&gt;&lt;b&gt;!diff-u!&lt;/b&gt; added.&lt;/li&gt;&lt;/ul&gt;" previous="changed-diff-1" changeId="changed-diff-2" next="last-diff">be given</span>
+</u>
+</b>
+<span class="diff-html-changed" changes="&lt;ul class='changelist'&gt;&lt;li&gt;&lt;b&gt;Bold&lt;/b&gt; style added.&lt;/li&gt;&lt;li&gt;&lt;b&gt;!diff-u!&lt;/b&gt; added.&lt;/li&gt;&lt;/ul&gt;" previous="changed-diff-1" changeId="changed-diff-2" next="last-diff"> </span>twice a week.</p>

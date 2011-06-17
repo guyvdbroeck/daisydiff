@@ -1,0 +1,27 @@
+<table border="1">
+<tbody>
+<tr>
+<td>
+<span class="diff-html-changed" id="changed-diff-0" changes="&lt;ul class='changelist'&gt;&lt;li&gt;Moved out of a &lt;b&gt;table&lt;/b&gt;.&lt;/li&gt;&lt;li&gt;Moved to a &lt;b&gt;table&lt;/b&gt; with border 1.&lt;/li&gt;&lt;/ul&gt;" previous="first-diff" changeId="changed-diff-0" next="removed-diff-0">Cell 1</span>
+</td>
+<td>
+<span class="diff-html-changed" changes="&lt;ul class='changelist'&gt;&lt;li&gt;Moved out of a &lt;b&gt;table&lt;/b&gt;.&lt;/li&gt;&lt;li&gt;Moved to a &lt;b&gt;table&lt;/b&gt; with border 1.&lt;/li&gt;&lt;/ul&gt;" previous="first-diff" changeId="changed-diff-0" next="removed-diff-0">Cell 2</span>
+</td>
+</tr>
+<tr>
+<td>
+<span class="diff-html-changed" changes="&lt;ul class='changelist'&gt;&lt;li&gt;Moved out of a &lt;b&gt;table&lt;/b&gt;.&lt;/li&gt;&lt;li&gt;Moved to a &lt;b&gt;table&lt;/b&gt; with border 1.&lt;/li&gt;&lt;/ul&gt;" previous="first-diff" changeId="changed-diff-0" next="removed-diff-0">Cell 3</span>
+</td>
+</tr>
+</tbody>
+</table>
+<td>
+<span class="diff-html-removed" id="removed-diff-0" previous="changed-diff-0" changeId="removed-diff-0" next="last-diff">Cell 4</span>
+</td>
+<table border="1">
+<tbody>
+<tr>
+<td/>
+</tr>
+</tbody>
+</table>

@@ -1,0 +1,13 @@
+ Enter the title of your HTML document here <ol> <b/>
+<li>
+<b>
+<span class="diff-html-changed" id="changed-diff-0" changes="&lt;b&gt;Bold&lt;/b&gt; style added." previous="first-diff" changeId="changed-diff-0" next="changed-diff-1">Dog</span>
+</b>
+</li>
+<li>
+<span class="diff-html-changed" id="changed-diff-1" changes="&lt;ul class='changelist'&gt;&lt;li&gt;Moved out of a &lt;b&gt;list item&lt;/b&gt;.&lt;/li&gt;&lt;li&gt;Moved to a &lt;b&gt;list item&lt;/b&gt;.&lt;/li&gt;&lt;/ul&gt;" previous="changed-diff-0" changeId="changed-diff-1" next="last-diff">Cat</span>
+</li>
+<li>
+<span class="diff-html-changed" changes="&lt;ul class='changelist'&gt;&lt;li&gt;Moved out of a &lt;b&gt;list item&lt;/b&gt;.&lt;/li&gt;&lt;li&gt;Moved to a &lt;b&gt;list item&lt;/b&gt;.&lt;/li&gt;&lt;/ul&gt;" previous="changed-diff-0" changeId="changed-diff-1" next="last-diff">Lion</span>
+</li>
+</ol>

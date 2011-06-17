@@ -1,0 +1,29 @@
+<p>Test Case 1a: Add font size tag=3</p>
+<p>Enter the body text of your <font size="3">
+<span class="diff-html-changed" id="changed-diff-0" changes="&lt;b&gt;Font&lt;/b&gt; style added with size 3." previous="first-diff" changeId="changed-diff-0" next="changed-diff-1">HTML</span>
+</font>
+<span class="diff-html-changed" changes="&lt;b&gt;Font&lt;/b&gt; style added with size 3." previous="first-diff" changeId="changed-diff-0" next="changed-diff-1"> </span>document here</p>
+<br/>
+<br/>
+<p>Test Case 1b: Add font size tag=6</p>
+<p>Enter the body text of your <font size="6">
+<span class="diff-html-changed" id="changed-diff-1" changes="&lt;b&gt;Font&lt;/b&gt; style added with size 6." previous="changed-diff-0" changeId="changed-diff-1" next="changed-diff-2">HTML</span>
+</font>
+<span class="diff-html-changed" changes="&lt;b&gt;Font&lt;/b&gt; style added with size 6." previous="changed-diff-0" changeId="changed-diff-1" next="changed-diff-2"> </span>document here</p>
+<br/>
+<br/>
+<p>Test Case 2: Change font size tag</p>
+<p>Enter the body text of your <font size="6">
+<span class="diff-html-changed" id="changed-diff-2" changes="&lt;ul class='changelist'&gt;&lt;li&gt;&lt;b&gt;Font&lt;/b&gt; style removed with size 3.&lt;/li&gt;&lt;li&gt;&lt;b&gt;Font&lt;/b&gt; style added with size 6.&lt;/li&gt;&lt;/ul&gt;" previous="changed-diff-1" changeId="changed-diff-2" next="changed-diff-3">HTML</span>
+</font>
+<span class="diff-html-changed" changes="&lt;ul class='changelist'&gt;&lt;li&gt;&lt;b&gt;Font&lt;/b&gt; style removed with size 3.&lt;/li&gt;&lt;li&gt;&lt;b&gt;Font&lt;/b&gt; style added with size 6.&lt;/li&gt;&lt;/ul&gt;" previous="changed-diff-1" changeId="changed-diff-2" next="changed-diff-3"> </span>document here</p>
+<br/>
+<br/>
+<p>Test Case 3: Delete font size tag</p>
+<p>Enter the body text of your <span class="diff-html-changed" id="changed-diff-3" changes="&lt;b&gt;Font&lt;/b&gt; style removed with size 3." previous="changed-diff-2" changeId="changed-diff-3" next="changed-diff-4">HTML </span>document here</p>
+<br/>
+<br/>
+<p>Test Case 3: Change text </p>
+<p>Enter the body text of your <font size="3">HTML <span class="diff-html-changed" id="changed-diff-4" changes="&lt;b&gt;Font&lt;/b&gt; style added with size 3." previous="changed-diff-3" changeId="changed-diff-4" next="last-diff">document</span>
+</font>
+<span class="diff-html-changed" changes="&lt;b&gt;Font&lt;/b&gt; style added with size 3." previous="changed-diff-3" changeId="changed-diff-4" next="last-diff"> </span>here</p>

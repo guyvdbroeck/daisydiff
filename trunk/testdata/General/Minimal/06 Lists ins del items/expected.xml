@@ -1,0 +1,32 @@
+<ul>
+<li>This is a car <span class="diff-html-removed" id="removed-diff-0" previous="first-diff" changeId="removed-diff-0" next="added-diff-0"/>
+</li>
+<li>
+<span class="diff-html-removed" previous="first-diff" changeId="removed-diff-0" next="added-diff-0">A nice bike</span>
+</li>
+<li>
+<span class="diff-html-added" id="added-diff-0" previous="removed-diff-0" changeId="added-diff-0" next="changed-diff-0">(Audi)</span>
+</li>
+<li>
+<span class="diff-html-changed" id="changed-diff-0" changes="&lt;ul class='changelist'&gt;&lt;li&gt;Moved out of a &lt;b&gt;list item&lt;/b&gt;.&lt;/li&gt;&lt;li&gt;Moved to a &lt;b&gt;list item&lt;/b&gt;.&lt;/li&gt;&lt;/ul&gt;" previous="added-diff-0" changeId="changed-diff-0" next="added-diff-1">Big aeroplane </span>
+<span class="diff-html-added" id="added-diff-1" previous="changed-diff-0" changeId="added-diff-1" next="changed-diff-1">with such big wings</span>
+<span class="diff-html-changed" id="changed-diff-1" changes="&lt;ul class='changelist'&gt;&lt;li&gt;Moved out of a &lt;b&gt;list item&lt;/b&gt;.&lt;/li&gt;&lt;li&gt;Moved to a &lt;b&gt;list item&lt;/b&gt;.&lt;/li&gt;&lt;/ul&gt;" previous="added-diff-1" changeId="changed-diff-1" next="added-diff-2">! </span>
+<ul>
+<span class="diff-html-changed" changes="&lt;ul class='changelist'&gt;&lt;li&gt;Moved out of a &lt;b&gt;list item&lt;/b&gt;.&lt;/li&gt;&lt;li&gt;Moved to a &lt;b&gt;list item&lt;/b&gt;.&lt;/li&gt;&lt;/ul&gt;" previous="added-diff-1" changeId="changed-diff-1" next="added-diff-2"/>
+<li>
+<span class="diff-html-added" id="added-diff-2" previous="changed-diff-1" changeId="added-diff-2" next="changed-diff-2">Olympic</span>
+</li>
+<li>
+<span class="diff-html-changed" id="changed-diff-2" changes="&lt;ul class='changelist'&gt;&lt;li&gt;&lt;ul class='changelist'&gt;&lt;li&gt;Moved to a &lt;b&gt;list item&lt;/b&gt;.&lt;/li&gt;&lt;li&gt;Moved to an &lt;b&gt;unordered list&lt;/b&gt;.&lt;/li&gt;&lt;/ul&gt;&lt;/li&gt;&lt;li&gt;&lt;ul class='changelist'&gt;&lt;li&gt;Moved out of an &lt;b&gt;unordered list&lt;/b&gt;.&lt;/li&gt;&lt;li&gt;Moved out of a &lt;b&gt;list item&lt;/b&gt;.&lt;/li&gt;&lt;/ul&gt;&lt;/li&gt;&lt;/ul&gt;" previous="added-diff-2" changeId="changed-diff-2" next="removed-diff-1">BA</span>
+</li>
+</ul>
+</li>
+<li>
+<span class="diff-html-removed" id="removed-diff-1" previous="changed-diff-2" changeId="removed-diff-1" next="added-diff-3">This is </span>
+<span class="diff-html-added" id="added-diff-3" previous="removed-diff-1" changeId="added-diff-3" next="changed-diff-3">What about a skateboard?</span>
+</li>
+<li>
+<span class="diff-html-added" previous="removed-diff-1" changeId="added-diff-3" next="changed-diff-3">This ain't </span>
+<span class="diff-html-changed" id="changed-diff-3" changes="&lt;ul class='changelist'&gt;&lt;li&gt;Moved out of a &lt;b&gt;list item&lt;/b&gt;.&lt;/li&gt;&lt;li&gt;Moved to a &lt;b&gt;list item&lt;/b&gt;.&lt;/li&gt;&lt;/ul&gt;" previous="added-diff-3" changeId="changed-diff-3" next="last-diff">a ship</span>
+</li>
+</ul>

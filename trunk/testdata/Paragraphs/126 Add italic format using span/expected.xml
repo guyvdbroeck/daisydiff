@@ -1,0 +1,5 @@
+ Enter the title of your HTML document here <p>
+<span style="font-style:italic">
+<span class="diff-html-changed" id="changed-diff-0" changes="Moved to a &lt;b&gt;span&lt;/b&gt; with style font-style:italic." previous="first-diff" changeId="changed-diff-0" next="last-diff">Enter the body text of your HTML document here</span>
+</span>
+</p>

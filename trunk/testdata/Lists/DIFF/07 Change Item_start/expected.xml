@@ -1,0 +1,7 @@
+ Enter the title of your HTML document here <ol>
+<li>
+<span class="diff-html-added" id="added-diff-0" previous="first-diff" changeId="added-diff-0" next="last-diff">Small </span>Dog</li>
+<li>Cat</li>
+<li>Lion</li>
+<li>Tiger</li>
+</ol>

@@ -1,0 +1,3 @@
+<p>this is <br clear="none">
+<span class="diff-html-changed" id="changed-diff-0" changes="&lt;ul class='changelist'&gt;&lt;li&gt;Moved out of a &lt;b&gt;break&lt;/b&gt;.&lt;/li&gt;&lt;li&gt;Moved to a &lt;b&gt;break&lt;/b&gt; with clear none.&lt;/li&gt;&lt;/ul&gt;" previous="first-diff" changeId="changed-diff-0" next="last-diff"/>
+</br> an empty template test.</p>
