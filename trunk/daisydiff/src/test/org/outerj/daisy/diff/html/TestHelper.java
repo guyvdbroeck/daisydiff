@@ -1,0 +1,117 @@
+//
+// TestHelper.java
+//
+// Copyright (C) 1998-2010
+// GEBIT Solutions GmbH
+// Berlin, Duesseldorf, Stuttgart (Germany)
+// All rights reserved.
+//
+package org.outerj.daisy.diff.html;
+
+import java.io.*;
+
+/**
+ * Support for reading files into strings from a given directory.
+ * @author TREND
+ * @version 17 Jun 2011
+ */
+public class TestHelper {
+	public static final String OLD_NAME = "a.html";
+	public static final String NEW_NAME = "b.html";
+	public static final String ANCESTOR_NAME = "ancestor.html";
+	public static final String EXPECTED_NAME = "expected.xml";
+	
+	public static final String ENCODING = "UTF-8";
+	
+	private File testDir;
+	private File resultsFile;
+	
+	public static boolean isTestDataDir(File aDir) {
+		File tempExpectedFile = new File(aDir, OLD_NAME);
+		return tempExpectedFile.exists();
+	}
+	
+	/**
+	 * Creates a new test helper. A file named "results.txt" is expected to
+	 * reside inside this directory.
+	 */
+	public TestHelper(File aTestDir) {
+		testDir = aTestDir;
+		if (!testDir.exists()) {
+			throw new IllegalArgumentException(testDir + " does not exist");
+		}
+		resultsFile = new File(testDir, EXPECTED_NAME);
+	}
+	
+	public File getOld() throws IOException {
+		File tempFile = new File(testDir, OLD_NAME);
+		verifyExists(tempFile);
+		return tempFile;
+	}
+	
+	public File getNew() throws IOException {
+		File tempFile = new File(testDir, NEW_NAME);
+		verifyExists(tempFile);
+		return tempFile;
+	}
+	
+	public File getAncestor() throws IOException {
+		File tempFile = new File(testDir, ANCESTOR_NAME);
+		verifyExists(tempFile);
+		return tempFile;
+	}
+	
+	public boolean hasAncestor() throws IOException {
+		try {
+			return getAncestor() != null; 
+		} catch (IOException ex) {
+			return false;
+		}
+	}
+	
+	private void verifyExists(File aFile) throws IOException {
+		if (!aFile.exists()) {
+			throw new FileNotFoundException(aFile.getAbsolutePath() + " does not exist");
+		}
+	}
+
+	/**
+	 * Returns the test directory as passed into the constructor
+	 * @return
+	 */
+	public File getTestDir() {
+		return testDir;
+	}
+	
+	/**
+	 * Returns the contents of the "expected.xml" file of the test directory.
+	 * @return
+	 * @throws IOException
+	 */
+	public String getExpectedResults() throws IOException {
+		return readContents(resultsFile);
+	}
+
+	/**
+	 * Reads the contents of the given file into a String. The file contents
+	 * is expected to be in UTF-8 encoding.
+	 * @param aFile
+	 * @return
+	 * @throws IOException
+	 */
+	public String readContents(File aFile) throws IOException {
+		Reader tempReader = new InputStreamReader(new FileInputStream(aFile), ENCODING);
+		try {
+			StringBuilder tempResult = new StringBuilder();
+			char[] buf = new char[8192];
+			int tempRead = 0;
+			while ((tempRead = tempReader.read(buf)) >= 0) {
+				tempResult.append(buf, 0, tempRead);
+			}
+			
+			return tempResult.toString();
+		} finally {
+			tempReader.close();
+		}
+	}
+}
