@@ -67,7 +67,14 @@ public class TextNodeComparator implements IRangeComparator, Iterable<TextNode> 
 
     private long newID = 0;
 
-    public void markAsNew(int start, int end) {
+    /**
+     * Marks the given range as new. In the output, the range will be formatted as
+     * specified by the anOutputFormat parameter.
+     * @param start
+     * @param end
+     * @param outputFormat specifies how this range shall be formatted in the output
+     */
+    public void markAsNew(int start, int end, ModificationType outputFormat) {
         if (end <= start)
             return;
 
@@ -77,7 +84,7 @@ public class TextNodeComparator implements IRangeComparator, Iterable<TextNode> 
         List<Modification> nextLastModified = new ArrayList<Modification>();
 
         for (int i = start; i < end; i++) {
-            Modification mod = new Modification(ModificationType.ADDED);
+            Modification mod = new Modification(ModificationType.ADDED, outputFormat);
             mod.setID(newID);
             if (lastModified.size() > 0) {
                 mod.setPrevious(lastModified.get(0));
@@ -93,6 +100,16 @@ public class TextNodeComparator implements IRangeComparator, Iterable<TextNode> 
         getTextNode(start).getModification().setFirstOfID(true);
         newID++;
         lastModified = nextLastModified;
+    }
+
+    /**
+     * Marks the given range as new. In the output, the range will be formatted
+     * as "added".
+     * @param start
+     * @param end
+     */
+    public void markAsNew(int start, int end) {
+    	markAsNew(start, end, ModificationType.ADDED);
     }
 
     public boolean rangesEqual(int i1, IRangeComparator rangeComp, int i2) {
@@ -137,7 +154,7 @@ public class TextNodeComparator implements IRangeComparator, Iterable<TextNode> 
 
             if (result.isChanged()) {
 
-                Modification mod = new Modification(ModificationType.CHANGED);
+                Modification mod = new Modification(ModificationType.CHANGED, ModificationType.CHANGED);
 
                 if (!changedIDUsed) {
                     mod.setFirstOfID(true);
@@ -191,8 +208,17 @@ public class TextNodeComparator implements IRangeComparator, Iterable<TextNode> 
 
     private long deletedID = 0;
 
+    /**
+     * Marks the given range as deleted. In the output, the range will be
+     * formatted as specified by the parameter anOutputFormat. 
+     * @param start
+     * @param end
+     * @param oldComp
+     * @param before
+     * @param anOutputFormat specifies how this range shall be formatted in the output
+     */
     public void markAsDeleted(int start, int end, TextNodeComparator oldComp,
-            int before) {
+            int before, ModificationType outputFormat) {
 
         if (end <= start)
             return;
@@ -206,7 +232,7 @@ public class TextNodeComparator implements IRangeComparator, Iterable<TextNode> 
         List<Modification> nextLastModified = new ArrayList<Modification>();
 
         for (int i = start; i < end; i++) {
-            Modification mod = new Modification(ModificationType.REMOVED);
+            Modification mod = new Modification(ModificationType.REMOVED, outputFormat);
             mod.setID(deletedID);
             if (lastModified.size() > 0) {
                 mod.setPrevious(lastModified.get(0));
@@ -285,9 +311,11 @@ public class TextNodeComparator implements IRangeComparator, Iterable<TextNode> 
                     .getMatchRatio(nextResult.getLastCommonParent());
 
                     if (distancePrev <= distanceNext) {
+                    	// insert after the previous node
                         prevResult.setLastCommonParentDepth(prevResult
                                 .getLastCommonParentDepth() + 1);
                     } else {
+                    	// insert before the next node
                         nextResult.setLastCommonParentDepth(nextResult
                                 .getLastCommonParentDepth() + 1);
                     }
@@ -337,6 +365,19 @@ public class TextNodeComparator implements IRangeComparator, Iterable<TextNode> 
         lastModified = nextLastModified;
         deletedID++;
     }
+    
+	/**
+     * Marks the given range as deleted. In the output, the range will be
+     * formatted as "removed".
+     * @param start
+     * @param end
+     * @param oldComp
+     * @param before
+     */
+    public void markAsDeleted(int start, int end, TextNodeComparator oldComp,
+            int before) {
+    	markAsDeleted(start, end, oldComp, before, ModificationType.REMOVED);
+    }
 
     public void expandWhiteSpace() {
         getBodyNode().expandWhiteSpace();
@@ -345,4 +386,54 @@ public class TextNodeComparator implements IRangeComparator, Iterable<TextNode> 
     public Iterator<TextNode> iterator() {
         return textNodes.iterator();
     }
+    
+    /**
+     * Used for combining multiple comparators in order to create a single
+     * output document. The IDs must be successive along the different
+     * comparators.
+     * @param aDeletedID
+     */
+    public void setStartDeletedID(long aDeletedID) {
+		deletedID = aDeletedID;
+	}
+    
+    /**
+     * Used for combining multiple comparators in order to create a single
+     * output document. The IDs must be successive along the different
+     * comparators.
+     * @param aDeletedID
+     */
+    public void setStartChangedID(long aChangedID) {
+		changedID = aChangedID;
+	}
+    
+    /**
+     * Used for combining multiple comparators in order to create a single
+     * output document. The IDs must be successive along the different
+     * comparators.
+     * @param aDeletedID
+     */
+    public void setStartNewID(long aNewID) {
+		newID = aNewID;
+	}
+    
+    public long getChangedID() {
+		return changedID;
+	}
+    
+    public long getDeletedID() {
+		return deletedID;
+	}
+    
+    public long getNewID() {
+		return newID;
+	}
+    
+    public List<Modification> getLastModified() {
+		return lastModified;
+	}
+    
+    public void setLastModified(List<Modification> aLastModified) {
+		lastModified = new ArrayList<Modification>(aLastModified);
+	}   
 }
