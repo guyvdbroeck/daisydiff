@@ -176,10 +176,24 @@ public class TagNode extends Node implements Iterable<Node> {
         //still a chance for being equal
         //if we are in the different tree
         //we should use semantic equivalence instead
-        if(!this.getQName().equalsIgnoreCase(tagNode.getQName()))
-            return false;
-
-        return hasSameAttributes(tagNode.getAttributes());
+        if (isSimilarTag(tagNode) {
+            if (getParent() != null && tagNode.getParent() != null) {
+                int indexInParent = getParent().getIndexOf(this);
+                int otherIndexInParent = tagNode.getParent().getIndexOf(tagNode);
+                if (indexInParent != otherIndexInParent) {
+                    // the nodes have a different position. If there is another similar
+                    // node at the *same* position, we declare to be not equal.
+                    if (tagNode.getParent().getNbChildren() > indexInParent) {
+                        Node tempNodeAtSamePosition = tagNode.getParent().getChild(indexInParent);
+                        if (this.isSimilarTag(tempNodeAtSamePosition)) {
+                            return false;
+                        }
+                    }
+                }
+            }
+            return true; // similar enough to be equal
+        }
+	return false;
     }
 
     private boolean hasSameAttributes(final Attributes otherAttributes)
@@ -196,6 +210,26 @@ public class TagNode extends Node implements Iterable<Node> {
     private AttributesMap getAttributesMap()
     {
         return new AttributesMap(getAttributes());
+    }
+
+    /**
+     * Returns <code>true</code> if this tag is similar to the given other tag.
+     * The tags may be from different trees. If the tag name and attributes
+     * are the same, the result will be <code>true</code>.
+     * @param another the tag to compare with
+     * @return wether this tag is similar to the other node
+     */
+    protected boolean isSimilarTag(Node another) {
+    	boolean result = false;
+    	if (another instanceof TagNode) {
+    		TagNode otherNode = (TagNode) another;
+    		if (this.getQName().equalsIgnoreCase(otherNode.getQName())) {
+    			AttributesMap localAttributesMap = new AttributesMap(getAttributes());
+    			AttributesMap externalAttributesMap = new AttributesMap(otherNode.getAttributes());
+    			result = localAttributesMap.equals(externalAttributesMap);
+    		}
+    	}
+		return result;
     }
 
     /**

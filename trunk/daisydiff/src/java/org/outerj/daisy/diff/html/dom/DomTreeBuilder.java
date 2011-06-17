@@ -89,8 +89,12 @@ public class DomTreeBuilder extends DefaultHandler implements DomTree {
                 newTagNode.setWhiteBefore(true);
             }
             whiteSpaceBeforeThis = false;
-            if (newTagNode.isPre())
+            if (newTagNode.isPre()) {
                 numberOfActivePreTags++;
+            }
+            if (isSeparatingTag(newTagNode)) {
+               addSeparatorNode();
+            }
 
         } else if (bodyStarted) {
             // Ignoring element after body tag closed
@@ -123,8 +127,12 @@ public class DomTreeBuilder extends DefaultHandler implements DomTree {
             } else {
                 lastSibling = null;
             }
-            if (localName.equalsIgnoreCase("pre"))
+            if (localName.equalsIgnoreCase("pre")) {
                 numberOfActivePreTags--;
+            }
+            if (isSeparatingTag(currentParent)) {
+               addSeparatorNode();
+            }
             currentParent = currentParent.getParent();
             whiteSpaceBeforeThis = false;
         }
@@ -172,6 +180,33 @@ public class DomTreeBuilder extends DefaultHandler implements DomTree {
         }
     }
 
+    /**
+     * Returns <code>true</code> if the given tag separates text nodes
+     * from being successive. I.e. every block starts a new distinct text flow.
+     * @param aTagNode
+     * @return
+     */
+    private boolean isSeparatingTag(TagNode aTagNode) {
+    	// treat all block tags as separating
+    	return aTagNode.isBlockLevel();
+	}
+
+    /**
+     * Ensures that a separator is added after the last text node.
+     */
+    private void addSeparatorNode() {
+    	if (textNodes.isEmpty()) {
+    		return;
+    	}
+    	
+    	// don't add multiple separators
+    	if (textNodes.get(textNodes.size() - 1) instanceof SeparatingNode) {
+    		return;
+    	}
+    	
+    	textNodes.add(new SeparatingNode(currentParent));
+    }
+    
     public static boolean isDelimiter(char c) {
         if (WhiteSpaceNode.isWhiteSpace(c))
             return true;
