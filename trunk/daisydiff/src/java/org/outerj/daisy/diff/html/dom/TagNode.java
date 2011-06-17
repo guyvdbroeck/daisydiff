@@ -176,7 +176,7 @@ public class TagNode extends Node implements Iterable<Node> {
         //still a chance for being equal
         //if we are in the different tree
         //we should use semantic equivalence instead
-        if (isSimilarTag(tagNode) {
+        if (isSimilarTag(tagNode)) {
             if (getParent() != null && tagNode.getParent() != null) {
                 int indexInParent = getParent().getIndexOf(this);
                 int otherIndexInParent = tagNode.getParent().getIndexOf(tagNode);
