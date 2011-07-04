@@ -180,20 +180,20 @@ public class TagNode extends Node implements Iterable<Node> {
         //if we are in the different tree
         //we should use semantic equivalence instead
         if (isSimilarTag(tagNode)) {
-            if (getParent() != null && tagNode.getParent() != null) {
-                int indexInParent = getParent().getIndexOf(this);
-                int otherIndexInParent = tagNode.getParent().getIndexOf(tagNode);
-                if (indexInParent != otherIndexInParent) {
-                    // the nodes have a different position. If there is another similar
-                    // node at the *same* position, we declare to be not equal.
-                    if (tagNode.getParent().getNbChildren() > indexInParent) {
-                        Node tempNodeAtSamePosition = tagNode.getParent().getChild(indexInParent);
-                        if (this.isSimilarTag(tempNodeAtSamePosition)) {
-                            return false;
-                        }
-                    }
-                }
-            }
+//            if (getParent() != null && tagNode.getParent() != null) {
+//                int indexInParent = getParent().getIndexOf(this);
+//                int otherIndexInParent = tagNode.getParent().getIndexOf(tagNode);
+//                if (indexInParent != otherIndexInParent) {
+//                    // the nodes have a different position. If there is another similar
+//                    // node at the *same* position, we declare to be not equal.
+//                    if (tagNode.getParent().getNbChildren() > indexInParent) {
+//                        Node tempNodeAtSamePosition = tagNode.getParent().getChild(indexInParent);
+//                        if (this.isSimilarTag(tempNodeAtSamePosition)) {
+//                            return false;
+//                        }
+//                    }
+//                }
+//            }
             return true; // similar enough to be equal
         }
 	return false;
