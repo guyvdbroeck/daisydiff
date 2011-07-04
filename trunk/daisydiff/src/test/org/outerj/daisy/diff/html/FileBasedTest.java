@@ -18,9 +18,11 @@ package org.outerj.daisy.diff.html;
 import java.io.*;
 import java.util.*;
 
-import junit.framework.TestCase;
 
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.Parameterized;
+import static org.junit.Assert.*;
 
 /**
  * Runs all tests in the testdata directory.
@@ -46,7 +48,8 @@ import org.junit.Test;
  * @author Carsten Pfeiffer <carsten.pfeiffer@gebit.de>
  * @version 17 Jun 2011
  */
-public class FileBasedTest extends TestCase {
+@RunWith(Parameterized.class)
+public class FileBasedTest{
 	/**
 	 * For creating (missing) test results from current output.
 	 */
@@ -61,21 +64,24 @@ public class FileBasedTest extends TestCase {
 //		ONLY_TESTS.add("table-discontinuous-cellcontents-replaced");
 	}
 	
-	@Override
-	protected void setUp() throws Exception {
-		// ensure that the test runs on platforms with different line endings
-		System.setProperty("line.separator", "\n");
-		super.setUp();
-	}
-	
-	/**
+
+    private final File testDirectory;
+
+    public FileBasedTest(File testDirectory)
+    {
+        this.testDirectory = testDirectory;
+        System.setProperty("line.separator", "\n");
+    }
+
+    /**
 	 * Runs a file-based test for the given test directory. Inside this
 	 * directory, the files a.html, b.html and expected.xml are, optionally
 	 * also the file ancestor.html.
-	 * @param aTestDir
 	 * @throws Exception
 	 */
-	private void runTest(File aTestDir) throws Exception {
+    @Test
+	public void test() throws Exception {
+        File aTestDir = this.testDirectory;
 		TestHelper tempHelper = new TestHelper(aTestDir);
 		
 		String tempResults = null;
@@ -111,7 +117,7 @@ public class FileBasedTest extends TestCase {
 			System.err.println("Actual:");
 			System.err.println(tempResults);
 		}
-		assertEquals(tempExpected, tempResults);
+		assertEquals("Content for test: " + testDirectory, tempExpected, tempResults);
 	}
 
 	/**
@@ -134,22 +140,19 @@ public class FileBasedTest extends TestCase {
 		}
 	}
 
-	@Test
-	public void testFileBased() throws Throwable {
+    @Parameterized.Parameters
+    public static List<Object[]> findAllTestDataDirs()
+    {
 		File tempRootDir = new File("testdata");
-		
-		List<File> tempTestDataDirs = findAllTestDataDirs(tempRootDir);
-		
-		for (File tempDir : tempTestDataDirs) {
-			testDir(tempDir);
-		}
-	}
-	
+
+        return findTestDataDirsRecursive(tempRootDir);
+    }
+    
 	/**
 	 * Returns a list of all directories which contain testdata, that is, a.html, b.html etc.
 	 * @param aRootDir the directory to start with
 	 */
-	private List<File> findAllTestDataDirs(File aRootDir) {
+	private static List<Object[]> findTestDataDirsRecursive(File aRootDir) {
 		final List<File> tempIntermediateDirs = new ArrayList<File>();
 		
 		File[] tempTestDataDirs = aRootDir.listFiles(new FileFilter() {
@@ -173,10 +176,15 @@ public class FileBasedTest extends TestCase {
 			}
 		});
 		
+        List<Object[]> tempResult = new ArrayList<Object[]>();
+        for (File tempTestDataDir : tempTestDataDirs)
+        {
+            tempResult.add(new Object[]{ tempTestDataDir});
+        }
+
 		// recursively find all further test data directories
-		List<File> tempResult = new ArrayList<File>(Arrays.asList(tempTestDataDirs));
 		for (File tempIntermediate : tempIntermediateDirs) {
-			tempResult.addAll(findAllTestDataDirs(tempIntermediate));
+			tempResult.addAll(findTestDataDirsRecursive(tempIntermediate));
 		}
 		if (ONLY_TESTS.isEmpty() && tempIntermediateDirs.size() > 0 && tempResult.size() == tempTestDataDirs.length) {
 			// we had intermediate dirs, but they did not contain any test data directories: fail
@@ -189,15 +197,5 @@ public class FileBasedTest extends TestCase {
 		}
 		
 		return tempResult;
-	}
-
-	private void testDir(File aDir) throws Throwable {
-		try {
-			runTest(aDir);
-		} catch (Throwable ex) {
-			System.err.println("Error was in test: " + aDir);
-			ex.printStackTrace();
-			throw ex;
-		}
 	}
 }
