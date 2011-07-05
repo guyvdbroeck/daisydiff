@@ -1,6 +1,0 @@
-<p>This is a <u>sample paragraph that will<span class="diff-html-removed" previous="first-diff" changeId="removed-diff-0" next="last-diff"> </span>
-<b>
-<span class="diff-html-removed" id="removed-diff-0" previous="first-diff" changeId="removed-diff-0" next="last-diff">be used</span>
-</b>
-</u>
-<span class="diff-html-removed" previous="first-diff" changeId="removed-diff-0" next="last-diff"> </span>for tests.</p>

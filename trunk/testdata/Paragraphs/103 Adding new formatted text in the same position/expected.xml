@@ -1,4 +1,0 @@
- Adding new formatted text in the same position <p>This is some <b>
-<span class="diff-html-added" id="added-diff-0" previous="first-diff" changeId="added-diff-0" next="last-diff">long</span>
-</b>
-<span class="diff-html-added" previous="first-diff" changeId="added-diff-0" next="last-diff"> </span>text.</p>

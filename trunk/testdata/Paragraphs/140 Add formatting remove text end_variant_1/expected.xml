@@ -1,5 +1,0 @@
-<p>This is a <u>
-<span class="diff-html-changed" id="changed-diff-0" changes="&lt;b&gt;!diff-u!&lt;/b&gt; added." previous="first-diff" changeId="changed-diff-0" next="removed-diff-0">sample paragraph that will be</span>
-</u>
-<span class="diff-html-removed" previous="changed-diff-0" changeId="removed-diff-0" next="last-diff"> </span>
-<span class="diff-html-removed" id="removed-diff-0" previous="changed-diff-0" changeId="removed-diff-0" next="last-diff">used </span>for tests.</p>

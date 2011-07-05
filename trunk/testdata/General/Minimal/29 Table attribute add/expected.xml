@@ -1,5 +1,0 @@
-<p>The product <td width="50%">
-<span class="diff-html-changed" id="changed-diff-0" changes="&lt;ul class='changelist'&gt;&lt;li&gt;Moved out of a &lt;b&gt;cell&lt;/b&gt; with width 30%.&lt;/li&gt;&lt;li&gt;Moved to a &lt;b&gt;cell&lt;/b&gt; with width 50%.&lt;/li&gt;&lt;/ul&gt;" previous="first-diff" changeId="changed-diff-0" next="added-diff-0">should </span>
-<span class="diff-html-added" id="added-diff-0" previous="changed-diff-0" changeId="added-diff-0" next="changed-diff-1">always </span>
-<span class="diff-html-changed" id="changed-diff-1" changes="&lt;ul class='changelist'&gt;&lt;li&gt;Moved out of a &lt;b&gt;cell&lt;/b&gt; with width 30%.&lt;/li&gt;&lt;li&gt;Moved to a &lt;b&gt;cell&lt;/b&gt; with width 50%.&lt;/li&gt;&lt;/ul&gt;" previous="added-diff-0" changeId="changed-diff-1" next="last-diff">be</span>
-</td> given twice a week.</p>

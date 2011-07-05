@@ -1,8 +1,0 @@
- Enter the title of your HTML document here <ol>
-<li>Dog</li>
-<li>Cat</li>
-<li>Lion</li>
-<li>
-<span class="diff-html-removed" id="removed-diff-0" previous="first-diff" changeId="removed-diff-0" next="last-diff">Tiger</span>
-</li>
-</ol>

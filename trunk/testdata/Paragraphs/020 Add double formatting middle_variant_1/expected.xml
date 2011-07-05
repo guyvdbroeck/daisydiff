@@ -1,6 +1,0 @@
-<p>This is a sample <i>
-<b>
-<span class="diff-html-changed" id="changed-diff-0" changes="&lt;ul class='changelist'&gt;&lt;li&gt;&lt;b&gt;Italics&lt;/b&gt; style added.&lt;/li&gt;&lt;li&gt;&lt;b&gt;Bold&lt;/b&gt; style added.&lt;/li&gt;&lt;/ul&gt;" previous="first-diff" changeId="changed-diff-0" next="last-diff">paragraph</span>
-</b>
-</i>
-<span class="diff-html-changed" changes="&lt;ul class='changelist'&gt;&lt;li&gt;&lt;b&gt;Italics&lt;/b&gt; style added.&lt;/li&gt;&lt;li&gt;&lt;b&gt;Bold&lt;/b&gt; style added.&lt;/li&gt;&lt;/ul&gt;" previous="first-diff" changeId="changed-diff-0" next="last-diff"> </span>that will be used for tests.</p>

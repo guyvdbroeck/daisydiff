@@ -1,4 +1,0 @@
- Overlapping format changes <p>This is some <i>
-<span class="diff-html-changed" id="changed-diff-0" changes="&lt;b&gt;Italics&lt;/b&gt; style added." previous="first-diff" changeId="changed-diff-0" next="last-diff">long demo</span>
-</i>
-<span class="diff-html-changed" changes="&lt;b&gt;Italics&lt;/b&gt; style added." previous="first-diff" changeId="changed-diff-0" next="last-diff"> </span>text.</p>

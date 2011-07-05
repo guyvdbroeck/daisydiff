@@ -33,7 +33,7 @@ import org.xml.sax.InputSource;
  * TestCase for HTML diffing. Can be used in unit tests. See HTMLDifferText for example.
  * 
  * @author kapelonk
- * @version 17 Jun 2011
+ * @version 04 Jul 2011
  *
  */
 public class HtmlTestFixture {
@@ -64,7 +64,7 @@ public class HtmlTestFixture {
 		TransformerHandler result = tf.newTransformerHandler();
         result.getTransformer().setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "yes");
         result.getTransformer().setOutputProperty(OutputKeys.INDENT, "yes");
-        result.getTransformer().setOutputProperty(OutputKeys.METHOD, "xml");
+        result.getTransformer().setOutputProperty(OutputKeys.METHOD, "html");
         result.getTransformer().setOutputProperty(OutputKeys.ENCODING, TestHelper.ENCODING);
         result.setResult(new StreamResult(finalResult));
         
@@ -132,7 +132,7 @@ public class HtmlTestFixture {
 		TransformerHandler result = tf.newTransformerHandler();
         result.getTransformer().setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "yes");
         result.getTransformer().setOutputProperty(OutputKeys.INDENT, "yes");
-        result.getTransformer().setOutputProperty(OutputKeys.METHOD, "xml");
+        result.getTransformer().setOutputProperty(OutputKeys.METHOD, "html");
         result.getTransformer().setOutputProperty(OutputKeys.ENCODING, TestHelper.ENCODING);
         result.setResult(new StreamResult(finalResult));
 		

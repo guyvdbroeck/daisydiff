@@ -20,13 +20,13 @@ import java.io.*;
 /**
  * Support for reading files into strings from a given directory.
  * @author TREND
- * @version 17 Jun 2011
+ * @version 04 Jul 2011
  */
 public class TestHelper {
 	public static final String OLD_NAME = "a.html";
 	public static final String NEW_NAME = "b.html";
 	public static final String ANCESTOR_NAME = "ancestor.html";
-	public static final String EXPECTED_NAME = "expected.xml";
+	public static final String EXPECTED_NAME = "expected.html";
 	
 	public static final String ENCODING = "UTF-8";
 	
@@ -91,7 +91,8 @@ public class TestHelper {
 	}
 	
 	/**
-	 * Returns the contents of the "expected.xml" file of the test directory.
+	 * Returns the contents of the "expected.html" file of the test directory,
+	 * minus the html header and footer
 	 * @return
 	 * @throws IOException
 	 */
@@ -99,6 +100,18 @@ public class TestHelper {
 		return readContents(resultsFile);
 	}
 
+	/**
+	 * Returns the header that is added to every results file and expected results file.
+	 * The header includes an online reference to the diff.css file at googlecode.com.
+	 * Having it as a fixed, static reference eases the comparison.
+	 */
+    public String getHtmlHeader() {
+		return "<html><head><link rel=\"stylesheet\" type=\"text/css\" href=\"http://daisydiff.googlecode.com/files/diff.css\"></link></head>\n";
+	}
+    public String getHtmlFooter() {
+    	return "\n</html>";
+    }
+	
 	/**
 	 * Reads the contents of the given file into a String. The file contents
 	 * is expected to be in UTF-8 encoding.

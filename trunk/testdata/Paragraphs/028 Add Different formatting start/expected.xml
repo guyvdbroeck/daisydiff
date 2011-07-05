@@ -1,5 +1,0 @@
-<p>This is a <u>
-<i>
-<span class="diff-html-changed" id="changed-diff-0" changes="&lt;b&gt;Italics&lt;/b&gt; style added." previous="first-diff" changeId="changed-diff-0" next="last-diff">sample</span>
-</i>
-<span class="diff-html-changed" changes="&lt;b&gt;Italics&lt;/b&gt; style added." previous="first-diff" changeId="changed-diff-0" next="last-diff"> </span>paragraph that will be used</u> for tests.</p>
