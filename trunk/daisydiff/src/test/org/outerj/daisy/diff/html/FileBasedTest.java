@@ -15,14 +15,19 @@
  */
 package org.outerj.daisy.diff.html;
 
-import java.io.*;
-import java.util.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
 
+import java.io.*;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
-import static org.junit.Assert.*;
+import org.outerj.daisy.diff.BetterParameterized;
 
 /**
  * Runs all tests in the testdata directory.
@@ -38,17 +43,17 @@ import static org.junit.Assert.*;
  * be performed in that case.
  * 
  * The expected results of the two- or three-way diff must be provided
- * in the file <code>expected.xml</code>
+ * in the file <code>expected.html</code>
  * 
  * A test case fails if the results of the diff does not exactly match the contents
- * of the <code>expected.xml</code> file.
+ * of the <code>expected.html</code>
  * 
- * Note: the files are expected to be UTF-8 encoded.
+ * Note: The files are expected to be UTF-8 encoded.
  * 
  * @author Carsten Pfeiffer <carsten.pfeiffer@gebit.de>
- * @version 17 Jun 2011
+ * @version 05 Jul 2011
  */
-@RunWith(Parameterized.class)
+@RunWith(BetterParameterized.class)
 public class FileBasedTest{
 	/**
 	 * For creating (missing) test results from current output.
@@ -75,7 +80,7 @@ public class FileBasedTest{
 
     /**
 	 * Runs a file-based test for the given test directory. Inside this
-	 * directory, the files a.html, b.html and expected.xml are, optionally
+	 * directory, the files a.html, b.html and expected.html are, optionally
 	 * also the file ancestor.html.
 	 * @throws Exception
 	 */
@@ -97,6 +102,9 @@ public class FileBasedTest{
 					tempHelper.readContents(tempHelper.getNew()));
 		}
 		
+		tempResults = new StringBuilder(tempResults)
+			.insert(0, tempHelper.getHtmlHeader()).append(tempHelper.getHtmlFooter()).toString();
+		
 		String tempExpected = null;
 		try {
 			tempExpected = tempHelper.getExpectedResults();
@@ -108,7 +116,7 @@ public class FileBasedTest{
 			}
 			throw ex;
 		}
-				
+
 		if (!tempExpected.equals(tempResults)) {
 			System.out.println("Length: expected: " + tempExpected.length() + ", actual: " + tempResults.length());
 			writeResultsFile(aTestDir, tempResults);
@@ -116,14 +124,14 @@ public class FileBasedTest{
 			System.err.println(tempExpected);
 			System.err.println("Actual:");
 			System.err.println(tempResults);
+			assertEquals("Content for test: " + testDirectory, tempExpected, tempResults);
 		}
-		assertEquals("Content for test: " + testDirectory, tempExpected, tempResults);
 	}
 
 	/**
 	 * Writes the given contents into a file of the given directory. By default,
 	 * the file is named _actual_result.html. This is useful for generating initial
-	 * testresults (expected.xml)
+	 * testresults (expected.html)
 	 * @param aDirectory
 	 * @param someContents
 	 */
@@ -140,7 +148,7 @@ public class FileBasedTest{
 		}
 	}
 
-    @Parameterized.Parameters
+	@Parameterized.Parameters
     public static List<Object[]> findAllTestDataDirs()
     {
 		File tempRootDir = new File("testdata");
