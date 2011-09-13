@@ -178,11 +178,11 @@ public class TagDiffer implements TextDiffer{
                         bridgelength = 2;
                 }
 
-                while ((leftComparator.getAtom(temp) instanceof DelimiterAtom || (bridgelength-- > 0))
-                        && temp < differences[i + 1].leftStart()) {
+				while (temp < differences[i + 1].leftStart()
+						&& (leftComparator.getAtom(temp) instanceof DelimiterAtom || (bridgelength-- > 0))) {
 
-                    temp++;
-                }
+					temp++;
+				}
                 if (temp == differences[i + 1].leftStart()) {
                     leftEnd = differences[i + 1].leftEnd();
                     rightEnd = differences[i + 1].rightEnd();

@@ -17,6 +17,8 @@ package org.outerj.daisy.diff.tag;
 
 import static org.junit.Assert.assertEquals;
 
+import java.util.List;
+
 import org.junit.Test;
 
 /**
@@ -138,5 +140,28 @@ public class TagDifferTest {
 		assertEquals("Expected modified text", newText, tagTest
 				.getReconstructedModifiedText());
 	}
+	
+	/**
+	 * Strange out of bounds exception. See issue 22 in Google code project
+	 * @throws Exception something went wrong.
+	 */
+	@Test
+	public void strangeOBException() throws Exception {
+		String oldText = "<p>hello</p>";
+		String newText = "<p>hello in the end</p><p>New</p>";
+
+		TagTestFixture tagTest = new TagTestFixture();
+		tagTest.performTagDiff(oldText, newText);
+		assertEquals("Expected 3 operations", 3, tagTest.getResults().size());
+		assertEquals("Expected original text", oldText, tagTest
+				.getReconstructedOriginalText());
+		assertEquals("Expected modified text", newText, tagTest
+				.getReconstructedModifiedText());
+
+	}
+	
+	
+	
+	
 
 }
