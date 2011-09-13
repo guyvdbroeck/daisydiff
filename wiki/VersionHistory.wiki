@@ -10,7 +10,8 @@ This page summarizes the Daisy Diff releases.
 Changes are:
 
  # Html mode performance tuning (By don.jp.willis, patch from issue 33)
- # Support for 3-way comparison (issue 27)
+ # Support for 3-way comparison (By Carsten Pfeiffer, see issue 27)
+ # Some initial unit tests (By Carsten Pfeiffer and Kostis Kapelonis)
 
 == Daisy Diff 1.1 (February 2010)==
 
