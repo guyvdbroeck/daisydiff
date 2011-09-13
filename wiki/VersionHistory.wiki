@@ -13,6 +13,7 @@ Changes are:
  # Support for 3-way comparison (By Carsten Pfeiffer, see issue 27)
  # Some initial unit tests (By Carsten Pfeiffer,Don Willis and Kostis Kapelonis)
  # Improved treatment of the visual document structure (By Carsten Pfeiffer, see issue 28)
+ # Fixed an out of bounds exception (By Beton, see issue 22)
 
 == Daisy Diff 1.1 (February 2010)==
 
