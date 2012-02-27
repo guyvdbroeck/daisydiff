@@ -1,19 +1,5 @@
 package org.outerj.daisy.diff;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.util.Locale;
-
-import javax.xml.transform.TransformerFactory;
-import javax.xml.transform.sax.SAXTransformerFactory;
-import javax.xml.transform.sax.TransformerHandler;
-import javax.xml.transform.stream.StreamResult;
-
 import org.outerj.daisy.diff.html.HTMLDiffer;
 import org.outerj.daisy.diff.html.HtmlSaxDiffOutput;
 import org.outerj.daisy.diff.html.TextNodeComparator;
@@ -22,6 +8,15 @@ import org.xml.sax.ContentHandler;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.AttributesImpl;
+
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.sax.SAXTransformerFactory;
+import javax.xml.transform.sax.TransformerHandler;
+import javax.xml.transform.stream.StreamResult;
+import java.io.*;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.util.Locale;
 
 public class Main {
   static boolean quietMode = false;
@@ -35,6 +30,9 @@ public class Main {
         boolean htmlOut = true;
         String outputFile = "daisydiff.htm";
         String[] css = new String[]{};
+        
+        InputStream oldStream = null;
+        InputStream newStream = null;
         
         try {
             for (int i = 2; i < args.length; i++) {
@@ -60,7 +58,7 @@ public class Main {
             }
             if (!quietMode){
               System.out.println("            ______________");
-              System.out.println("           /Daisy Diff 1.2\\");
+              System.out.println("           /Daisy Diff 1.3\\");
               System.out.println("          /________________\\");
               System.out.println();
               System.out.println(" -= http://code.google.com/p/daisydiff/ =-");
@@ -96,7 +94,6 @@ public class Main {
             TransformerHandler result = tf.newTransformerHandler();
             result.setResult(new StreamResult(new File(outputFile)));
             
-            InputStream oldStream, newStream;
             
             if (args[0].startsWith("http://")) {
                 oldStream = new URI(args[0]).toURL().openStream();
@@ -164,9 +161,31 @@ public class Main {
                 postProcess.startElement("", "diff", "diff",
                         new AttributesImpl());
                 System.out.print(".");
-                DaisyDiff.diffTag(new BufferedReader(new InputStreamReader(
-                        oldStream)), new BufferedReader(new InputStreamReader(
-                        newStream)), postProcess);
+
+                
+                InputStreamReader oldReader = null;
+                BufferedReader oldBuffer = null;
+
+                InputStreamReader newISReader = null;
+                BufferedReader newBuffer = null;
+                try {
+                    oldReader = new InputStreamReader(oldStream);
+                    oldBuffer = new BufferedReader(oldReader);
+
+                    newISReader = new InputStreamReader(newStream);
+                    newBuffer = new BufferedReader(newISReader);
+                    DaisyDiff.diffTag(oldBuffer, newBuffer, postProcess);
+                    
+                } catch (Exception e) {
+                    e.printStackTrace();
+                } finally {
+                    oldBuffer.close();
+                    newBuffer.close();
+                    oldReader.close();
+                    newISReader.close();
+                }
+
+
                 System.out.print(".");
                 postProcess.endElement("", "diff", "diff");
                 postProcess.endElement("", "diffreport", "diffreport");
@@ -186,6 +205,17 @@ public class Main {
             }
             help();
           }
+        } finally {
+            try {
+                if(oldStream != null) oldStream.close();
+            } catch (IOException e) {
+                //ignore this exception
+            }
+            try {
+                if(newStream != null) newStream.close();
+            } catch (IOException e) {
+                //ignore this exception
+            }
         }
         if (quietMode)
           System.out.println();
