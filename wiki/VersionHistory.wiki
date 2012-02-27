@@ -7,7 +7,9 @@ This page summarizes the Daisy Diff releases.
 
 == Daisy Diff Trunk ==
 
-Same as 1.2 at the moment
+Changes are:
+
+ # Proper closing of readers and streams (by firecreeper, patch from  issue 41 )
 
 
 
