@@ -10,6 +10,7 @@ This page summarizes the Daisy Diff releases.
 Changes are:
 
  # Proper closing of readers and streams (by firecreeper, patch from  issue 41 )
+ # Running of unit tests via Ant (by Gregor Petrin, see issue 48)
 
 
 
