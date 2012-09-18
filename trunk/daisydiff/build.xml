@@ -66,17 +66,29 @@
 		</javac>
 	</target>
 	<target name="test" description="run unit tests" depends="compileTests">
+		<property name="dir.testresults" value="testresults"/>
+		<delete dir="${dir.testresults}"/>
+		<mkdir dir="${dir.testresults}"/>
+
 		<junit fork="true" dir="../">
-			<formatter type="brief" usefile="false" />
+			<formatter type="xml" />
 			<classpath>
+				<pathelement path="lib/junit-4.10.jar" />
 				<path refid="project.class.path" />
 				<pathelement path="${build}" />
 			</classpath>
-			<batchtest fork="yes">
+			<batchtest fork="yes" todir="${dir.testresults}">
 				<fileset dir="${test}">
 					<include name="**/*Test.java"/>
 				</fileset>
 			</batchtest>
 		</junit>
+
+		<junitreport todir="${dir.testresults}">
+			<fileset dir="${dir.testresults}">
+			<include name="TEST-*.xml" />
+		</fileset>
+		<report todir="${dir.testresults}" />
+		</junitreport>
 	</target>
 </project>
