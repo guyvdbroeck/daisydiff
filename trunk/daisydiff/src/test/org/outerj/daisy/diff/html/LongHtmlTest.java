@@ -17,7 +17,10 @@ package org.outerj.daisy.diff.html;
 
 import static org.junit.Assert.assertTrue;
 
+import java.util.Arrays;
+
 import org.junit.Test;
+import org.outerj.daisy.diff.html.ancestor.ChangeTextGenerator;
 
 
 /**
@@ -42,6 +45,23 @@ public class LongHtmlTest {
 		String result = HtmlTestFixture.diff(oldText, newText);
 		assertTrue("Expected a change",result.indexOf("diff-html-changed") > -1);
 	}
-	
-	
+
+	/**
+	 * When a text has exactly the length of the maximum output line, we 
+	 * previously hit an assertion error in ChangeText.addTextBrokenAcrossLines().
+	 * Note: this test would only fail if the jvm was started with assertions enabled
+	 * (i.e. with the "-ea" vm argument).
+	 */
+	@Test
+	public void longHtmlMaxOutputLineLength() throws Exception
+	{
+		char[] string = new char[ChangeTextGenerator.MAX_OUTPUT_LINE_LENGTH];
+		Arrays.fill(string, 'a');
+		
+		String oldText = "<html> <body> <A HREF=\"" + new String(string) + "\">Link</A> </body> </html>";
+		String newText = "<html> <body> <A HREF=\"" + new String(string) + "xyz\">Link</A> </body> </html>";
+		
+		String result = HtmlTestFixture.diff(oldText, newText);
+		assertTrue("Expected a change",result.indexOf("diff-html-changed") > -1);
+	}
 }

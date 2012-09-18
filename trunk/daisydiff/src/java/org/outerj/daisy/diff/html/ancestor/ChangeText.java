@@ -31,18 +31,21 @@ public class ChangeText {
 
     public synchronized void addText(String s) {
         s = clean(s);
+        addTextInternal(s);
+    }
 
-        if (s.length() + charsThisLine > maxNbCharsPerLine) {
-            addTextCarefully(s);
+    private void addTextInternal(String cleanText) {
+        if (cleanText.length() + charsThisLine > maxNbCharsPerLine) {
+            addTextCarefully(cleanText);
         } else {
-            addToLine(s);
+            addToLine(cleanText);
         }
     }
-
+    
     private void addToLine(String s) {
-      txt.append(s);
-      charsThisLine += s.length();
-    }
+            txt.append(s);
+            charsThisLine += s.length();
+        }
 
     public synchronized void addHtml(String s) {
         txt.append(s);
@@ -55,28 +58,28 @@ public class ChangeText {
 
         int firstSpace = s.indexOf(" ");
         if (firstSpace < 0) { //  Next word is the whole string.
-            if (s.length() < maxNbCharsPerLine) {
+            if (s.length() <= maxNbCharsPerLine) {
               //  If the word will fit on a standard output line, by itself, get a new line and put it out.
               if (charsThisLine > 0)
                 addNewLine();
-              addText(s);
+              addTextInternal(s);
             } else {
               addNewLine();
               addTextBrokenAcrossLines(s);
             }
-        } else if (firstSpace + 1 >= maxNbCharsPerLine){
+        } else if (firstSpace > maxNbCharsPerLine){
           //  The first word in s won't fit on a line, break it across several lines
           if (charsThisLine > 0)
             addNewLine();
-          addTextBrokenAcrossLines(s.substring(0, firstSpace + 1));
+          addTextBrokenAcrossLines(s.substring(0, firstSpace));
           if (firstSpace + 1 < s.length())
-            addText(s.substring(firstSpace + 1, s.length()));
-        } else if (firstSpace + 1 + charsThisLine > maxNbCharsPerLine) {
+            addTextInternal(s.substring(firstSpace + 1, s.length()));
+        } else if (firstSpace + charsThisLine > maxNbCharsPerLine) {
           //  The new word won't fit on the current line.
-          addNewLine();
-          addText(s);
+        	addNewLine();
+            addTextInternal(s);
         } else {
-            addText(s.substring(0, firstSpace + 1));
+            addTextInternal(s.substring(0, firstSpace));
             if (firstSpace + 1 < s.length())
                 addTextCarefully(s.substring(firstSpace + 1, s.length()));
         }
@@ -87,10 +90,10 @@ public class ChangeText {
       int firstPart = Math.min(s.length(), maxNbCharsPerLine
               - charsThisLine);
 
-      addText(s.substring(0, firstPart));
+      addTextInternal(s.substring(0, firstPart));
 
       addNewLine();
-      addText(s.substring(firstPart, s.length()));
+      addTextInternal(s.substring(firstPart, s.length()));
     }
 
     public synchronized void addNewLine() {
